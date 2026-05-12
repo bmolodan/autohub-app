@@ -1,0 +1,49 @@
+name: autohub
+description: NESEMOS AutoHub customer mobile app.
+publish_to: "none"
+version: 0.1.0+1
+
+environment:
+  sdk: ">=3.4.0 <4.0.0"
+  flutter: ">=3.22.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+
+  # ─── Core ──────────────────────────────────────────────────────────
+  google_fonts: ^6.2.1            # Inter web font (theme typography)
+
+  # ─── State / DI ────────────────────────────────────────────────────
+  flutter_riverpod: ^2.5.1
+
+  # ─── Navigation ───────────────────────────────────────────────────
+  go_router: ^14.2.0
+
+  # ─── Networking (will activate when wiring real API) ──────────────
+  # dio: ^5.5.0
+  # retrofit: ^4.1.0
+
+  # ─── Local storage ────────────────────────────────────────────────
+  shared_preferences: ^2.3.2
+  # hive_flutter: ^1.1.0           # if we need indexed/typed boxes later
+  # flutter_secure_storage: ^9.2.2 # if we need OS keychain for tokens
+
+  # ─── Firebase (auth + push + analytics + crashlytics) ─────────────
+  # firebase_core: ^3.3.0
+  # firebase_auth: ^5.1.4
+  # firebase_messaging: ^15.0.4
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^4.0.0
+  # mocktail: ^1.0.4
+
+flutter:
+  uses-material-design: true
+  generate: true
+  assets:
+    - assets/mocks/

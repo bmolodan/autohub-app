@@ -1,0 +1,17 @@
+include: package:flutter_lints/flutter.yaml
+
+analyzer:
+  language:
+    strict-casts: true
+    strict-inference: true
+    strict-raw-types: true
+
+linter:
+  rules:
+    # Treat unawaited futures as bugs — opt out with `unawaited()` when intentional.
+    unawaited_futures: true
+    avoid_print: true
+    prefer_final_locals: true
+    always_declare_return_types: true
+    avoid_catches_without_on_clauses: true
+    always_use_package_imports: false # local relative imports OK in feature folders
