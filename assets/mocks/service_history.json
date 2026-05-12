@@ -1,0 +1,30 @@
+[
+  {
+    "id": "h-1001",
+    "title": "ТО-15000",
+    "completed_at": "2026-04-18T11:30:00+03:00",
+    "price_uah": 2400,
+    "vehicle_id": "v-camry-1"
+  },
+  {
+    "id": "h-1002",
+    "title": "Гальм. колодки",
+    "completed_at": "2026-04-05T15:10:00+03:00",
+    "price_uah": 1850,
+    "vehicle_id": "v-camry-1"
+  },
+  {
+    "id": "h-1003",
+    "title": "Шиномонтаж",
+    "completed_at": "2026-04-02T09:45:00+03:00",
+    "price_uah": 800,
+    "vehicle_id": "v-camry-1"
+  },
+  {
+    "id": "h-1004",
+    "title": "Заміна масла",
+    "completed_at": "2026-03-15T13:20:00+03:00",
+    "price_uah": 1200,
+    "vehicle_id": "v-camry-1"
+  }
+]
