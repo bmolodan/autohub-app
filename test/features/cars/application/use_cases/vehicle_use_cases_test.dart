@@ -1,9 +1,17 @@
+import 'package:autohub/core/util/clock.dart';
+import 'package:autohub/core/util/id_generator.dart';
 import 'package:autohub/features/cars/application/ports/outbound/vehicle_repository_port.dart';
 import 'package:autohub/features/cars/application/use_cases/add_vehicle.dart';
 import 'package:autohub/features/cars/application/use_cases/get_vehicle.dart';
 import 'package:autohub/features/cars/application/use_cases/list_vehicles.dart';
 import 'package:autohub/features/cars/domain/vehicle.dart';
 import 'package:flutter_test/flutter_test.dart';
+
+AddVehicleUseCase _addUseCase(VehicleRepositoryPort repo) => AddVehicleUseCase(
+      repo,
+      FixedClock(DateTime.utc(2026, 5, 13)),
+      CountingIdGenerator(),
+    );
 
 /// In-memory fake port — independent of any real adapter so the use case
 /// tests stay infrastructure-free.
@@ -73,7 +81,7 @@ void main() {
   group('AddVehicleUseCase', () {
     test('persists a new vehicle and assigns an id', () async {
       final repo = _FakeRepo();
-      final useCase = AddVehicleUseCase(repo);
+      final useCase = _addUseCase(repo);
 
       final added = await useCase.execute(const AddVehicleInput(
         make: 'BMW',
@@ -98,7 +106,7 @@ void main() {
 
     test('trims whitespace from string fields', () async {
       final repo = _FakeRepo();
-      final added = await AddVehicleUseCase(repo).execute(
+      final added = await _addUseCase(repo).execute(
         const AddVehicleInput(
           make: '  Mazda  ',
           model: ' CX-5 ',
@@ -116,7 +124,7 @@ void main() {
     test('rejects empty plate', () async {
       final repo = _FakeRepo();
       expect(
-        () => AddVehicleUseCase(repo).execute(const AddVehicleInput(
+        () => _addUseCase(repo).execute(const AddVehicleInput(
           make: 'Mazda',
           model: 'CX-5',
           year: 2017,
@@ -129,7 +137,7 @@ void main() {
     test('rejects implausible year', () async {
       final repo = _FakeRepo();
       expect(
-        () => AddVehicleUseCase(repo).execute(const AddVehicleInput(
+        () => _addUseCase(repo).execute(const AddVehicleInput(
           make: 'Mazda',
           model: 'CX-5',
           year: 1800,
@@ -141,7 +149,7 @@ void main() {
 
     test('treats null/empty vin as absent', () async {
       final repo = _FakeRepo();
-      final added = await AddVehicleUseCase(repo).execute(
+      final added = await _addUseCase(repo).execute(
         const AddVehicleInput(
           make: 'Mazda',
           model: 'CX-5',

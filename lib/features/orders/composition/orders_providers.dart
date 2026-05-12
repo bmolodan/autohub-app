@@ -1,6 +1,8 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/storage/shared_prefs_provider.dart';
+import '../../../core/util/clock.dart';
+import '../../../core/util/id_generator.dart';
 import '../adapters/outbound/_seed.dart';
 import '../adapters/outbound/shared_prefs_active_order_repository.dart';
 import '../application/ports/outbound/active_order_repository_port.dart';
@@ -11,10 +13,13 @@ import '../domain/active_order.dart';
 
 /// Composition root for the orders feature.
 final activeOrderRepositoryProvider = Provider<ActiveOrderRepositoryPort>(
-  (ref) => SharedPrefsActiveOrderRepository(
-    ref.watch(sharedPreferencesProvider),
-    seedJson: kActiveOrdersSeedJson,
-  ),
+  (ref) {
+    final clock = ref.watch(clockProvider);
+    return SharedPrefsActiveOrderRepository(
+      ref.watch(sharedPreferencesProvider),
+      seedBuilder: () => buildActiveOrdersSeedJson(clock),
+    );
+  },
 );
 
 final getActiveOrdersUseCaseProvider = Provider<GetActiveOrdersUseCase>(
@@ -26,7 +31,11 @@ final getOrderByIdUseCaseProvider = Provider<GetOrderByIdUseCase>(
 );
 
 final createOrderUseCaseProvider = Provider<CreateOrderUseCase>(
-  (ref) => CreateOrderUseCase(ref.watch(activeOrderRepositoryProvider)),
+  (ref) => CreateOrderUseCase(
+    ref.watch(activeOrderRepositoryProvider),
+    ref.watch(clockProvider),
+    ref.watch(idGeneratorProvider),
+  ),
 );
 
 /// View-model: the active-orders list. Notifier so the booking flow can

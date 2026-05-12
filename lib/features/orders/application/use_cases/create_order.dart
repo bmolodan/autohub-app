@@ -1,3 +1,5 @@
+import '../../../../core/util/clock.dart';
+import '../../../../core/util/id_generator.dart';
 import '../../../cars/domain/vehicle.dart';
 import '../../domain/active_order.dart';
 import '../ports/outbound/active_order_repository_port.dart';
@@ -19,8 +21,11 @@ class CreateOrderInput {
 /// Creates a new booking. Status is always `pendingConfirmation` —
 /// the STO confirms (or rejects) on their end before it moves to in-progress.
 class CreateOrderUseCase {
-  const CreateOrderUseCase(this._repository);
+  const CreateOrderUseCase(this._repository, this._clock, this._idGen);
+
   final ActiveOrderRepositoryPort _repository;
+  final Clock _clock;
+  final IdGenerator _idGen;
 
   Future<ActiveOrder> execute(CreateOrderInput input) async {
     final title = input.serviceTitle.trim();
@@ -29,9 +34,9 @@ class CreateOrderUseCase {
       throw ArgumentError('servicePriceUah must be >= 0');
     }
 
-    final now = DateTime.now();
+    final now = _clock.now();
     final order = ActiveOrder(
-      id: 'o-${now.microsecondsSinceEpoch}',
+      id: _idGen.next('o'),
       title: title,
       status: ActiveOrderStatus.pendingConfirmation,
       statusLabel: 'Очікує підтвердження',

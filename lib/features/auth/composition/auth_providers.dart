@@ -1,6 +1,8 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/storage/shared_prefs_provider.dart';
+import '../../../core/util/clock.dart';
+import '../../../core/util/id_generator.dart';
 import '../adapters/outbound/fake_otp_gateway.dart';
 import '../adapters/outbound/shared_prefs_session_storage.dart';
 import '../application/ports/outbound/otp_gateway_port.dart';
@@ -11,7 +13,12 @@ import '../application/use_cases/verify_otp.dart';
 import '../domain/session.dart';
 
 /// Composition root for auth.
-final otpGatewayProvider = Provider<OtpGatewayPort>((_) => FakeOtpGateway());
+final otpGatewayProvider = Provider<OtpGatewayPort>(
+  (ref) => FakeOtpGateway(
+    clock: ref.watch(clockProvider),
+    idGen: ref.watch(idGeneratorProvider),
+  ),
+);
 
 final sessionStorageProvider = Provider<SessionStoragePort>(
   (ref) => SharedPrefsSessionStorage(ref.watch(sharedPreferencesProvider)),

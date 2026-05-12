@@ -1,8 +1,17 @@
+import 'package:autohub/core/util/clock.dart';
+import 'package:autohub/core/util/id_generator.dart';
 import 'package:autohub/features/cars/domain/vehicle.dart';
 import 'package:autohub/features/orders/application/ports/outbound/active_order_repository_port.dart';
 import 'package:autohub/features/orders/application/use_cases/create_order.dart';
 import 'package:autohub/features/orders/domain/active_order.dart';
 import 'package:flutter_test/flutter_test.dart';
+
+CreateOrderUseCase _useCase(ActiveOrderRepositoryPort repo) =>
+    CreateOrderUseCase(
+      repo,
+      FixedClock(DateTime.utc(2026, 5, 13, 12)),
+      CountingIdGenerator(),
+    );
 
 class _FakeRepo implements ActiveOrderRepositoryPort {
   final Map<String, ActiveOrder> store = {};
@@ -47,7 +56,7 @@ void main() {
   group('CreateOrderUseCase', () {
     test('saves a new pending order with a generated id', () async {
       final repo = _FakeRepo();
-      final useCase = CreateOrderUseCase(repo);
+      final useCase = _useCase(repo);
 
       final created = await useCase.execute(_input(description: 'плановий ТО'));
 
@@ -70,7 +79,7 @@ void main() {
     test('rejects empty service title', () async {
       final repo = _FakeRepo();
       expect(
-        () => CreateOrderUseCase(repo).execute(_input(serviceTitle: '   ')),
+        () => _useCase(repo).execute(_input(serviceTitle: '   ')),
         throwsA(isA<ArgumentError>()),
       );
       expect(repo.store, isEmpty);
@@ -79,7 +88,7 @@ void main() {
     test('rejects negative price', () async {
       final repo = _FakeRepo();
       expect(
-        () => CreateOrderUseCase(repo).execute(_input(servicePriceUah: -1)),
+        () => _useCase(repo).execute(_input(servicePriceUah: -1)),
         throwsA(isA<ArgumentError>()),
       );
       expect(repo.store, isEmpty);
@@ -87,15 +96,14 @@ void main() {
 
     test('description is optional (empty allowed)', () async {
       final repo = _FakeRepo();
-      final created = await CreateOrderUseCase(repo).execute(_input());
+      final created = await _useCase(repo).execute(_input());
       expect(created.id, isNotEmpty);
     });
 
     test('generates unique ids on successive calls', () async {
       final repo = _FakeRepo();
-      final useCase = CreateOrderUseCase(repo);
+      final useCase = _useCase(repo);
       final a = await useCase.execute(_input());
-      await Future<void>.delayed(const Duration(microseconds: 1));
       final b = await useCase.execute(_input(serviceTitle: 'Шиномонтаж'));
       expect(a.id, isNot(b.id));
     });

@@ -1,6 +1,8 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/storage/shared_prefs_provider.dart';
+import '../../../core/util/clock.dart';
+import '../../../core/util/id_generator.dart';
 import '../adapters/outbound/shared_prefs_vehicle_repository.dart';
 import '../application/ports/outbound/vehicle_repository_port.dart';
 import '../application/use_cases/add_vehicle.dart';
@@ -39,7 +41,11 @@ final getVehicleUseCaseProvider = Provider<GetVehicleUseCase>(
 );
 
 final addVehicleUseCaseProvider = Provider<AddVehicleUseCase>(
-  (ref) => AddVehicleUseCase(ref.watch(vehicleRepositoryProvider)),
+  (ref) => AddVehicleUseCase(
+    ref.watch(vehicleRepositoryProvider),
+    ref.watch(clockProvider),
+    ref.watch(idGeneratorProvider),
+  ),
 );
 
 /// View-model: list of vehicles. Notifier so screens can refresh on add.

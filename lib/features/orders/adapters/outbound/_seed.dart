@@ -1,5 +1,15 @@
+import '../../../../core/util/clock.dart';
+
 /// Goes away once a real backend is wired in.
-const kActiveOrdersSeedJson = '''
+///
+/// Builds the seed lazily so timestamps are anchored to `clock.now()` at
+/// first construction — avoids the "stale ETA" problem on long-running
+/// installs.
+String buildActiveOrdersSeedJson(Clock clock) {
+  final now = clock.now();
+  String iso(Duration offset) => now.add(offset).toIso8601String();
+
+  return '''
 [
   {
     "id": "4521",
@@ -8,12 +18,12 @@ const kActiveOrdersSeedJson = '''
     "status_label": "У ремонті",
     "vehicle": {"make": "Toyota", "model": "Camry", "plate": "AA 1234 BC"},
     "progress": 0.6,
-    "eta": "2026-05-13T14:00:00+03:00",
+    "eta": "${iso(const Duration(hours: 3))}",
     "total_uah": 2850,
     "timeline": [
-      {"stage": "accepted", "label": "Прийнято", "at": "2026-05-13T10:24:00+03:00"},
-      {"stage": "diagnostics", "label": "Діагностика", "at": "2026-05-13T11:05:00+03:00"},
-      {"stage": "in_progress", "label": "У ремонті", "at": "2026-05-13T12:30:00+03:00"}
+      {"stage": "accepted", "label": "Прийнято", "at": "${iso(const Duration(hours: -4))}"},
+      {"stage": "diagnostics", "label": "Діагностика", "at": "${iso(const Duration(hours: -3))}"},
+      {"stage": "in_progress", "label": "У ремонті", "at": "${iso(const Duration(hours: -2))}"}
     ]
   },
   {
@@ -22,7 +32,8 @@ const kActiveOrdersSeedJson = '''
     "status": "pending_confirmation",
     "status_label": "Очікує підтвердження",
     "vehicle": {"make": "Toyota", "model": "Camry", "plate": "AA 1234 BC"},
-    "scheduled_for": "2026-05-14T16:00:00+03:00"
+    "scheduled_for": "${iso(const Duration(days: 1))}"
   }
 ]
 ''';
+}

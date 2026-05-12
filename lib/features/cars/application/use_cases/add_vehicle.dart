@@ -1,3 +1,5 @@
+import '../../../../core/util/clock.dart';
+import '../../../../core/util/id_generator.dart';
 import '../../domain/vehicle.dart';
 import '../ports/outbound/vehicle_repository_port.dart';
 
@@ -18,9 +20,11 @@ class AddVehicleInput {
 }
 
 class AddVehicleUseCase {
-  const AddVehicleUseCase(this._repository);
+  const AddVehicleUseCase(this._repository, this._clock, this._idGen);
 
   final VehicleRepositoryPort _repository;
+  final Clock _clock;
+  final IdGenerator _idGen;
 
   Future<Vehicle> execute(AddVehicleInput input) async {
     final make = input.make.trim();
@@ -31,12 +35,12 @@ class AddVehicleUseCase {
     if (plate.isEmpty) throw ArgumentError('plate is required');
     if (make.isEmpty) throw ArgumentError('make is required');
     if (model.isEmpty) throw ArgumentError('model is required');
-    if (input.year < 1900 || input.year > DateTime.now().year + 1) {
+    if (input.year < 1900 || input.year > _clock.now().year + 1) {
       throw ArgumentError('year ${input.year} is implausible');
     }
 
     final vehicle = Vehicle(
-      id: 'v-${DateTime.now().microsecondsSinceEpoch}',
+      id: _idGen.next('v'),
       make: make,
       model: model,
       year: input.year,

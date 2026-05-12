@@ -6,14 +6,17 @@ import '../../application/ports/outbound/active_order_repository_port.dart';
 import '../../domain/active_order.dart';
 import 'active_order_codec.dart';
 
-/// Seeds [seedJson] only when the underlying key is absent — repeated cold
-/// starts don't clobber user-saved orders. Seed write is fire-and-forget
+/// Seeds via [seedBuilder] only when the underlying key is absent — repeated
+/// cold starts don't clobber user-saved orders. Seed write is fire-and-forget
 /// because the constructor must stay sync.
 class SharedPrefsActiveOrderRepository implements ActiveOrderRepositoryPort {
-  SharedPrefsActiveOrderRepository(this._prefs, {String? seedJson}) {
-    if (!_prefs.containsKey(_key) && seedJson != null) {
+  SharedPrefsActiveOrderRepository(
+    this._prefs, {
+    String Function()? seedBuilder,
+  }) {
+    if (!_prefs.containsKey(_key) && seedBuilder != null) {
       try {
-        unawaited(_writeAll(decodeActiveOrders(seedJson)));
+        unawaited(_writeAll(decodeActiveOrders(seedBuilder())));
       } on Object catch (_) {
         // Bad seed — leave storage empty.
       }

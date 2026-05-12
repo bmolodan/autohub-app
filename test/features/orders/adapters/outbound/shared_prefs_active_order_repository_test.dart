@@ -50,7 +50,8 @@ void main() {
 
     test('seed populates on first read when storage empty', () async {
       final prefs = await SharedPreferences.getInstance();
-      final repo = SharedPrefsActiveOrderRepository(prefs, seedJson: _seed);
+      final repo =
+          SharedPrefsActiveOrderRepository(prefs, seedBuilder: () => _seed);
       final all = await repo.findAll();
       expect(all, hasLength(1));
       expect(all.single.id, 'seed-1');
@@ -59,11 +60,12 @@ void main() {
 
     test('seed is NOT reapplied after save (simulated restart)', () async {
       final prefs = await SharedPreferences.getInstance();
-      await SharedPrefsActiveOrderRepository(prefs, seedJson: _seed)
+      await SharedPrefsActiveOrderRepository(prefs, seedBuilder: () => _seed)
           .save(_o('added'));
 
       // New instance, same prefs.
-      final repo2 = SharedPrefsActiveOrderRepository(prefs, seedJson: _seed);
+      final repo2 =
+          SharedPrefsActiveOrderRepository(prefs, seedBuilder: () => _seed);
       final all = await repo2.findAll();
       expect(all.map((o) => o.id), containsAll(['seed-1', 'added']));
       expect(all, hasLength(2));
