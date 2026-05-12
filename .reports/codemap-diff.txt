@@ -1,0 +1,45 @@
+Codemap generation report
+=========================
+Generated: 2026-05-13
+Mode: first generation (no prior codemaps detected)
+
+Files written
+-------------
+docs/CODEMAPS/architecture.md   (architecture + hexagonal layout + feature inventory)
+docs/CODEMAPS/frontend.md       (routes + screen→use-case wiring + theme + l10n)
+docs/CODEMAPS/data.md           (storage map + domain entities + codec + seed lifecycle)
+docs/CODEMAPS/dependencies.md   (active runtime + dev deps + commented next-iteration deps)
+docs/CODEMAPS/features.md       (per-feature use case maps + booking flow trace)
+
+Source scope
+------------
+Source files:    58 dart files in lib/
+Test files:      12 dart files in test/
+Asset fixtures:  2 JSON files in assets/mocks/
+
+Features detected (7)
+---------------------
+auth            full hexagonal           15 tests
+cars            full hexagonal           16 tests
+history         full hexagonal (R/O)      4 tests
+orders          full hexagonal (R/W)     21 tests
+booking         data + presentation      0 tests (UI-only)
+home            presentation only        consumer of orders
+profile         presentation only        consumer of auth + cars
+onboarding      presentation only        static
+                                        ---
+                                        56 (+1 widget_test) = 57 source tests
+
+Detected architecture changes vs. prior assumptions
+---------------------------------------------------
+- features.md mentions cross-feature import: orders/application → booking/data (flagged HIGH-MED by /flutter-review)
+- SharedPrefsVehicleRepository._writeAll does not await setString (durability bug; fixed in orders, pending in cars)
+- GoRouter redirect uses ref.read — auth state changes don't auto-refire the guard (flagged HIGH by /flutter-review)
+
+New dependencies detected
+-------------------------
+shared_preferences ^2.3.2 (added in current session for persistence)
+
+Staleness warnings
+------------------
+None — this is the first generation.
