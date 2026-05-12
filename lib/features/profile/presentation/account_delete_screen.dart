@@ -1,0 +1,145 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+
+import '../../../core/router/app_router.dart';
+import '../../../core/theme/app_colors.dart';
+import '../../../core/theme/app_radii.dart';
+import '../../../core/theme/app_spacing.dart';
+import '../../../core/theme/app_typography.dart';
+import '../../auth/composition/auth_providers.dart';
+
+/// Mockup 18 — destructive confirm. Signs out; full data wipe is a follow-up.
+class AccountDeleteScreen extends ConsumerWidget {
+  const AccountDeleteScreen({super.key});
+
+  static const _willDelete = [
+    'Профіль і авто',
+    'Історія обслуговування',
+    'Push-сповіщення',
+  ];
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return Scaffold(
+      appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () => context.pop(),
+        ),
+        title: Text('Видалення акаунта', style: AppTypography.titleLarge),
+      ),
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              const SizedBox(height: AppSpacing.md),
+              Center(
+                child: Container(
+                  width: 72,
+                  height: 72,
+                  decoration: const BoxDecoration(
+                    color: AppColors.errorSoft,
+                    borderRadius: AppRadii.lgAll,
+                  ),
+                  child: const Icon(
+                    Icons.warning_amber_rounded,
+                    size: 36,
+                    color: AppColors.error,
+                  ),
+                ),
+              ),
+              const SizedBox(height: AppSpacing.md),
+              Text('Видалити акаунт?', style: AppTypography.headlineMedium),
+              const SizedBox(height: AppSpacing.xs),
+              Text(
+                'Ця дія незворотна. Ось що буде видалено:',
+                style: AppTypography.bodyMedium
+                    .copyWith(color: AppColors.textSecondary),
+              ),
+              const SizedBox(height: AppSpacing.md),
+              for (final item in _willDelete) _DeleteItem(label: item),
+              const SizedBox(height: AppSpacing.md),
+              Container(
+                padding: const EdgeInsets.all(AppSpacing.md),
+                decoration: const BoxDecoration(
+                  color: AppColors.brandYellowSoft,
+                  borderRadius: AppRadii.mdAll,
+                ),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Icon(Icons.info_outline,
+                        size: 18, color: AppColors.brandBlack),
+                    const SizedBox(width: AppSpacing.sm),
+                    Expanded(
+                      child: Text(
+                        'Активні замовлення збережуться у СТО для бухгалтерії'
+                        ' — згідно ЗУ «Про захист ПД».',
+                        style: AppTypography.bodySmall,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const Spacer(),
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.error,
+                  foregroundColor: Colors.white,
+                ),
+                onPressed: () async {
+                  await ref.read(authControllerProvider.notifier).signOut();
+                  if (!context.mounted) return;
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Акаунт видалено (стаб)'),
+                    ),
+                  );
+                  context.go(AppRoutes.onboarding);
+                },
+                child: const Text('Так, видалити'),
+              ),
+              const SizedBox(height: AppSpacing.sm),
+              OutlinedButton(
+                onPressed: () => context.pop(),
+                child: const Text('Скасувати'),
+              ),
+              const SizedBox(height: AppSpacing.lg),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _DeleteItem extends StatelessWidget {
+  const _DeleteItem({required this.label});
+  final String label;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: AppSpacing.sm),
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppSpacing.md,
+        vertical: AppSpacing.md,
+      ),
+      decoration: BoxDecoration(
+        color: AppColors.surface,
+        borderRadius: AppRadii.lgAll,
+        border: Border.all(color: AppColors.border, width: 0.5),
+      ),
+      child: Row(
+        children: [
+          const Icon(Icons.close, color: AppColors.error, size: 18),
+          const SizedBox(width: AppSpacing.sm),
+          Expanded(child: Text(label, style: AppTypography.titleSmall)),
+        ],
+      ),
+    );
+  }
+}
