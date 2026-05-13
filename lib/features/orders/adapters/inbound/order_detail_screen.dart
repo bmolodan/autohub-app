@@ -195,29 +195,35 @@ class _PendingBodyState extends ConsumerState<_PendingBody> {
     return ListView(
       padding: const EdgeInsets.symmetric(vertical: AppSpacing.md),
       children: [
-        Container(
-          padding: const EdgeInsets.all(AppSpacing.md),
-          decoration: const BoxDecoration(
-            color: AppColors.brandYellow,
-            borderRadius: AppRadii.xlAll,
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                l.orderPendingHeroLabel,
-                style: AppTypography.overline
-                    .copyWith(color: AppColors.brandBlack),
+        Hero(
+          tag: 'order-hero-${order.id}',
+          child: Material(
+            type: MaterialType.transparency,
+            child: Container(
+              padding: const EdgeInsets.all(AppSpacing.md),
+              decoration: const BoxDecoration(
+                color: AppColors.brandYellow,
+                borderRadius: AppRadii.xlAll,
               ),
-              const SizedBox(height: AppSpacing.xxs),
-              Text(order.title,
-                  style: AppTypography.headlineSmall
-                      .copyWith(color: AppColors.brandBlack)),
-              const SizedBox(height: AppSpacing.xxs),
-              Text(order.vehicleSummary,
-                  style: AppTypography.bodySmall
-                      .copyWith(color: AppColors.brandBlack)),
-            ],
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    l.orderPendingHeroLabel,
+                    style: AppTypography.overline
+                        .copyWith(color: AppColors.brandBlack),
+                  ),
+                  const SizedBox(height: AppSpacing.xxs),
+                  Text(order.title,
+                      style: AppTypography.headlineSmall
+                          .copyWith(color: AppColors.brandBlack)),
+                  const SizedBox(height: AppSpacing.xxs),
+                  Text(order.vehicleSummary,
+                      style: AppTypography.bodySmall
+                          .copyWith(color: AppColors.brandBlack)),
+                ],
+              ),
+            ),
           ),
         ),
         const SizedBox(height: AppSpacing.lg),
@@ -258,27 +264,34 @@ class _CanceledBody extends StatelessWidget {
     return ListView(
       padding: const EdgeInsets.symmetric(vertical: AppSpacing.md),
       children: [
-        Container(
-          padding: const EdgeInsets.all(AppSpacing.md),
-          decoration: BoxDecoration(
-            color: AppColors.errorSoft,
-            borderRadius: AppRadii.xlAll,
-            border: Border.all(color: AppColors.error, width: 0.5),
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                context.l10n.orderCanceledHeroLabel,
-                style: AppTypography.overline.copyWith(color: AppColors.error),
+        Hero(
+          tag: 'order-hero-${order.id}',
+          child: Material(
+            type: MaterialType.transparency,
+            child: Container(
+              padding: const EdgeInsets.all(AppSpacing.md),
+              decoration: BoxDecoration(
+                color: AppColors.errorSoft,
+                borderRadius: AppRadii.xlAll,
+                border: Border.all(color: AppColors.error, width: 0.5),
               ),
-              const SizedBox(height: AppSpacing.xxs),
-              Text(order.title, style: AppTypography.headlineSmall),
-              const SizedBox(height: AppSpacing.xxs),
-              Text(order.vehicleSummary,
-                  style: AppTypography.bodySmall
-                      .copyWith(color: AppColors.textSecondary)),
-            ],
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    context.l10n.orderCanceledHeroLabel,
+                    style:
+                        AppTypography.overline.copyWith(color: AppColors.error),
+                  ),
+                  const SizedBox(height: AppSpacing.xxs),
+                  Text(order.title, style: AppTypography.headlineSmall),
+                  const SizedBox(height: AppSpacing.xxs),
+                  Text(order.vehicleSummary,
+                      style: AppTypography.bodySmall
+                          .copyWith(color: AppColors.textSecondary)),
+                ],
+              ),
+            ),
           ),
         ),
         const SizedBox(height: AppSpacing.lg),

@@ -269,28 +269,34 @@ class _PendingConfirmationCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(AppSpacing.md),
-      decoration: BoxDecoration(
-        color: AppColors.surface,
-        borderRadius: AppRadii.lgAll,
-        border: Border.all(color: AppColors.border, width: 0.5),
-      ),
-      child: Row(
-        children: [
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(order.title, style: AppTypography.titleMedium),
-                const SizedBox(height: AppSpacing.xxs),
-                Text(orderStatusLabel(context.l10n, order.status),
-                    style: AppTypography.bodySmall),
-              ],
-            ),
+    return Hero(
+      tag: 'order-hero-${order.id}',
+      child: Material(
+        type: MaterialType.transparency,
+        child: Container(
+          padding: const EdgeInsets.all(AppSpacing.md),
+          decoration: BoxDecoration(
+            color: AppColors.surface,
+            borderRadius: AppRadii.lgAll,
+            border: Border.all(color: AppColors.border, width: 0.5),
           ),
-          const Icon(Icons.chevron_right, color: AppColors.textDisabled),
-        ],
+          child: Row(
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(order.title, style: AppTypography.titleMedium),
+                    const SizedBox(height: AppSpacing.xxs),
+                    Text(orderStatusLabel(context.l10n, order.status),
+                        style: AppTypography.bodySmall),
+                  ],
+                ),
+              ),
+              const Icon(Icons.chevron_right, color: AppColors.textDisabled),
+            ],
+          ),
+        ),
       ),
     );
   }
@@ -302,27 +308,33 @@ class _CanceledCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(AppSpacing.md),
-      decoration: BoxDecoration(
-        color: AppColors.surfaceVariant,
-        borderRadius: AppRadii.lgAll,
-        border: Border.all(color: AppColors.border, width: 0.5),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            order.title,
-            style: AppTypography.titleMedium
-                .copyWith(color: AppColors.textSecondary),
+    return Hero(
+      tag: 'order-hero-${order.id}',
+      child: Material(
+        type: MaterialType.transparency,
+        child: Container(
+          padding: const EdgeInsets.all(AppSpacing.md),
+          decoration: BoxDecoration(
+            color: AppColors.surfaceVariant,
+            borderRadius: AppRadii.lgAll,
+            border: Border.all(color: AppColors.border, width: 0.5),
           ),
-          const SizedBox(height: AppSpacing.xxs),
-          Text(
-            orderStatusLabel(context.l10n, order.status),
-            style: AppTypography.bodySmall.copyWith(color: AppColors.error),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                order.title,
+                style: AppTypography.titleMedium
+                    .copyWith(color: AppColors.textSecondary),
+              ),
+              const SizedBox(height: AppSpacing.xxs),
+              Text(
+                orderStatusLabel(context.l10n, order.status),
+                style: AppTypography.bodySmall.copyWith(color: AppColors.error),
+              ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }
