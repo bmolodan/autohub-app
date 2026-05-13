@@ -3,6 +3,8 @@ import 'package:flutter/services.dart';
 
 import 'app_colors.dart';
 import 'app_radii.dart';
+import 'app_sizes.dart';
+import 'app_spacing.dart';
 import 'app_typography.dart';
 
 /// Master theme for the NESEMOS AutoHub customer app.
@@ -63,7 +65,8 @@ class AppTheme {
         scrolledUnderElevation: 0,
         centerTitle: false,
         titleTextStyle: AppTypography.titleLarge,
-        iconTheme: const IconThemeData(color: AppColors.textPrimary, size: 22),
+        iconTheme: const IconThemeData(
+            color: AppColors.textPrimary, size: AppIconSize.lg),
         systemOverlayStyle: SystemUiOverlayStyle.dark,
       ),
 
@@ -84,8 +87,9 @@ class AppTheme {
           foregroundColor: AppColors.onYellow,
           disabledBackgroundColor: AppColors.surfaceVariant,
           disabledForegroundColor: AppColors.textDisabled,
-          minimumSize: const Size(double.infinity, 50),
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
+          minimumSize: const Size(double.infinity, AppSizes.ctaMinHeight),
+          padding: const EdgeInsets.symmetric(
+              horizontal: AppSpacing.btnH, vertical: AppSpacing.btnV),
           shape: const RoundedRectangleBorder(borderRadius: AppRadii.pillAll),
           elevation: 0,
           textStyle: AppTypography.labelLarge,
@@ -96,8 +100,9 @@ class AppTheme {
         style: FilledButton.styleFrom(
           backgroundColor: AppColors.brandBlack,
           foregroundColor: AppColors.onBlack,
-          minimumSize: const Size(double.infinity, 50),
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
+          minimumSize: const Size(double.infinity, AppSizes.ctaMinHeight),
+          padding: const EdgeInsets.symmetric(
+              horizontal: AppSpacing.btnH, vertical: AppSpacing.btnV),
           shape: const RoundedRectangleBorder(borderRadius: AppRadii.pillAll),
           textStyle: AppTypography.labelLarge,
         ),
@@ -107,8 +112,9 @@ class AppTheme {
         style: OutlinedButton.styleFrom(
           foregroundColor: AppColors.textPrimary,
           side: const BorderSide(color: AppColors.borderStrong, width: 0.5),
-          minimumSize: const Size(double.infinity, 50),
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
+          minimumSize: const Size(double.infinity, AppSizes.ctaMinHeight),
+          padding: const EdgeInsets.symmetric(
+              horizontal: AppSpacing.btnH, vertical: AppSpacing.btnV),
           shape: const RoundedRectangleBorder(borderRadius: AppRadii.pillAll),
           textStyle: AppTypography.labelLarge,
         ),
@@ -117,7 +123,8 @@ class AppTheme {
       textButtonTheme: TextButtonThemeData(
         style: TextButton.styleFrom(
           foregroundColor: AppColors.textPrimary,
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+          padding: const EdgeInsets.symmetric(
+              horizontal: AppSpacing.md, vertical: AppSpacing.sm),
           textStyle: AppTypography.labelMedium,
         ),
       ),
@@ -126,8 +133,8 @@ class AppTheme {
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
         fillColor: AppColors.surface,
-        contentPadding:
-            const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
+        contentPadding: const EdgeInsets.symmetric(
+            horizontal: AppSpacing.inputH, vertical: AppSpacing.inputV),
         hintStyle:
             AppTypography.bodyMedium.copyWith(color: AppColors.textTertiary),
         labelStyle:
@@ -161,7 +168,8 @@ class AppTheme {
         labelStyle: AppTypography.labelMedium,
         secondaryLabelStyle:
             AppTypography.labelMedium.copyWith(color: AppColors.onBlack),
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+        padding: const EdgeInsets.symmetric(
+            horizontal: AppSpacing.chipH, vertical: AppSpacing.chipV),
         shape: const RoundedRectangleBorder(borderRadius: AppRadii.pillAll),
         side: BorderSide.none,
       ),
@@ -204,7 +212,7 @@ class AppTheme {
       // ─── Icons ───────────────────────────────────────────────────
       iconTheme: const IconThemeData(
         color: AppColors.textPrimary,
-        size: 20,
+        size: AppIconSize.md,
       ),
 
       // ─── Dialogs ─────────────────────────────────────────────────

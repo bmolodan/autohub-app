@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../../../../core/router/app_router.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_radii.dart';
+import '../../../../core/theme/app_sizes.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_typography.dart';
 import '../../../../l10n/l10n_extension.dart';
@@ -72,8 +73,8 @@ class _VehicleCard extends StatelessWidget {
           child: Row(
             children: [
               Container(
-                width: 56,
-                height: 56,
+                width: AppSizes.avatar,
+                height: AppSizes.avatar,
                 decoration: const BoxDecoration(
                   color: AppColors.brandYellowSoft,
                   borderRadius: AppRadii.mdAll,

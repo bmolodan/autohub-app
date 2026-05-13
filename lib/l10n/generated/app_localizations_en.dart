@@ -331,7 +331,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get historyTitle => 'History';
 
   @override
-  String get historyTotalLabel => 'Spent all time';
+  String get historyTotalLabel => 'Total spent';
 
   @override
   String get historyEmptyTitle => 'History is empty';

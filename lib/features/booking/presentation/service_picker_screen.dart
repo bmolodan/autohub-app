@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import '../../../core/router/app_router.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_radii.dart';
+import '../../../core/theme/app_sizes.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_typography.dart';
 import '../../../l10n/l10n_extension.dart';
@@ -54,7 +55,7 @@ class _ServicePickerScreenState extends State<ServicePickerScreen> {
                 onChanged: (v) => setState(() => _query = v),
                 decoration: InputDecoration(
                   hintText: context.l10n.bookingPickerSearchHint,
-                  prefixIcon: const Icon(Icons.search, size: 20),
+                  prefixIcon: const Icon(Icons.search, size: AppIconSize.md),
                 ),
               ),
               const SizedBox(height: AppSpacing.md),
@@ -121,7 +122,8 @@ class _ServiceTile extends StatelessWidget {
           ),
           child: Row(
             children: [
-              Icon(item.icon, size: 24, color: AppColors.textPrimary),
+              Icon(item.icon,
+                  size: AppIconSize.xl, color: AppColors.textPrimary),
               const SizedBox(width: AppSpacing.md),
               Expanded(
                 child: Column(
@@ -144,7 +146,7 @@ class _ServiceTile extends StatelessWidget {
               ),
               if (selected)
                 const Icon(Icons.check_circle,
-                    color: AppColors.brandBlack, size: 22),
+                    color: AppColors.brandBlack, size: AppIconSize.lg),
             ],
           ),
         ),

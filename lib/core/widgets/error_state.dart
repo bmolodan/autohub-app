@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../l10n/l10n_extension.dart';
 import '../theme/app_colors.dart';
 import '../theme/app_radii.dart';
+import '../theme/app_sizes.dart';
 import '../theme/app_spacing.dart';
 import '../theme/app_typography.dart';
 
@@ -39,7 +40,7 @@ class ErrorState extends StatelessWidget {
                 borderRadius: AppRadii.pillAll,
               ),
               child: const Icon(Icons.wifi_off,
-                  size: 36, color: AppColors.brandYellow),
+                  size: AppIconSize.hero, color: AppColors.brandYellow),
             ),
           ),
           const SizedBox(height: AppSpacing.lg),

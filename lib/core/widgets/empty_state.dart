@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../theme/app_colors.dart';
 import '../theme/app_radii.dart';
+import '../theme/app_sizes.dart';
 import '../theme/app_spacing.dart';
 import '../theme/app_typography.dart';
 
@@ -39,7 +40,8 @@ class EmptyState extends StatelessWidget {
                 color: AppColors.brandYellowSoft,
                 borderRadius: AppRadii.pillAll,
               ),
-              child: Icon(icon, size: 36, color: AppColors.brandBlack),
+              child: Icon(icon,
+                  size: AppIconSize.hero, color: AppColors.brandBlack),
             ),
           ),
           const SizedBox(height: AppSpacing.lg),

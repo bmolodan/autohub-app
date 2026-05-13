@@ -90,7 +90,8 @@ class _PhoneScreenState extends ConsumerState<PhoneScreen> {
               ),
               const SizedBox(height: AppSpacing.xl),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 14),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: AppSpacing.inputH),
                 decoration: const BoxDecoration(
                   color: AppColors.surface,
                   borderRadius: AppRadii.mdAll,

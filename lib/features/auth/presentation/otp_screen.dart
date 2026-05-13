@@ -8,6 +8,7 @@ import 'package:go_router/go_router.dart';
 import '../../../core/router/app_router.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_radii.dart';
+import '../../../core/theme/app_sizes.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_typography.dart';
 import '../../../l10n/l10n_extension.dart';
@@ -131,7 +132,7 @@ class _OtpScreenState extends ConsumerState<OtpScreen> {
                       child: Container(
                         margin:
                             EdgeInsets.only(right: i < 3 ? AppSpacing.xs : 0),
-                        height: 56,
+                        height: AppSizes.otpSlotHeight,
                         decoration: BoxDecoration(
                           color: AppColors.surface,
                           borderRadius: AppRadii.mdAll,

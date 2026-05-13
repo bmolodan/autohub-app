@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../../../core/router/app_router.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_radii.dart';
+import '../../../core/theme/app_sizes.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_typography.dart';
 import '../../../l10n/l10n_extension.dart';
@@ -39,15 +40,15 @@ class AccountDeleteScreen extends ConsumerWidget {
               const SizedBox(height: AppSpacing.md),
               Center(
                 child: Container(
-                  width: 72,
-                  height: 72,
+                  width: AppSizes.iconBubble,
+                  height: AppSizes.iconBubble,
                   decoration: const BoxDecoration(
                     color: AppColors.errorSoft,
                     borderRadius: AppRadii.lgAll,
                   ),
                   child: const Icon(
                     Icons.warning_amber_rounded,
-                    size: 36,
+                    size: AppIconSize.hero,
                     color: AppColors.error,
                   ),
                 ),
@@ -73,7 +74,7 @@ class AccountDeleteScreen extends ConsumerWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const Icon(Icons.info_outline,
-                        size: 18, color: AppColors.brandBlack),
+                        size: AppIconSize.sm, color: AppColors.brandBlack),
                     const SizedBox(width: AppSpacing.sm),
                     Expanded(
                       child: Text(
@@ -133,7 +134,7 @@ class _DeleteItem extends StatelessWidget {
       ),
       child: Row(
         children: [
-          const Icon(Icons.close, color: AppColors.error, size: 18),
+          const Icon(Icons.close, color: AppColors.error, size: AppIconSize.sm),
           const SizedBox(width: AppSpacing.sm),
           Expanded(child: Text(label, style: AppTypography.titleSmall)),
         ],

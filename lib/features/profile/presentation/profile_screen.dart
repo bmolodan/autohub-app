@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../../../core/router/app_router.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_radii.dart';
+import '../../../core/theme/app_sizes.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_typography.dart';
 import '../../../l10n/l10n_extension.dart';
@@ -141,8 +142,8 @@ class _UserHeader extends StatelessWidget {
             image: true,
             label: context.l10n.profileAvatarSemantics(name),
             child: Container(
-              width: 56,
-              height: 56,
+              width: AppSizes.avatar,
+              height: AppSizes.avatar,
               decoration: const BoxDecoration(
                 color: AppColors.brandBlack,
                 shape: BoxShape.circle,
@@ -234,37 +235,41 @@ class _SettingsRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Material(
-      color: AppColors.surface,
-      child: InkWell(
-        onTap: onTap,
-        child: Container(
-          padding: const EdgeInsets.symmetric(
-            horizontal: AppSpacing.md,
-            vertical: AppSpacing.md,
-          ),
-          decoration: const BoxDecoration(
-            border: Border(
-              bottom: BorderSide(color: AppColors.border, width: 0.5),
+    return Semantics(
+      button: true,
+      label: trailing == null ? label : '$label, $trailing',
+      child: Material(
+        color: AppColors.surface,
+        child: InkWell(
+          onTap: onTap,
+          child: Container(
+            padding: const EdgeInsets.symmetric(
+              horizontal: AppSpacing.md,
+              vertical: AppSpacing.md,
             ),
-          ),
-          child: Row(
-            children: [
-              Icon(icon, size: 22, color: AppColors.textPrimary),
-              const SizedBox(width: AppSpacing.md),
-              Expanded(
-                child: Text(label, style: AppTypography.titleSmall),
+            decoration: const BoxDecoration(
+              border: Border(
+                bottom: BorderSide(color: AppColors.border, width: 0.5),
               ),
-              if (trailing != null) ...[
-                Text(
-                  trailing!,
-                  style: AppTypography.labelMedium
-                      .copyWith(color: AppColors.textSecondary),
+            ),
+            child: Row(
+              children: [
+                Icon(icon, size: AppIconSize.lg, color: AppColors.textPrimary),
+                const SizedBox(width: AppSpacing.md),
+                Expanded(
+                  child: Text(label, style: AppTypography.titleSmall),
                 ),
-                const SizedBox(width: AppSpacing.xs),
+                if (trailing != null) ...[
+                  Text(
+                    trailing!,
+                    style: AppTypography.labelMedium
+                        .copyWith(color: AppColors.textSecondary),
+                  ),
+                  const SizedBox(width: AppSpacing.xs),
+                ],
+                const Icon(Icons.chevron_right, color: AppColors.textDisabled),
               ],
-              const Icon(Icons.chevron_right, color: AppColors.textDisabled),
-            ],
+            ),
           ),
         ),
       ),

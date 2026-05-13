@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../l10n/l10n_extension.dart';
 import '../router/app_router.dart';
+import '../theme/app_spacing.dart';
 
 /// Tabbed shell: bottom nav over a child route.
 class AppShell extends StatelessWidget {
@@ -33,7 +34,13 @@ class AppShell extends StatelessWidget {
     final currentIndex = _indexFor(location);
 
     return Scaffold(
-      body: child,
+      body: Center(
+        child: ConstrainedBox(
+          constraints:
+              const BoxConstraints(maxWidth: AppSpacing.contentMaxWidth),
+          child: child,
+        ),
+      ),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: currentIndex,
         onTap: (i) => context.go(_tabs[i].path),
