@@ -138,10 +138,12 @@ class _OtpScreenState extends ConsumerState<OtpScreen> {
                           color: context.colors.surface,
                           borderRadius: AppRadii.mdAll,
                           border: hasError
-                              ? Border.all(color: context.colors.error, width: 2)
+                              ? Border.all(
+                                  color: context.colors.error, width: 2)
                               : isCurrent
                                   ? Border.all(
-                                      color: context.colors.brandYellow, width: 2)
+                                      color: context.colors.brandYellow,
+                                      width: 2)
                                   : null,
                         ),
                         alignment: Alignment.center,

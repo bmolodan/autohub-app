@@ -101,7 +101,8 @@ class _Dot extends StatelessWidget {
         width: active ? 24 : 5,
         height: 5,
         decoration: BoxDecoration(
-          color: active ? context.colors.brandBlack : context.colors.borderStrong,
+          color:
+              active ? context.colors.brandBlack : context.colors.borderStrong,
           borderRadius: AppRadii.pillAll,
         ),
       );

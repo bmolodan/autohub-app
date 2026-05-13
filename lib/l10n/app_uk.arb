@@ -46,19 +46,15 @@
   "@homeArchiveCount": {
     "placeholders": { "count": { "type": "int" } }
   },
-  "bookingStep1Title": "Запис · крок 1 з 3",
-  "bookingPickerHeading": "Що потрібно?",
-  "bookingPickerSearchHint": "Пошук послуги",
-  "bookingServiceDurationAndPrice": "~{minutes} хв  ·  від {price} ₴",
-  "@bookingServiceDurationAndPrice": {
-    "placeholders": {
-      "minutes": { "type": "int" },
-      "price": { "type": "int" }
-    }
-  },
-  "bookingStep3Title": "Запис · крок 3 з 3",
+  "bookingTitle": "Запис на сервіс",
+  "bookingPlaceholderTitle": "Запис на сервіс",
+  "bookingVehicleSectionLabel": "Авто",
+  "bookingDateSectionLabel": "Бажана дата",
+  "bookingDateNearestChip": "Найближчий час",
+  "bookingDatePickHint": "Обрати дату й час",
+  "bookingDateClearSemantics": "Скинути обрану дату",
   "problemHeading": "Що сталось?",
-  "problemSubtitle": "Опишіть проблему",
+  "problemSubtitle": "Опишіть проблему — менеджер передзвонить і узгодить роботи",
   "problemHint": "Стук у передній підвісці на нерівностях. Зʼявляється після прогрівання…",
   "problemPhotosCount": "Фото ({count} / {max})",
   "@problemPhotosCount": {
@@ -66,13 +62,6 @@
       "count": { "type": "int" },
       "max": { "type": "int" }
     }
-  },
-  "problemSummaryService": "Послуга",
-  "problemSummaryVehicle": "Авто",
-  "problemSummaryEstimate": "Орієнтовно",
-  "problemEstimateFrom": "від {price} ₴",
-  "@problemEstimateFrom": {
-    "placeholders": { "price": { "type": "int" } }
   },
   "problemSubmit": "Підтвердити запис",
   "problemNoVehicleSnack": "Спочатку додайте авто",
@@ -193,11 +182,6 @@
   "accountDeleteLegalNote": "Активні замовлення збережуться у СТО для бухгалтерії — згідно ЗУ «Про захист ПД».",
   "accountDeleteConfirm": "Так, видалити",
   "accountDeleteSuccessSnack": "Акаунт видалено (стаб)",
-  "serviceOilChange": "Заміна масла",
-  "serviceTires": "Шиномонтаж",
-  "serviceDiagnostics": "Діагностика двигуна",
-  "serviceBrakes": "Гальмівна система",
-  "serviceAc": "Кондиціонер",
   "orderStatusInProgress": "У ремонті",
   "orderStatusPending": "Очікує підтвердження",
   "orderStatusCanceled": "Скасовано",
@@ -216,7 +200,6 @@
   "otpExpiredCode": "Час дії коду минув",
   "otpInvalidCode": "Невірний код",
   "problemVehiclePickerTitle": "Виберіть авто",
-  "problemVehicleChangeHint": "Натисніть, щоб змінити",
   "addCarMakeUnknown": "Виберіть марку зі списку",
   "addCarModelUnknown": "Виберіть модель зі списку",
   "addCarPlateInvalid": "Формат: AA 1234 BB",
@@ -241,10 +224,5 @@
   "registerEditTitle": "Особисті дані",
   "registerEditSubmit": "Зберегти зміни",
   "registerUpdatedSnack": "Дані оновлено",
-  "profileEditSemantics": "Редагувати",
-  "bookingPickerCustomCta": "Не знайшли? Назвіть послугу самі",
-  "bookingPickerCustomSheetTitle": "Власна послуга",
-  "bookingPickerCustomFieldLabel": "Назва послуги",
-  "bookingPickerCustomSubmit": "Продовжити",
-  "problemEstimateTbd": "За домовленістю"
+  "profileEditSemantics": "Редагувати"
 }

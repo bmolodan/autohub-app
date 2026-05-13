@@ -144,27 +144,32 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get bookingStep1Title => 'Booking · step 1 of 3';
+  String get bookingTitle => 'Service request';
 
   @override
-  String get bookingPickerHeading => 'What do you need?';
+  String get bookingPlaceholderTitle => 'Service request';
 
   @override
-  String get bookingPickerSearchHint => 'Search service';
+  String get bookingVehicleSectionLabel => 'Vehicle';
 
   @override
-  String bookingServiceDurationAndPrice(int minutes, int price) {
-    return '~$minutes min  ·  from $price ₴';
-  }
+  String get bookingDateSectionLabel => 'Preferred time';
 
   @override
-  String get bookingStep3Title => 'Booking · step 3 of 3';
+  String get bookingDateNearestChip => 'Nearest available';
+
+  @override
+  String get bookingDatePickHint => 'Pick date & time';
+
+  @override
+  String get bookingDateClearSemantics => 'Clear selected date';
 
   @override
   String get problemHeading => 'What happened?';
 
   @override
-  String get problemSubtitle => 'Describe the problem';
+  String get problemSubtitle =>
+      'Describe the problem — the manager will call to align on the work';
 
   @override
   String get problemHint =>
@@ -173,20 +178,6 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String problemPhotosCount(int count, int max) {
     return 'Photos ($count / $max)';
-  }
-
-  @override
-  String get problemSummaryService => 'Service';
-
-  @override
-  String get problemSummaryVehicle => 'Car';
-
-  @override
-  String get problemSummaryEstimate => 'Estimate';
-
-  @override
-  String problemEstimateFrom(int price) {
-    return 'from $price ₴';
   }
 
   @override
@@ -487,21 +478,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get accountDeleteSuccessSnack => 'Account deleted (stub)';
 
   @override
-  String get serviceOilChange => 'Oil change';
-
-  @override
-  String get serviceTires => 'Tire service';
-
-  @override
-  String get serviceDiagnostics => 'Engine diagnostics';
-
-  @override
-  String get serviceBrakes => 'Brake system';
-
-  @override
-  String get serviceAc => 'Air conditioning';
-
-  @override
   String get orderStatusInProgress => 'In progress';
 
   @override
@@ -547,9 +523,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get problemVehiclePickerTitle => 'Choose a car';
-
-  @override
-  String get problemVehicleChangeHint => 'Tap to change';
 
   @override
   String get addCarMakeUnknown => 'Pick a make from the list';
@@ -626,20 +599,4 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get profileEditSemantics => 'Edit';
-
-  @override
-  String get bookingPickerCustomCta =>
-      'Can\'t find it? Name the service yourself';
-
-  @override
-  String get bookingPickerCustomSheetTitle => 'Custom service';
-
-  @override
-  String get bookingPickerCustomFieldLabel => 'Service name';
-
-  @override
-  String get bookingPickerCustomSubmit => 'Continue';
-
-  @override
-  String get problemEstimateTbd => 'To be agreed';
 }

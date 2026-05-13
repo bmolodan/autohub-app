@@ -103,7 +103,8 @@ class ProfileScreen extends ConsumerWidget {
             const SizedBox(height: AppSpacing.sm),
             TextButton(
               onPressed: () => context.push(AppRoutes.profileAccountDelete),
-              style: TextButton.styleFrom(foregroundColor: context.colors.error),
+              style:
+                  TextButton.styleFrom(foregroundColor: context.colors.error),
               child: Text(l.profileDeleteAccount),
             ),
             const SizedBox(height: AppSpacing.lg),
@@ -283,7 +284,8 @@ class _SettingsRow extends StatelessWidget {
             ),
             child: Row(
               children: [
-                Icon(icon, size: AppIconSize.lg, color: context.colors.textPrimary),
+                Icon(icon,
+                    size: AppIconSize.lg, color: context.colors.textPrimary),
                 const SizedBox(width: AppSpacing.md),
                 Expanded(
                   child: Text(label, style: AppTypography.titleSmall),

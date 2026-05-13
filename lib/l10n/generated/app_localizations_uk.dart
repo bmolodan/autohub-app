@@ -146,27 +146,32 @@ class AppLocalizationsUk extends AppLocalizations {
   }
 
   @override
-  String get bookingStep1Title => 'Запис · крок 1 з 3';
+  String get bookingTitle => 'Запис на сервіс';
 
   @override
-  String get bookingPickerHeading => 'Що потрібно?';
+  String get bookingPlaceholderTitle => 'Запис на сервіс';
 
   @override
-  String get bookingPickerSearchHint => 'Пошук послуги';
+  String get bookingVehicleSectionLabel => 'Авто';
 
   @override
-  String bookingServiceDurationAndPrice(int minutes, int price) {
-    return '~$minutes хв  ·  від $price ₴';
-  }
+  String get bookingDateSectionLabel => 'Бажана дата';
 
   @override
-  String get bookingStep3Title => 'Запис · крок 3 з 3';
+  String get bookingDateNearestChip => 'Найближчий час';
+
+  @override
+  String get bookingDatePickHint => 'Обрати дату й час';
+
+  @override
+  String get bookingDateClearSemantics => 'Скинути обрану дату';
 
   @override
   String get problemHeading => 'Що сталось?';
 
   @override
-  String get problemSubtitle => 'Опишіть проблему';
+  String get problemSubtitle =>
+      'Опишіть проблему — менеджер передзвонить і узгодить роботи';
 
   @override
   String get problemHint =>
@@ -175,20 +180,6 @@ class AppLocalizationsUk extends AppLocalizations {
   @override
   String problemPhotosCount(int count, int max) {
     return 'Фото ($count / $max)';
-  }
-
-  @override
-  String get problemSummaryService => 'Послуга';
-
-  @override
-  String get problemSummaryVehicle => 'Авто';
-
-  @override
-  String get problemSummaryEstimate => 'Орієнтовно';
-
-  @override
-  String problemEstimateFrom(int price) {
-    return 'від $price ₴';
   }
 
   @override
@@ -489,21 +480,6 @@ class AppLocalizationsUk extends AppLocalizations {
   String get accountDeleteSuccessSnack => 'Акаунт видалено (стаб)';
 
   @override
-  String get serviceOilChange => 'Заміна масла';
-
-  @override
-  String get serviceTires => 'Шиномонтаж';
-
-  @override
-  String get serviceDiagnostics => 'Діагностика двигуна';
-
-  @override
-  String get serviceBrakes => 'Гальмівна система';
-
-  @override
-  String get serviceAc => 'Кондиціонер';
-
-  @override
   String get orderStatusInProgress => 'У ремонті';
 
   @override
@@ -549,9 +525,6 @@ class AppLocalizationsUk extends AppLocalizations {
 
   @override
   String get problemVehiclePickerTitle => 'Виберіть авто';
-
-  @override
-  String get problemVehicleChangeHint => 'Натисніть, щоб змінити';
 
   @override
   String get addCarMakeUnknown => 'Виберіть марку зі списку';
@@ -629,19 +602,4 @@ class AppLocalizationsUk extends AppLocalizations {
 
   @override
   String get profileEditSemantics => 'Редагувати';
-
-  @override
-  String get bookingPickerCustomCta => 'Не знайшли? Назвіть послугу самі';
-
-  @override
-  String get bookingPickerCustomSheetTitle => 'Власна послуга';
-
-  @override
-  String get bookingPickerCustomFieldLabel => 'Назва послуги';
-
-  @override
-  String get bookingPickerCustomSubmit => 'Продовжити';
-
-  @override
-  String get problemEstimateTbd => 'За домовленістю';
 }

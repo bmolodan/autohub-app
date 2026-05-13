@@ -31,9 +31,9 @@ class HomeScreen extends ConsumerWidget {
     if (vehicles != null && vehicles.isEmpty) {
       return '${AppRoutes.carAdd}'
           '?${QueryParams.nextRoute}='
-          '${Uri.encodeQueryComponent(AppRoutes.bookingService)}';
+          '${Uri.encodeQueryComponent(AppRoutes.booking)}';
     }
-    return AppRoutes.bookingService;
+    return AppRoutes.booking;
   }
 
   @override
@@ -275,8 +275,7 @@ class _InProgressCard extends StatelessWidget {
               Text(
                 order.vehicleSummary,
                 style: AppTypography.bodySmall.copyWith(
-                  color:
-                      context.colors.onHeroSurface.withValues(alpha: 0.65),
+                  color: context.colors.onHeroSurface.withValues(alpha: 0.65),
                 ),
               ),
               const SizedBox(height: AppSpacing.sm),
@@ -373,7 +372,8 @@ class _CanceledCard extends StatelessWidget {
               const SizedBox(height: AppSpacing.xxs),
               Text(
                 orderStatusLabel(context.l10n, order.status),
-                style: AppTypography.bodySmall.copyWith(color: context.colors.error),
+                style: AppTypography.bodySmall
+                    .copyWith(color: context.colors.error),
               ),
             ],
           ),

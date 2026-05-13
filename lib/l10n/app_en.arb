@@ -51,20 +51,18 @@
     "placeholders": { "count": { "type": "int" } }
   },
 
-  "bookingStep1Title": "Booking · step 1 of 3",
-  "bookingPickerHeading": "What do you need?",
-  "bookingPickerSearchHint": "Search service",
-  "bookingServiceDurationAndPrice": "~{minutes} min  ·  from {price} ₴",
+  "bookingTitle": "Service request",
+  "bookingPlaceholderTitle": "Service request",
+  "bookingVehicleSectionLabel": "Vehicle",
+  "bookingDateSectionLabel": "Preferred time",
+  "bookingDateNearestChip": "Nearest available",
+  "bookingDatePickHint": "Pick date & time",
+  "bookingDateClearSemantics": "Clear selected date",
 
-  "bookingStep3Title": "Booking · step 3 of 3",
   "problemHeading": "What happened?",
-  "problemSubtitle": "Describe the problem",
+  "problemSubtitle": "Describe the problem — the manager will call to align on the work",
   "problemHint": "Knocking in the front suspension on bumps. Appears after warm-up…",
   "problemPhotosCount": "Photos ({count} / {max})",
-  "problemSummaryService": "Service",
-  "problemSummaryVehicle": "Car",
-  "problemSummaryEstimate": "Estimate",
-  "problemEstimateFrom": "from {price} ₴",
   "problemSubmit": "Confirm booking",
   "problemNoVehicleSnack": "Add a car first",
   "photoSourceCamera": "Camera",
@@ -164,12 +162,6 @@
   "accountDeleteConfirm": "Yes, delete",
   "accountDeleteSuccessSnack": "Account deleted (stub)",
 
-  "serviceOilChange": "Oil change",
-  "serviceTires": "Tire service",
-  "serviceDiagnostics": "Engine diagnostics",
-  "serviceBrakes": "Brake system",
-  "serviceAc": "Air conditioning",
-
   "orderStatusInProgress": "In progress",
   "orderStatusPending": "Awaiting confirmation",
   "orderStatusCanceled": "Canceled",
@@ -191,7 +183,6 @@
   "otpInvalidCode": "Invalid code",
 
   "problemVehiclePickerTitle": "Choose a car",
-  "problemVehicleChangeHint": "Tap to change",
 
   "addCarMakeUnknown": "Pick a make from the list",
   "addCarModelUnknown": "Pick a model from the list",
@@ -219,11 +210,5 @@
   "registerEditTitle": "Personal details",
   "registerEditSubmit": "Save changes",
   "registerUpdatedSnack": "Details updated",
-  "profileEditSemantics": "Edit",
-
-  "bookingPickerCustomCta": "Can't find it? Name the service yourself",
-  "bookingPickerCustomSheetTitle": "Custom service",
-  "bookingPickerCustomFieldLabel": "Service name",
-  "bookingPickerCustomSubmit": "Continue",
-  "problemEstimateTbd": "To be agreed"
+  "profileEditSemantics": "Edit"
 }

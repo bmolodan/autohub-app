@@ -338,35 +338,47 @@ abstract class AppLocalizations {
   /// **'{count, plural, one{{count} скасоване} few{{count} скасовані} other{{count} скасованих}}'**
   String homeArchiveCount(int count);
 
-  /// No description provided for @bookingStep1Title.
+  /// No description provided for @bookingTitle.
   ///
   /// In uk, this message translates to:
-  /// **'Запис · крок 1 з 3'**
-  String get bookingStep1Title;
+  /// **'Запис на сервіс'**
+  String get bookingTitle;
 
-  /// No description provided for @bookingPickerHeading.
+  /// No description provided for @bookingPlaceholderTitle.
   ///
   /// In uk, this message translates to:
-  /// **'Що потрібно?'**
-  String get bookingPickerHeading;
+  /// **'Запис на сервіс'**
+  String get bookingPlaceholderTitle;
 
-  /// No description provided for @bookingPickerSearchHint.
+  /// No description provided for @bookingVehicleSectionLabel.
   ///
   /// In uk, this message translates to:
-  /// **'Пошук послуги'**
-  String get bookingPickerSearchHint;
+  /// **'Авто'**
+  String get bookingVehicleSectionLabel;
 
-  /// No description provided for @bookingServiceDurationAndPrice.
+  /// No description provided for @bookingDateSectionLabel.
   ///
   /// In uk, this message translates to:
-  /// **'~{minutes} хв  ·  від {price} ₴'**
-  String bookingServiceDurationAndPrice(int minutes, int price);
+  /// **'Бажана дата'**
+  String get bookingDateSectionLabel;
 
-  /// No description provided for @bookingStep3Title.
+  /// No description provided for @bookingDateNearestChip.
   ///
   /// In uk, this message translates to:
-  /// **'Запис · крок 3 з 3'**
-  String get bookingStep3Title;
+  /// **'Найближчий час'**
+  String get bookingDateNearestChip;
+
+  /// No description provided for @bookingDatePickHint.
+  ///
+  /// In uk, this message translates to:
+  /// **'Обрати дату й час'**
+  String get bookingDatePickHint;
+
+  /// No description provided for @bookingDateClearSemantics.
+  ///
+  /// In uk, this message translates to:
+  /// **'Скинути обрану дату'**
+  String get bookingDateClearSemantics;
 
   /// No description provided for @problemHeading.
   ///
@@ -377,7 +389,7 @@ abstract class AppLocalizations {
   /// No description provided for @problemSubtitle.
   ///
   /// In uk, this message translates to:
-  /// **'Опишіть проблему'**
+  /// **'Опишіть проблему — менеджер передзвонить і узгодить роботи'**
   String get problemSubtitle;
 
   /// No description provided for @problemHint.
@@ -391,30 +403,6 @@ abstract class AppLocalizations {
   /// In uk, this message translates to:
   /// **'Фото ({count} / {max})'**
   String problemPhotosCount(int count, int max);
-
-  /// No description provided for @problemSummaryService.
-  ///
-  /// In uk, this message translates to:
-  /// **'Послуга'**
-  String get problemSummaryService;
-
-  /// No description provided for @problemSummaryVehicle.
-  ///
-  /// In uk, this message translates to:
-  /// **'Авто'**
-  String get problemSummaryVehicle;
-
-  /// No description provided for @problemSummaryEstimate.
-  ///
-  /// In uk, this message translates to:
-  /// **'Орієнтовно'**
-  String get problemSummaryEstimate;
-
-  /// No description provided for @problemEstimateFrom.
-  ///
-  /// In uk, this message translates to:
-  /// **'від {price} ₴'**
-  String problemEstimateFrom(int price);
 
   /// No description provided for @problemSubmit.
   ///
@@ -968,36 +956,6 @@ abstract class AppLocalizations {
   /// **'Акаунт видалено (стаб)'**
   String get accountDeleteSuccessSnack;
 
-  /// No description provided for @serviceOilChange.
-  ///
-  /// In uk, this message translates to:
-  /// **'Заміна масла'**
-  String get serviceOilChange;
-
-  /// No description provided for @serviceTires.
-  ///
-  /// In uk, this message translates to:
-  /// **'Шиномонтаж'**
-  String get serviceTires;
-
-  /// No description provided for @serviceDiagnostics.
-  ///
-  /// In uk, this message translates to:
-  /// **'Діагностика двигуна'**
-  String get serviceDiagnostics;
-
-  /// No description provided for @serviceBrakes.
-  ///
-  /// In uk, this message translates to:
-  /// **'Гальмівна система'**
-  String get serviceBrakes;
-
-  /// No description provided for @serviceAc.
-  ///
-  /// In uk, this message translates to:
-  /// **'Кондиціонер'**
-  String get serviceAc;
-
   /// No description provided for @orderStatusInProgress.
   ///
   /// In uk, this message translates to:
@@ -1087,12 +1045,6 @@ abstract class AppLocalizations {
   /// In uk, this message translates to:
   /// **'Виберіть авто'**
   String get problemVehiclePickerTitle;
-
-  /// No description provided for @problemVehicleChangeHint.
-  ///
-  /// In uk, this message translates to:
-  /// **'Натисніть, щоб змінити'**
-  String get problemVehicleChangeHint;
 
   /// No description provided for @addCarMakeUnknown.
   ///
@@ -1243,36 +1195,6 @@ abstract class AppLocalizations {
   /// In uk, this message translates to:
   /// **'Редагувати'**
   String get profileEditSemantics;
-
-  /// No description provided for @bookingPickerCustomCta.
-  ///
-  /// In uk, this message translates to:
-  /// **'Не знайшли? Назвіть послугу самі'**
-  String get bookingPickerCustomCta;
-
-  /// No description provided for @bookingPickerCustomSheetTitle.
-  ///
-  /// In uk, this message translates to:
-  /// **'Власна послуга'**
-  String get bookingPickerCustomSheetTitle;
-
-  /// No description provided for @bookingPickerCustomFieldLabel.
-  ///
-  /// In uk, this message translates to:
-  /// **'Назва послуги'**
-  String get bookingPickerCustomFieldLabel;
-
-  /// No description provided for @bookingPickerCustomSubmit.
-  ///
-  /// In uk, this message translates to:
-  /// **'Продовжити'**
-  String get bookingPickerCustomSubmit;
-
-  /// No description provided for @problemEstimateTbd.
-  ///
-  /// In uk, this message translates to:
-  /// **'За домовленістю'**
-  String get problemEstimateTbd;
 }
 
 class _AppLocalizationsDelegate

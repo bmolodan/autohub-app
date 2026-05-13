@@ -43,7 +43,7 @@ Codec: `active_order_codec.dart` (single source for asset + persistence formats)
 Files: `lib/features/orders/...`
 Tests: `test/features/orders/`
 
-`CreateOrderUseCase` looks up service title/price from `booking/data/service_catalog.dart` (cross-feature dependency — flagged in flutter-review). Also accepts an optional `customTitle` from the booking flow when no catalog match exists.
+`CreateOrderUseCase` accepts a localized placeholder `title` (passed from the booking screen, e.g. "Запис на сервіс"), an optional `scheduledFor`, the vehicle, description, and photos. **No client-facing pricing** — the manager assigns services + total on the operator side after intake; `totalUah` is left `null` on the client write.
 
 ## history
 
@@ -69,12 +69,13 @@ Routes `/register` (first-time) and `/profile/edit` (returning) reuse the same `
 ## booking
 
 ```
-HomeScreen "+ Записатись" → push /booking/service     → ServicePickerScreen (catalog lookup)
-ServicePickerScreen "Далі"  → push /booking/problem?serviceId | ?customTitle  → ProblemFormScreen
-ProblemFormScreen submit    → OrdersController.create (delegates into orders feature)
+HomeScreen "+ Записатись" → push /booking → BookingScreen
+BookingScreen submit       → OrdersController.create (delegates into orders feature)
 ```
-Data: `booking/data/service_catalog.dart` — const list of services.
-No own domain/use-cases. Writes via the `orders` feature. When no preset service matches user need, the picker forwards a `customTitle` query param straight into `ProblemFormScreen`; `CreateOrder` uses it verbatim.
+
+Single-screen client intake. The screen collects description + up to 3 photos + a vehicle (large tile selector — bottom sheet when multiple vehicles) + an optional preferred date/time (default "Найближчий час" leaves it null, otherwise a date+time picker pair).
+
+No service catalog and no client-facing pricing. The manager assigns the actual services and total on the operator side; the client-side `CreateOrderInput` just carries `title = bookingPlaceholderTitle` ("Запис на сервіс") plus the user inputs. Writes via the `orders` feature.
 
 ## home / profile-presentation / onboarding
 
@@ -91,12 +92,10 @@ Inbound ports are not declared as separate Dart abstractions in this project. In
 
 ```
 User taps "+ Записатись" on HomeScreen
-  → (if no vehicles) AddCarScreen?next=/booking/service → save → /booking/service
-  → ServicePickerScreen (picks "Заміна масла" or types a custom title)
-  → ProblemFormScreen (description + photos)
-  → OrdersController.create(serviceId | customTitle, description, vehicle)
+  → (if no vehicles) AddCarScreen?next=/booking → save → /booking
+  → BookingScreen (description + photos + vehicle + preferred date/time)
+  → OrdersController.create(title, description, vehicle, scheduledFor, photos)
        → CreateOrderUseCase.execute(...)
-       → service_catalog.lookup (or use customTitle)
        → ActiveOrderRepositoryPort.save(order)
        → SharedPrefsActiveOrderRepository writes JSON to `active_orders` key
   → state = AsyncData([...existing, created])

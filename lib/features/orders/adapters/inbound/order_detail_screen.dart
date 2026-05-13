@@ -238,7 +238,8 @@ class _PendingBodyState extends ConsumerState<_PendingBody> {
         ],
         OutlinedButton(
           onPressed: _confirmCancel,
-          style: OutlinedButton.styleFrom(foregroundColor: context.colors.error),
+          style:
+              OutlinedButton.styleFrom(foregroundColor: context.colors.error),
           child: Text(l.orderCancelLabel),
         ),
         const SizedBox(height: AppSpacing.lg),
@@ -272,8 +273,8 @@ class _CanceledBody extends StatelessWidget {
                 children: [
                   Text(
                     context.l10n.orderCanceledHeroLabel,
-                    style:
-                        AppTypography.overline.copyWith(color: context.colors.error),
+                    style: AppTypography.overline
+                        .copyWith(color: context.colors.error),
                   ),
                   const SizedBox(height: AppSpacing.xxs),
                   Text(order.title, style: AppTypography.headlineSmall),
@@ -315,8 +316,8 @@ class _Timeline extends StatelessWidget {
         ),
         child: Text(
           context.l10n.orderTimelineEmpty,
-          style:
-              AppTypography.bodySmall.copyWith(color: context.colors.textSecondary),
+          style: AppTypography.bodySmall
+              .copyWith(color: context.colors.textSecondary),
         ),
       );
     }

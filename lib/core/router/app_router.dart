@@ -5,8 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../../features/auth/composition/auth_providers.dart';
 import '../../features/auth/presentation/otp_screen.dart';
 import '../../features/auth/presentation/phone_screen.dart';
-import '../../features/booking/presentation/problem_form_screen.dart';
-import '../../features/booking/presentation/service_picker_screen.dart';
+import '../../features/booking/presentation/booking_screen.dart';
 import '../../features/cars/adapters/inbound/add_car_screen.dart';
 import '../../features/cars/adapters/inbound/car_detail_screen.dart';
 import '../../features/cars/adapters/inbound/cars_list_screen.dart';
@@ -38,9 +37,8 @@ class AppRoutes {
   static const cars = '/cars';
   static const profile = '/profile';
 
-  // Booking flow
-  static const bookingService = '/booking/service';
-  static const bookingProblem = '/booking/problem';
+  // Booking — single-screen client intake
+  static const booking = '/booking';
 
   // Cars sub-routes (outside the shell)
   static const carAdd = '/cars/add';
@@ -64,13 +62,11 @@ class QueryParams {
   QueryParams._();
   static const phone = 'phone';
   static const challengeId = 'challengeId';
-  static const serviceId = 'serviceId';
-  static const customTitle = 'customTitle';
 
   /// Route to navigate to after a screen's primary action succeeds.
   /// Used by Add Car when entered via the empty-vehicles Home redirect:
-  /// `?next=/booking/service` sends the new user back into booking once
-  /// they save their first car.
+  /// `?next=/booking` sends the new user back into booking once they
+  /// save their first car.
   static const nextRoute = 'next';
 }
 
@@ -176,25 +172,10 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         ],
       ),
 
-      // Booking flow (outside the shell — full-screen modal feel)
+      // Booking — single-screen intake (outside the shell)
       GoRoute(
-        path: AppRoutes.bookingService,
-        builder: (_, __) => const ServicePickerScreen(),
-      ),
-      GoRoute(
-        path: AppRoutes.bookingProblem,
-        builder: (_, state) {
-          // customTitle wins if both are accidentally present in the URL.
-          final custom = _nullIfEmpty(
-              _clamp(state.uri.queryParameters[QueryParams.customTitle], 80));
-          final serviceId =
-              _clamp(state.uri.queryParameters[QueryParams.serviceId], 64);
-          if (custom != null) {
-            return ProblemFormScreen(customTitle: custom);
-          }
-          return ProblemFormScreen(
-              serviceId: serviceId.isEmpty ? null : serviceId);
-        },
+        path: AppRoutes.booking,
+        builder: (_, __) => const BookingScreen(),
       ),
 
       // Cars detail / add (outside the shell)
@@ -259,5 +240,3 @@ String _clamp(String? value, int max) {
   if (value == null) return '';
   return value.length <= max ? value : value.substring(0, max);
 }
-
-String? _nullIfEmpty(String value) => value.isEmpty ? null : value;

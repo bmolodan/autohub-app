@@ -43,17 +43,17 @@ const _vehicle = Vehicle(
 );
 
 CreateOrderInput _input({
-  String serviceTitle = 'Заміна масла',
-  int servicePriceUah = 1600,
+  String title = 'Запис на сервіс',
   String description = '',
   Vehicle vehicle = _vehicle,
+  DateTime? scheduledFor,
   List<OrderPhoto> photos = const [],
 }) =>
     CreateOrderInput(
-      serviceTitle: serviceTitle,
-      servicePriceUah: servicePriceUah,
+      title: title,
       description: description,
       vehicle: vehicle,
+      scheduledFor: scheduledFor,
       photos: photos,
     );
 
@@ -67,8 +67,9 @@ void main() {
 
       expect(created.id, isNotEmpty);
       expect(created.status, ActiveOrderStatus.pendingConfirmation);
-      expect(created.title, 'Заміна масла');
-      expect(created.totalUah, 1600);
+      expect(created.title, 'Запис на сервіс');
+      // Manager fills in totalUah after intake — client-side stays unpriced.
+      expect(created.totalUah, isNull);
       expect(created.vehicleMake, 'Toyota');
       expect(created.vehicleModel, 'Camry');
       expect(created.vehiclePlate, 'AA 1234 BC');
@@ -80,19 +81,10 @@ void main() {
       expect(stored!.id, created.id);
     });
 
-    test('rejects empty service title', () async {
+    test('rejects empty title', () async {
       final repo = _FakeRepo();
       expect(
-        () => _useCase(repo).execute(_input(serviceTitle: '   ')),
-        throwsA(isA<ArgumentError>()),
-      );
-      expect(repo.store, isEmpty);
-    });
-
-    test('rejects negative price', () async {
-      final repo = _FakeRepo();
-      expect(
-        () => _useCase(repo).execute(_input(servicePriceUah: -1)),
+        () => _useCase(repo).execute(_input(title: '   ')),
         throwsA(isA<ArgumentError>()),
       );
       expect(repo.store, isEmpty);
@@ -102,6 +94,20 @@ void main() {
       final repo = _FakeRepo();
       final created = await _useCase(repo).execute(_input());
       expect(created.id, isNotEmpty);
+    });
+
+    test('persists scheduledFor when provided', () async {
+      final repo = _FakeRepo();
+      final preferred = DateTime.utc(2026, 5, 15, 10);
+      final created =
+          await _useCase(repo).execute(_input(scheduledFor: preferred));
+      expect(created.scheduledFor, preferred);
+    });
+
+    test('scheduledFor defaults to null (nearest available)', () async {
+      final repo = _FakeRepo();
+      final created = await _useCase(repo).execute(_input());
+      expect(created.scheduledFor, isNull);
     });
 
     test('attaches photos when provided', () async {
@@ -126,7 +132,7 @@ void main() {
       final repo = _FakeRepo();
       final useCase = _useCase(repo);
       final a = await useCase.execute(_input());
-      final b = await useCase.execute(_input(serviceTitle: 'Шиномонтаж'));
+      final b = await useCase.execute(_input(description: 'другий'));
       expect(a.id, isNot(b.id));
     });
   });

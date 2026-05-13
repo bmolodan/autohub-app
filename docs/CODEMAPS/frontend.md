@@ -20,9 +20,7 @@ ShellRoute (AppShell — bottom nav)
 ├─ /cars                         CarsListScreen
 └─ /profile                      ProfileScreen
 
-/booking/service                 ServicePickerScreen      (step 1/3 — supports custom title)
-/booking/problem?serviceId       ProblemFormScreen        (step 3/3, posts order)
-/booking/problem?customTitle     ProblemFormScreen        (custom-service variant)
+/booking                         BookingScreen            (single-screen client intake)
 /cars/add?next=                  AddCarScreen             (optional ?next= for empty-vehicle detour)
 /cars/edit/:id                   AddCarScreen (editMode)
 /cars/detail/:id                 CarDetailScreen
@@ -37,7 +35,7 @@ ShellRoute (AppShell — bottom nav)
 
 Refresh: `_RouterRefresh` listens to both `authControllerProvider` and `clientProfileControllerProvider`, so sign-in/out + profile save trigger redirect re-evaluation.
 
-Deep-link query params are clamped via `_clamp(value, max)` to guard against malicious long strings. Typed keys live in `QueryParams` (`phone`, `challengeId`, `serviceId`, `customTitle`, `nextRoute`).
+Deep-link query params are clamped via `_clamp(value, max)` to guard against malicious long strings. Typed keys live in `QueryParams` (`phone`, `challengeId`, `nextRoute`).
 
 ## Screen → use case wiring
 
@@ -50,8 +48,7 @@ Deep-link query params are clamped via `_clamp(value, max)` to guard against mal
 | CarDetailScreen | `vehicleByIdProvider(id)`, `vehiclesControllerProvider.notifier.delete` | GetVehicle, DeleteVehicle |
 | ProfileScreen | `clientProfileControllerProvider`, `vehiclesControllerProvider`, `authControllerProvider` | GetClientProfile, ListVehicles, SignOut |
 | RegisterClientScreen | `clientProfileControllerProvider.notifier.save()` | SaveClientProfile |
-| ServicePickerScreen | (local state) | — |
-| ProblemFormScreen | `ordersControllerProvider.notifier.create()`, `vehiclesControllerProvider` | CreateOrder |
+| BookingScreen | `ordersControllerProvider.notifier.create()`, `vehiclesControllerProvider` | CreateOrder |
 | OrderDetailScreen | `orderByIdProvider(id)`, `ordersControllerProvider.notifier.cancel` | GetOrderById, CancelOrder |
 | PhoneScreen | `authControllerProvider.notifier.requestCode()` | RequestOtp |
 | OtpScreen | `authControllerProvider.notifier.verifyCode()` | VerifyOtp |

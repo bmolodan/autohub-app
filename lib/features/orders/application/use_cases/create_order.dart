@@ -6,15 +6,23 @@ import '../ports/outbound/active_order_repository_port.dart';
 
 class CreateOrderInput {
   const CreateOrderInput({
-    required this.serviceTitle,
-    required this.servicePriceUah,
+    required this.title,
     required this.description,
     required this.vehicle,
+    this.scheduledFor,
     this.photos = const [],
   });
 
-  final String serviceTitle;
-  final int servicePriceUah;
+  /// Placeholder title — the client-side app no longer picks a service
+  /// from a catalog. The manager confirms / replaces this on the
+  /// operator side. Caller passes a localized placeholder (e.g.
+  /// "Запис на сервіс").
+  final String title;
+
+  /// Client's preferred date/time, or `null` for "nearest available
+  /// slot" — the manager schedules in that case.
+  final DateTime? scheduledFor;
+
   final String description;
   final Vehicle vehicle;
   final List<OrderPhoto> photos;
@@ -30,11 +38,8 @@ class CreateOrderUseCase {
   final IdGenerator _idGen;
 
   Future<ActiveOrder> execute(CreateOrderInput input) async {
-    final title = input.serviceTitle.trim();
-    if (title.isEmpty) throw ArgumentError('serviceTitle is required');
-    if (input.servicePriceUah < 0) {
-      throw ArgumentError('servicePriceUah must be >= 0');
-    }
+    final title = input.title.trim();
+    if (title.isEmpty) throw ArgumentError('title is required');
 
     final now = _clock.now();
     final order = ActiveOrder(
@@ -46,8 +51,9 @@ class CreateOrderUseCase {
       vehiclePlate: input.vehicle.plate,
       progress: null,
       eta: null,
-      scheduledFor: null,
-      totalUah: input.servicePriceUah,
+      scheduledFor: input.scheduledFor,
+      // Manager assigns services + price; client side stays unpriced.
+      totalUah: null,
       timeline: [
         OrderTimelineEntry(
           stage: OrderStage.pendingConfirmation,

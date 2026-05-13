@@ -81,8 +81,8 @@ class _HistoryView extends StatelessWidget {
         const SizedBox(height: AppSpacing.md),
         Text(
           context.l10n.historyTotalLabel,
-          style:
-              AppTypography.bodySmall.copyWith(color: context.colors.textSecondary),
+          style: AppTypography.bodySmall
+              .copyWith(color: context.colors.textSecondary),
         ),
         const SizedBox(height: AppSpacing.xxs),
         Text('${output.totalUah} ₴', style: AppTypography.headlineLarge),
@@ -116,8 +116,8 @@ class _VehicleChip extends StatelessWidget {
           borderRadius: AppRadii.pillAll,
         ),
         child: Text(label,
-            style:
-                AppTypography.labelMedium.copyWith(color: context.colors.onYellow)),
+            style: AppTypography.labelMedium
+                .copyWith(color: context.colors.onYellow)),
       ),
     );
   }
@@ -135,7 +135,8 @@ class _MonthHeader extends StatelessWidget {
       padding: const EdgeInsets.only(bottom: AppSpacing.xxs),
       child: Text(
         '$label $year',
-        style: AppTypography.overline.copyWith(color: context.colors.textSecondary),
+        style: AppTypography.overline
+            .copyWith(color: context.colors.textSecondary),
       ),
     );
   }

@@ -22,7 +22,8 @@ class AppTheme {
   AppTheme._();
 
   /// Light theme — primary brand experience.
-  static ThemeData light() => _buildTheme(BrandColors.light(), Brightness.light);
+  static ThemeData light() =>
+      _buildTheme(BrandColors.light(), Brightness.light);
 
   /// Dark theme — mirrors the light theme with the dark `BrandColors`
   /// palette. Brand yellow stays identical; cream / black / borders
@@ -226,7 +227,8 @@ class AppTheme {
       dialogTheme: DialogThemeData(
         backgroundColor: c.surface,
         shape: const RoundedRectangleBorder(borderRadius: AppRadii.xlAll),
-        titleTextStyle: AppTypography.headlineSmall.copyWith(color: c.textPrimary),
+        titleTextStyle:
+            AppTypography.headlineSmall.copyWith(color: c.textPrimary),
         contentTextStyle:
             AppTypography.bodyLarge.copyWith(color: c.textSecondary),
       ),
