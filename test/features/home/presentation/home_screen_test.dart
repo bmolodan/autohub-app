@@ -1,7 +1,7 @@
 import 'package:autohub/features/home/presentation/home_screen.dart';
 import 'package:autohub/features/orders/composition/orders_providers.dart';
 import 'package:autohub/features/orders/domain/active_order.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 
 import '../../../_helpers/fakes.dart';

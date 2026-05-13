@@ -146,8 +146,7 @@ class _AddCarScreenState extends ConsumerState<AddCarScreen> {
 
     if (_isEditing) {
       // Pre-fill on first build from the current vehicle, if available.
-      final v =
-          ref.watch(vehicleByIdProvider(widget.editVehicleId!)).valueOrNull;
+      final v = ref.watch(vehicleByIdProvider(widget.editVehicleId!)).value;
       if (v != null) _prefillFrom(v);
     }
 

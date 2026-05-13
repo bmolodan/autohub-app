@@ -2,7 +2,7 @@ import 'package:autohub/features/cars/adapters/inbound/car_detail_screen.dart';
 import 'package:autohub/features/cars/composition/cars_providers.dart';
 import 'package:autohub/features/cars/domain/vehicle.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 
 import '../../../../_helpers/fakes.dart';

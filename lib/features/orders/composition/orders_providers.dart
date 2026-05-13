@@ -74,7 +74,7 @@ class OrdersController extends AsyncNotifier<List<ActiveOrder>> {
 
   Future<ActiveOrder> create(CreateOrderInput input) async {
     final created = await ref.read(createOrderUseCaseProvider).execute(input);
-    final current = state.valueOrNull ?? const <ActiveOrder>[];
+    final current = state.value ?? const <ActiveOrder>[];
     state = AsyncData([...current, created]);
     return created;
   }
@@ -109,7 +109,7 @@ class OrdersController extends AsyncNotifier<List<ActiveOrder>> {
   /// (handles races where the list was rebuilt between use-case completion
   /// and the state write).
   List<ActiveOrder> _replaceOrAppend(ActiveOrder updated) {
-    final current = state.valueOrNull ?? const <ActiveOrder>[];
+    final current = state.value ?? const <ActiveOrder>[];
     final replaced = [
       for (final o in current) o.id == updated.id ? updated : o,
     ];

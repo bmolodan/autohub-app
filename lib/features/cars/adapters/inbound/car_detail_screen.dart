@@ -58,16 +58,15 @@ class CarDetailScreen extends ConsumerWidget {
           IconButton(
             icon: const Icon(Icons.edit_outlined),
             tooltip: l.carDetailEditSemantics,
-            onPressed: async.valueOrNull == null
+            onPressed: async.value == null
                 ? null
                 : () => context.push('${AppRoutes.carEdit}/$vehicleId'),
           ),
           IconButton(
             icon: const Icon(Icons.delete_outline, color: AppColors.error),
             tooltip: l.carDetailDeleteSemantics,
-            onPressed: async.valueOrNull == null
-                ? null
-                : () => _confirmDelete(context, ref),
+            onPressed:
+                async.value == null ? null : () => _confirmDelete(context, ref),
           ),
         ],
       ),

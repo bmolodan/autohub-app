@@ -38,7 +38,7 @@ class _RegisterClientScreenState extends ConsumerState<RegisterClientScreen> {
   void didChangeDependencies() {
     super.didChangeDependencies();
     if (widget.editMode && !_prefilled) {
-      final current = ref.read(clientProfileControllerProvider).valueOrNull;
+      final current = ref.read(clientProfileControllerProvider).value;
       if (current != null) {
         _prefilled = true;
         _name.text = current.name;
