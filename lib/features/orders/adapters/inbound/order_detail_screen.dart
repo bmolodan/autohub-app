@@ -34,45 +34,7 @@ class OrderDetailScreen extends ConsumerWidget {
       ),
       body: SafeArea(
         child: async.when(
-          loading: () => Skeletonizer(
-            enabled: true,
-            child: ListView(
-              padding: const EdgeInsets.symmetric(
-                  horizontal: AppSpacing.lg, vertical: AppSpacing.md),
-              children: [
-                Container(
-                  padding: const EdgeInsets.all(AppSpacing.md),
-                  decoration: const BoxDecoration(
-                    color: AppColors.brandBlack,
-                    borderRadius: AppRadii.xlAll,
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text('LOADING STATUS',
-                          style: AppTypography.overline
-                              .copyWith(color: AppColors.brandYellow)),
-                      const SizedBox(height: AppSpacing.xxs),
-                      Text('Loading service title',
-                          style: AppTypography.headlineSmall
-                              .copyWith(color: AppColors.onBlack)),
-                      const SizedBox(height: AppSpacing.xxs),
-                      Text('Loading vehicle info',
-                          style: AppTypography.bodySmall
-                              .copyWith(color: AppColors.textDisabled)),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: AppSpacing.lg),
-                for (var i = 0; i < 3; i++)
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: AppSpacing.md),
-                    child: Text('Stage placeholder',
-                        style: AppTypography.titleSmall),
-                  ),
-              ],
-            ),
-          ),
+          loading: () => const _LoadingSkeleton(),
           error: (e, _) => ErrorState(
             onRetry: () => ref.invalidate(orderByIdProvider(orderId)),
           ),
@@ -483,4 +445,57 @@ class _TimelineRailPainter extends CustomPainter {
       old.isFirst != isFirst ||
       old.isLast != isLast ||
       old.isCurrent != isCurrent;
+}
+
+/// Generic loading skeleton used while the order is loading — the status is
+/// not known yet, so the shape is intentionally neutral (surfaceVariant
+/// hero + a stat-card row + a few timeline rows) and works for both the
+/// in-progress and pending body layouts.
+class _LoadingSkeleton extends StatelessWidget {
+  const _LoadingSkeleton();
+
+  @override
+  Widget build(BuildContext context) {
+    return Skeletonizer(
+      enabled: true,
+      child: ListView(
+        padding: const EdgeInsets.symmetric(
+          horizontal: AppSpacing.lg,
+          vertical: AppSpacing.md,
+        ),
+        children: [
+          Container(
+            padding: const EdgeInsets.all(AppSpacing.md),
+            decoration: const BoxDecoration(
+              color: AppColors.surfaceVariant,
+              borderRadius: AppRadii.xlAll,
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text('LOADING STATUS', style: AppTypography.overline),
+                const SizedBox(height: AppSpacing.xxs),
+                Text('Loading service title',
+                    style: AppTypography.headlineSmall),
+                const SizedBox(height: AppSpacing.xxs),
+                Text('Loading vehicle info', style: AppTypography.bodySmall),
+              ],
+            ),
+          ),
+          const SizedBox(height: AppSpacing.lg),
+          // Stat-card row — present on pending body (Scheduled time) and
+          // in-progress body (Estimate). Same shape on both.
+          const StatCard(label: 'Loading label', value: 'Loading value'),
+          const SizedBox(height: AppSpacing.lg),
+          Text('JOURNAL', style: AppTypography.overline),
+          const SizedBox(height: AppSpacing.sm),
+          for (var i = 0; i < 3; i++)
+            Padding(
+              padding: const EdgeInsets.only(bottom: AppSpacing.md),
+              child: Text('Stage placeholder', style: AppTypography.titleSmall),
+            ),
+        ],
+      ),
+    );
+  }
 }
