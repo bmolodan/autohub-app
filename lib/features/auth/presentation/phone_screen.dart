@@ -9,6 +9,7 @@ import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_radii.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_typography.dart';
+import '../../../core/widgets/button_spinner.dart';
 import '../../../l10n/l10n_extension.dart';
 import '../composition/auth_providers.dart';
 
@@ -186,11 +187,7 @@ class _PhoneScreenState extends ConsumerState<PhoneScreen> {
               FilledButton(
                 onPressed: _canSubmit ? _submit : null,
                 child: _submitting
-                    ? const SizedBox(
-                        width: 20,
-                        height: 20,
-                        child: CircularProgressIndicator(strokeWidth: 2),
-                      )
+                    ? const ButtonSpinner()
                     : Text(context.l10n.phoneSubmit),
               ),
             ],

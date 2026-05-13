@@ -40,7 +40,7 @@ class AppTheme {
       surfaceContainerHighest: AppColors.surfaceVariant,
       onSurfaceVariant: AppColors.textSecondary,
       error: AppColors.error,
-      onError: Colors.white,
+      onError: AppColors.onError,
       outline: AppColors.border,
       outlineVariant: AppColors.borderStrong,
     );

@@ -89,7 +89,7 @@ class AccountDeleteScreen extends ConsumerWidget {
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppColors.error,
-                  foregroundColor: Colors.white,
+                  foregroundColor: AppColors.onError,
                 ),
                 onPressed: () async {
                   await ref.read(authControllerProvider.notifier).signOut();

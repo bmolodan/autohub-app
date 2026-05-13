@@ -11,6 +11,7 @@ import '../../../core/theme/app_radii.dart';
 import '../../../core/theme/app_sizes.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_typography.dart';
+import '../../../core/widgets/button_spinner.dart';
 import '../../../l10n/l10n_extension.dart';
 import '../../cars/composition/cars_providers.dart';
 import '../../cars/domain/vehicle.dart';
@@ -302,13 +303,8 @@ class _ProblemFormScreenState extends ConsumerState<ProblemFormScreen> {
               const Spacer(),
               ElevatedButton(
                 onPressed: _submitting ? null : _submit,
-                child: _submitting
-                    ? const SizedBox(
-                        width: 20,
-                        height: 20,
-                        child: CircularProgressIndicator(strokeWidth: 2),
-                      )
-                    : Text(l.problemSubmit),
+                child:
+                    _submitting ? const ButtonSpinner() : Text(l.problemSubmit),
               ),
               const SizedBox(height: AppSpacing.lg),
             ],

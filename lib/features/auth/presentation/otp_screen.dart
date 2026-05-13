@@ -11,6 +11,7 @@ import '../../../core/theme/app_radii.dart';
 import '../../../core/theme/app_sizes.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_typography.dart';
+import '../../../core/widgets/button_spinner.dart';
 import '../../../l10n/l10n_extension.dart';
 import '../application/ports/outbound/otp_gateway_port.dart';
 import '../composition/auth_providers.dart';
@@ -192,11 +193,7 @@ class _OtpScreenState extends ConsumerState<OtpScreen> {
                 onPressed:
                     _ctrl.text.length == 4 && !_submitting ? _submit : null,
                 child: _submitting
-                    ? const SizedBox(
-                        width: 20,
-                        height: 20,
-                        child: CircularProgressIndicator(strokeWidth: 2),
-                      )
+                    ? const ButtonSpinner()
                     : Text(context.l10n.otpSubmit),
               ),
             ],

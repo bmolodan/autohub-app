@@ -8,6 +8,7 @@ import '../../../../core/theme/app_sizes.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_typography.dart';
 import '../../../../core/util/ua_plate_formatter.dart';
+import '../../../../core/widgets/button_spinner.dart';
 import '../../../../l10n/l10n_extension.dart';
 import '../../application/use_cases/add_vehicle.dart';
 import '../../application/use_cases/update_vehicle.dart';
@@ -294,11 +295,7 @@ class _AddCarScreenState extends ConsumerState<AddCarScreen> {
             ElevatedButton(
               onPressed: _submitting ? null : _submit,
               child: _submitting
-                  ? const SizedBox(
-                      width: 20,
-                      height: 20,
-                      child: CircularProgressIndicator(strokeWidth: 2),
-                    )
+                  ? const ButtonSpinner()
                   : Text(_isEditing ? l.addCarUpdateSave : l.addCarSave),
             ),
             const SizedBox(height: AppSpacing.lg),

@@ -8,6 +8,7 @@ import '../../../../core/router/app_router.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_typography.dart';
+import '../../../../core/widgets/button_spinner.dart';
 import '../../../../l10n/l10n_extension.dart';
 import '../../composition/profile_providers.dart';
 
@@ -148,11 +149,7 @@ class _RegisterClientScreenState extends ConsumerState<RegisterClientScreen> {
                 ElevatedButton(
                   onPressed: _submitting ? null : _submit,
                   child: _submitting
-                      ? const SizedBox(
-                          width: 20,
-                          height: 20,
-                          child: CircularProgressIndicator(strokeWidth: 2),
-                        )
+                      ? const ButtonSpinner()
                       : Text(widget.editMode
                           ? l.registerEditSubmit
                           : l.registerSubmit),

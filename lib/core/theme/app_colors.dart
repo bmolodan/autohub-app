@@ -59,6 +59,9 @@ class AppColors {
   /// Soft error background.
   static const Color errorSoft = Color(0x1AC04545); // 10% alpha
 
+  /// Foreground color on top of [error] (destructive button text).
+  static const Color onError = Color(0xFFFFFFFF);
+
   /// Success / completed states.
   static const Color success = Color(0xFF1D9E75);
 

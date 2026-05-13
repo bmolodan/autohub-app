@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../../../../core/router/app_router.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_radii.dart';
+import '../../../../core/theme/app_sizes.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_typography.dart';
 import '../../../../core/widgets/stat_card.dart';
@@ -115,14 +116,14 @@ class _Detail extends StatelessWidget {
         children: [
           Center(
             child: Container(
-              width: 88,
-              height: 88,
+              width: AppSizes.iconBubble,
+              height: AppSizes.iconBubble,
               decoration: const BoxDecoration(
                 color: AppColors.brandYellowSoft,
                 borderRadius: AppRadii.lgAll,
               ),
               child: const Icon(Icons.directions_car,
-                  size: 40, color: AppColors.brandBlack),
+                  size: AppIconSize.hero, color: AppColors.brandBlack),
             ),
           ),
           const SizedBox(height: AppSpacing.md),
