@@ -29,10 +29,10 @@ class CarDetailScreen extends ConsumerWidget {
     if (!confirmed || !context.mounted) return;
     try {
       await ref.read(vehiclesControllerProvider.notifier).remove(vehicleId);
-    } on Object catch (e) {
+    } on Object catch (_) {
       if (!context.mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('$e')),
+        SnackBar(content: Text(l.errorGeneric)),
       );
       return;
     }
@@ -74,8 +74,8 @@ class CarDetailScreen extends ConsumerWidget {
       body: SafeArea(
         child: async.when(
           loading: () => const Center(child: CircularProgressIndicator()),
-          error: (e, _) => Center(
-            child: Text('$e', style: AppTypography.bodyMedium),
+          error: (_, __) => Center(
+            child: Text(l.errorGeneric, style: AppTypography.bodyMedium),
           ),
           data: (v) {
             if (v == null) {

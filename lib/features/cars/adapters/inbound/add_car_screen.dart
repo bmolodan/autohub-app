@@ -95,9 +95,10 @@ class _AddCarScreenState extends ConsumerState<AddCarScreen> {
         );
       }
       context.pop();
-    } on Object catch (e) {
+    } on Object catch (_) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('$e')));
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text(context.l10n.errorGeneric)));
     } finally {
       if (mounted) setState(() => _submitting = false);
     }
@@ -220,7 +221,12 @@ class _AddCarScreenState extends ConsumerState<AddCarScreen> {
             const SizedBox(height: AppSpacing.md),
             TextFormField(
               controller: _vin,
-              decoration: InputDecoration(labelText: l.addCarFieldVin),
+              // VIN spec is exactly 17 chars; cap to prevent garbage input.
+              maxLength: 17,
+              decoration: InputDecoration(
+                labelText: l.addCarFieldVin,
+                counterText: '',
+              ),
             ),
             const SizedBox(height: AppSpacing.sm),
             Row(

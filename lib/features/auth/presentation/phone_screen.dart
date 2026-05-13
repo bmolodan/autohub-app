@@ -50,9 +50,10 @@ class _PhoneScreenState extends ConsumerState<PhoneScreen> {
         '?${QueryParams.challengeId}=${Uri.encodeComponent(challenge.id)}'
         '&${QueryParams.phone}=${Uri.encodeComponent(phone)}',
       );
-    } on Object catch (e) {
+    } on Object catch (_) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('$e')));
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text(context.l10n.errorGeneric)));
     } finally {
       if (mounted) setState(() => _submitting = false);
     }

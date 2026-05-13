@@ -139,8 +139,11 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: AppRoutes.otp,
         builder: (_, state) => OtpScreen(
-          phone: state.uri.queryParameters[QueryParams.phone] ?? '',
-          challengeId: state.uri.queryParameters[QueryParams.challengeId] ?? '',
+          // Clamp deep-link params: a malicious URL can't pass arbitrary
+          // long strings into the AppBar / use case.
+          phone: _clamp(state.uri.queryParameters[QueryParams.phone], 24),
+          challengeId:
+              _clamp(state.uri.queryParameters[QueryParams.challengeId], 128),
         ),
       ),
 
@@ -176,12 +179,15 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         path: AppRoutes.bookingProblem,
         builder: (_, state) {
           // customTitle wins if both are accidentally present in the URL.
-          final custom = state.uri.queryParameters[QueryParams.customTitle];
-          final serviceId = state.uri.queryParameters[QueryParams.serviceId];
-          if (custom != null && custom.isNotEmpty) {
+          final custom = _nullIfEmpty(
+              _clamp(state.uri.queryParameters[QueryParams.customTitle], 80));
+          final serviceId =
+              _clamp(state.uri.queryParameters[QueryParams.serviceId], 64);
+          if (custom != null) {
             return ProblemFormScreen(customTitle: custom);
           }
-          return ProblemFormScreen(serviceId: serviceId);
+          return ProblemFormScreen(
+              serviceId: serviceId.isEmpty ? null : serviceId);
         },
       ),
 
@@ -240,3 +246,10 @@ final appRouterProvider = Provider<GoRouter>((ref) {
     ],
   );
 });
+
+String _clamp(String? value, int max) {
+  if (value == null) return '';
+  return value.length <= max ? value : value.substring(0, max);
+}
+
+String? _nullIfEmpty(String value) => value.isEmpty ? null : value;

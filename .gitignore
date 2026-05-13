@@ -46,3 +46,15 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+# Secrets / signing material — pre-empt before a real backend lands
+.env
+.env.local
+.env.*.local
+*.p12
+*.pem
+*.key
+ios/Runner/GoogleService-Info.plist
+android/app/google-services.json
+android/key.properties
+android/app/upload-keystore.jks

@@ -92,9 +92,9 @@ class _OtpScreenState extends ConsumerState<OtpScreen> {
         };
         _ctrl.clear();
       });
-    } on Object catch (e) {
+    } on Object catch (_) {
       if (!mounted) return;
-      setState(() => _error = '$e');
+      setState(() => _error = context.l10n.errorGeneric);
     } finally {
       if (mounted) setState(() => _submitting = false);
     }

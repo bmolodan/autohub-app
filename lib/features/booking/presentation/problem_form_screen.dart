@@ -209,10 +209,10 @@ class _ProblemFormScreenState extends ConsumerState<ProblemFormScreen> {
       // the detail so the AppBar back arrow lands back on Home.
       context.go(AppRoutes.home);
       unawaited(context.push('${AppRoutes.orderDetail}/${created.id}'));
-    } on Object catch (e) {
+    } on Object catch (_) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('$e')),
+        SnackBar(content: Text(context.l10n.errorGeneric)),
       );
     } finally {
       if (mounted) setState(() => _submitting = false);
@@ -254,7 +254,14 @@ class _ProblemFormScreenState extends ConsumerState<ProblemFormScreen> {
               TextField(
                 controller: _descController,
                 maxLines: 4,
-                decoration: InputDecoration(hintText: l.problemHint),
+                // Cap so a pasted megabyte doesn't end up in the order
+                // JSON; 1000 chars is generous for free-text problem
+                // description while still bounded for storage / transport.
+                maxLength: 1000,
+                decoration: InputDecoration(
+                  hintText: l.problemHint,
+                  counterText: '',
+                ),
               ),
               const SizedBox(height: AppSpacing.lg),
               Text(

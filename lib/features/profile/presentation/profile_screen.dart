@@ -57,7 +57,8 @@ class ProfileScreen extends ConsumerWidget {
             const SizedBox(height: AppSpacing.sm),
             async.when(
               loading: () => const Center(child: CircularProgressIndicator()),
-              error: (e, _) => Text('$e', style: AppTypography.bodyMedium),
+              error: (_, __) =>
+                  Text(l.errorGeneric, style: AppTypography.bodyMedium),
               data: (cars) => Column(
                 children: [
                   for (final car in cars) _VehicleSummary(vehicle: car),
