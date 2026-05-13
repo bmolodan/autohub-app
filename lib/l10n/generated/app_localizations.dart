@@ -326,6 +326,18 @@ abstract class AppLocalizations {
   /// **'+ Записатись'**
   String get homeBookingCta;
 
+  /// No description provided for @homeArchiveTitle.
+  ///
+  /// In uk, this message translates to:
+  /// **'Архів'**
+  String get homeArchiveTitle;
+
+  /// No description provided for @homeArchiveCount.
+  ///
+  /// In uk, this message translates to:
+  /// **'{count, plural, one{{count} скасоване} few{{count} скасовані} other{{count} скасованих}}'**
+  String homeArchiveCount(int count);
+
   /// No description provided for @bookingStep1Title.
   ///
   /// In uk, this message translates to:

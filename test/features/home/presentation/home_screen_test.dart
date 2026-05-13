@@ -50,7 +50,8 @@ void main() {
       expect(find.text('+ Записатись на СТО'), findsOneWidget);
     });
 
-    testWidgets('renders in-progress + canceled cards', (tester) async {
+    testWidgets('renders active list, canceled hidden in collapsed archive',
+        (tester) async {
       await pumpScreen(
         tester,
         child: const HomeScreen(),
@@ -62,6 +63,25 @@ void main() {
 
       expect(find.text('У РЕМОНТІ'), findsOneWidget);
       expect(find.text('Заміна колодок'), findsOneWidget);
+      // Archive header is visible but canceled card body is not yet.
+      expect(find.text('Архів'), findsOneWidget);
+      expect(find.text('1 скасоване'), findsOneWidget);
+      expect(find.text('Шиномонтаж'), findsNothing);
+    });
+
+    testWidgets('expanding the archive reveals canceled cards', (tester) async {
+      await pumpScreen(
+        tester,
+        child: const HomeScreen(),
+        overrides: [
+          _repo([_inProgress(), _canceled()])
+        ],
+      );
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.text('Архів'));
+      await tester.pumpAndSettle();
+
       expect(find.text('Шиномонтаж'), findsOneWidget);
       expect(find.text('Скасовано'), findsOneWidget);
     });

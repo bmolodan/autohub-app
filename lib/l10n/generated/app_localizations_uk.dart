@@ -131,6 +131,21 @@ class AppLocalizationsUk extends AppLocalizations {
   String get homeBookingCta => '+ Записатись';
 
   @override
+  String get homeArchiveTitle => 'Архів';
+
+  @override
+  String homeArchiveCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count скасованих',
+      few: '$count скасовані',
+      one: '$count скасоване',
+    );
+    return '$_temp0';
+  }
+
+  @override
   String get bookingStep1Title => 'Запис · крок 1 з 3';
 
   @override

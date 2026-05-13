@@ -41,6 +41,11 @@
   "homeEmptySubtitle": "Активних замовлень немає. Запишіться на сервіс — ми про все подбаємо.",
   "homeEmptyCta": "+ Записатись на СТО",
   "homeBookingCta": "+ Записатись",
+  "homeArchiveTitle": "Архів",
+  "homeArchiveCount": "{count, plural, one{{count} скасоване} few{{count} скасовані} other{{count} скасованих}}",
+  "@homeArchiveCount": {
+    "placeholders": { "count": { "type": "int" } }
+  },
   "bookingStep1Title": "Запис · крок 1 з 3",
   "bookingPickerHeading": "Що потрібно?",
   "bookingPickerSearchHint": "Пошук послуги",

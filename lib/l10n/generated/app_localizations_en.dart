@@ -130,6 +130,20 @@ class AppLocalizationsEn extends AppLocalizations {
   String get homeBookingCta => '+ Book';
 
   @override
+  String get homeArchiveTitle => 'Archive';
+
+  @override
+  String homeArchiveCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count canceled',
+      one: '$count canceled',
+    );
+    return '$_temp0';
+  }
+
+  @override
   String get bookingStep1Title => 'Booking · step 1 of 3';
 
   @override

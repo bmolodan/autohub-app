@@ -45,6 +45,11 @@
   "homeEmptySubtitle": "No active orders. Book a service — we'll take care of it.",
   "homeEmptyCta": "+ Book a service",
   "homeBookingCta": "+ Book",
+  "homeArchiveTitle": "Archive",
+  "homeArchiveCount": "{count, plural, one{{count} canceled} other{{count} canceled}}",
+  "@homeArchiveCount": {
+    "placeholders": { "count": { "type": "int" } }
+  },
 
   "bookingStep1Title": "Booking · step 1 of 3",
   "bookingPickerHeading": "What do you need?",

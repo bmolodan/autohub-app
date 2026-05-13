@@ -80,21 +80,7 @@ class HomeScreen extends ConsumerWidget {
                 error: (e, _) => ErrorState(
                   onRetry: () => ref.invalidate(ordersControllerProvider),
                 ),
-                data: (orders) => orders.isEmpty
-                    ? EmptyState(
-                        icon: Icons.car_repair_outlined,
-                        title: context.l10n.homeEmptyTitle,
-                        subtitle: context.l10n.homeEmptySubtitle,
-                        ctaLabel: context.l10n.homeEmptyCta,
-                        onCta: () => context.push(AppRoutes.bookingService),
-                      )
-                    : ListView.separated(
-                        padding: EdgeInsets.zero,
-                        itemCount: orders.length,
-                        separatorBuilder: (_, __) =>
-                            const SizedBox(height: AppSpacing.sm),
-                        itemBuilder: (_, i) => _OrderCard(order: orders[i]),
-                      ),
+                data: (orders) => _buildOrderList(context, orders),
               ),
             ),
             const SizedBox(height: AppSpacing.sm),
@@ -102,6 +88,73 @@ class HomeScreen extends ConsumerWidget {
               onPressed: () => context.push(AppRoutes.bookingService),
               child: Text(context.l10n.homeBookingCta),
             ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildOrderList(BuildContext context, List<ActiveOrder> orders) {
+    final active = <ActiveOrder>[];
+    final canceled = <ActiveOrder>[];
+    for (final o in orders) {
+      (o.status == ActiveOrderStatus.canceled ? canceled : active).add(o);
+    }
+    // EmptyState fires only when both buckets are empty. A canceled-only
+    // case still shows the archive (canceled orders are real history)
+    // and relies on the persistent "+ Записатись" CTA below the list.
+    if (active.isEmpty && canceled.isEmpty) {
+      return EmptyState(
+        icon: Icons.car_repair_outlined,
+        title: context.l10n.homeEmptyTitle,
+        subtitle: context.l10n.homeEmptySubtitle,
+        ctaLabel: context.l10n.homeEmptyCta,
+        onCta: () => context.push(AppRoutes.bookingService),
+      );
+    }
+    return ListView(
+      padding: EdgeInsets.zero,
+      children: [
+        for (int i = 0; i < active.length; i++) ...[
+          if (i > 0) const SizedBox(height: AppSpacing.sm),
+          _OrderCard(order: active[i]),
+        ],
+        if (canceled.isNotEmpty) ...[
+          const SizedBox(height: AppSpacing.lg),
+          _CanceledArchive(orders: canceled),
+        ],
+      ],
+    );
+  }
+}
+
+class _CanceledArchive extends StatelessWidget {
+  const _CanceledArchive({required this.orders});
+  final List<ActiveOrder> orders;
+
+  @override
+  Widget build(BuildContext context) {
+    final l = context.l10n;
+    return Material(
+      type: MaterialType.transparency,
+      child: Theme(
+        // ExpansionTile's default theming pulls in divider lines we don't
+        // want; strip them so the archive blends with the home palette.
+        data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
+        child: ExpansionTile(
+          tilePadding: EdgeInsets.zero,
+          childrenPadding: const EdgeInsets.only(top: AppSpacing.sm),
+          title: Text(l.homeArchiveTitle, style: AppTypography.titleSmall),
+          subtitle: Text(
+            l.homeArchiveCount(orders.length),
+            style: AppTypography.bodySmall
+                .copyWith(color: AppColors.textSecondary),
+          ),
+          children: [
+            for (int i = 0; i < orders.length; i++) ...[
+              if (i > 0) const SizedBox(height: AppSpacing.sm),
+              _OrderCard(order: orders[i]),
+            ],
           ],
         ),
       ),
