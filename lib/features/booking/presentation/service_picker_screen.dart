@@ -37,7 +37,7 @@ class _ServicePickerScreenState extends State<ServicePickerScreen> {
     // to make.
     setState(() => _selectedId = null);
     unawaited(context.push(
-      '${AppRoutes.bookingProblem}?customTitle=${Uri.encodeQueryComponent(picked)}',
+      '${AppRoutes.bookingProblem}?${QueryParams.customTitle}=${Uri.encodeQueryComponent(picked)}',
     ));
   }
 
@@ -98,7 +98,7 @@ class _ServicePickerScreenState extends State<ServicePickerScreen> {
                 onPressed: _selectedId == null
                     ? null
                     : () => context.push(
-                          '${AppRoutes.bookingProblem}?serviceId=$_selectedId',
+                          '${AppRoutes.bookingProblem}?${QueryParams.serviceId}=$_selectedId',
                         ),
                 child: Text(context.l10n.commonNext),
               ),

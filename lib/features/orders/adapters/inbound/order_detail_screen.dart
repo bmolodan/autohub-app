@@ -8,6 +8,7 @@ import '../../../../core/theme/app_radii.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_typography.dart';
 import '../../../../core/util/date_format.dart';
+import '../../../../core/widgets/confirm_dialog.dart';
 import '../../../../core/widgets/empty_state.dart';
 import '../../../../core/widgets/error_state.dart';
 import '../../../../core/widgets/stat_card.dart';
@@ -203,25 +204,13 @@ class _PendingBody extends ConsumerStatefulWidget {
 class _PendingBodyState extends ConsumerState<_PendingBody> {
   Future<void> _confirmCancel() async {
     final l = context.l10n;
-    final confirmed = await showDialog<bool>(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        title: Text(l.orderCancelDialogTitle),
-        content: Text(l.orderCancelDialogBody),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(ctx).pop(false),
-            child: Text(l.commonNo),
-          ),
-          TextButton(
-            onPressed: () => Navigator.of(ctx).pop(true),
-            style: TextButton.styleFrom(foregroundColor: AppColors.error),
-            child: Text(l.orderCancelDialogConfirm),
-          ),
-        ],
-      ),
+    final confirmed = await showConfirmDialog(
+      context,
+      title: l.orderCancelDialogTitle,
+      body: l.orderCancelDialogBody,
+      confirmLabel: l.orderCancelDialogConfirm,
     );
-    if (confirmed != true || !mounted) return;
+    if (!confirmed || !mounted) return;
 
     try {
       await ref.read(ordersControllerProvider.notifier).cancel(widget.order.id);

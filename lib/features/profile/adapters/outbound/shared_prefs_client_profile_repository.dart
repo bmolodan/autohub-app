@@ -1,9 +1,8 @@
-import 'dart:convert';
-
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../application/ports/outbound/client_profile_repository_port.dart';
 import '../../domain/client_profile.dart';
+import 'client_profile_codec.dart';
 
 class SharedPrefsClientProfileRepository
     implements ClientProfileRepositoryPort {
@@ -16,32 +15,21 @@ class SharedPrefsClientProfileRepository
   Future<ClientProfile?> findByPhone(String phone) async {
     final raw = _prefs.getString(_key);
     if (raw == null) return null;
-    try {
-      final decoded = jsonDecode(raw) as Map<String, dynamic>;
-      final stored = ClientProfile(
-        phone: decoded['phone'] as String,
-        name: decoded['name'] as String,
-        email: decoded['email'] as String?,
-      );
-      if (stored.phone == phone) return stored;
-      // Different user signed in — drop the stale row so PII for the
-      // previous user doesn't linger in plaintext storage.
-      await _prefs.remove(_key);
-      return null;
-    } on Object catch (_) {
+    final stored = tryDecodeClientProfile(raw);
+    if (stored == null) {
       // Corrupt entry — purge so subsequent reads start clean.
       await _prefs.remove(_key);
       return null;
     }
+    if (stored.phone == phone) return stored;
+    // Different user signed in — drop the stale row so PII for the
+    // previous user doesn't linger in plaintext storage.
+    await _prefs.remove(_key);
+    return null;
   }
 
   @override
   Future<void> save(ClientProfile profile) async {
-    final encoded = jsonEncode({
-      'phone': profile.phone,
-      'name': profile.name,
-      'email': profile.email,
-    });
-    await _prefs.setString(_key, encoded);
+    await _prefs.setString(_key, encodeClientProfile(profile));
   }
 }

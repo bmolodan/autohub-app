@@ -58,6 +58,16 @@ class AppRoutes {
   static const devStates = '/dev/states';
 }
 
+/// Typed query-param keys — referenced everywhere `state.uri.queryParameters`
+/// or a `?key=...` push happens, so a rename is a single change.
+class QueryParams {
+  QueryParams._();
+  static const phone = 'phone';
+  static const challengeId = 'challengeId';
+  static const serviceId = 'serviceId';
+  static const customTitle = 'customTitle';
+}
+
 /// Routes accessible without a signed-in session.
 const _publicRoutes = <String>{
   AppRoutes.onboarding,
@@ -129,8 +139,8 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: AppRoutes.otp,
         builder: (_, state) => OtpScreen(
-          phone: state.uri.queryParameters['phone'] ?? '',
-          challengeId: state.uri.queryParameters['challengeId'] ?? '',
+          phone: state.uri.queryParameters[QueryParams.phone] ?? '',
+          challengeId: state.uri.queryParameters[QueryParams.challengeId] ?? '',
         ),
       ),
 
@@ -166,8 +176,8 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         path: AppRoutes.bookingProblem,
         builder: (_, state) {
           // customTitle wins if both are accidentally present in the URL.
-          final custom = state.uri.queryParameters['customTitle'];
-          final serviceId = state.uri.queryParameters['serviceId'];
+          final custom = state.uri.queryParameters[QueryParams.customTitle];
+          final serviceId = state.uri.queryParameters[QueryParams.serviceId];
           if (custom != null && custom.isNotEmpty) {
             return ProblemFormScreen(customTitle: custom);
           }

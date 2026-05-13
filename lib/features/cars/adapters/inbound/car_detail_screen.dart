@@ -8,6 +8,7 @@ import '../../../../core/theme/app_radii.dart';
 import '../../../../core/theme/app_sizes.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_typography.dart';
+import '../../../../core/widgets/confirm_dialog.dart';
 import '../../../../core/widgets/stat_card.dart';
 import '../../../../l10n/l10n_extension.dart';
 import '../../composition/cars_providers.dart';
@@ -19,25 +20,13 @@ class CarDetailScreen extends ConsumerWidget {
 
   Future<void> _confirmDelete(BuildContext context, WidgetRef ref) async {
     final l = context.l10n;
-    final confirmed = await showDialog<bool>(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        title: Text(l.carDeleteDialogTitle),
-        content: Text(l.carDeleteDialogBody),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(ctx).pop(false),
-            child: Text(l.commonNo),
-          ),
-          TextButton(
-            onPressed: () => Navigator.of(ctx).pop(true),
-            style: TextButton.styleFrom(foregroundColor: AppColors.error),
-            child: Text(l.carDeleteDialogConfirm),
-          ),
-        ],
-      ),
+    final confirmed = await showConfirmDialog(
+      context,
+      title: l.carDeleteDialogTitle,
+      body: l.carDeleteDialogBody,
+      confirmLabel: l.carDeleteDialogConfirm,
     );
-    if (confirmed != true || !context.mounted) return;
+    if (!confirmed || !context.mounted) return;
     try {
       await ref.read(vehiclesControllerProvider.notifier).remove(vehicleId);
     } on Object catch (e) {

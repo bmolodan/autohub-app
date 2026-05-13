@@ -8,12 +8,10 @@ import '../../../../core/router/app_router.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_typography.dart';
+import '../../../../core/util/validators.dart';
 import '../../../../core/widgets/button_spinner.dart';
 import '../../../../l10n/l10n_extension.dart';
 import '../../composition/profile_providers.dart';
-
-/// Pragmatic email regex — RFC-compliant is overkill for a UI nudge.
-final _emailRegex = RegExp(r'^[^@\s]+@[^@\s]+\.[^@\s]+$');
 
 /// First-time onboarding form. Also reused as a profile-edit screen by
 /// passing `editMode: true` — in that case the form prefills from the
@@ -90,14 +88,12 @@ class _RegisterClientScreenState extends ConsumerState<RegisterClientScreen> {
   Widget build(BuildContext context) {
     final l = context.l10n;
 
-    String? validateName(String? v) {
-      if (v == null || v.trim().isEmpty) return l.commonRequiredField;
-      return null;
-    }
+    String? validateName(String? v) =>
+        requireNonEmpty(v, l.commonRequiredField);
 
     String? validateEmail(String? v) {
       if (v == null || v.trim().isEmpty) return null;
-      return _emailRegex.hasMatch(v.trim()) ? null : l.registerEmailInvalid;
+      return emailRegex.hasMatch(v.trim()) ? null : l.registerEmailInvalid;
     }
 
     return Scaffold(

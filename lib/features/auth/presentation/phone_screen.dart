@@ -47,8 +47,8 @@ class _PhoneScreenState extends ConsumerState<PhoneScreen> {
       if (!mounted) return;
       context.go(
         '${AppRoutes.otp}'
-        '?challengeId=${Uri.encodeComponent(challenge.id)}'
-        '&phone=${Uri.encodeComponent(phone)}',
+        '?${QueryParams.challengeId}=${Uri.encodeComponent(challenge.id)}'
+        '&${QueryParams.phone}=${Uri.encodeComponent(phone)}',
       );
     } on Object catch (e) {
       if (!mounted) return;

@@ -8,6 +8,7 @@ import '../../../../core/theme/app_sizes.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_typography.dart';
 import '../../../../core/util/ua_plate_formatter.dart';
+import '../../../../core/util/validators.dart';
 import '../../../../core/widgets/button_spinner.dart';
 import '../../../../l10n/l10n_extension.dart';
 import '../../application/use_cases/add_vehicle.dart';
@@ -176,12 +177,10 @@ class _AddCarScreenState extends ConsumerState<AddCarScreen> {
   Widget _buildForm(BuildContext context, CarCatalog catalog) {
     final l = context.l10n;
 
-    String? required(String? v) =>
-        (v == null || v.trim().isEmpty) ? l.commonRequiredField : null;
-
     String? validYear(String? v) {
-      if (v == null || v.trim().isEmpty) return l.commonRequiredField;
-      final y = int.tryParse(v);
+      final base = requireNonEmpty(v, l.commonRequiredField);
+      if (base != null) return base;
+      final y = int.tryParse(v!);
       if (y == null) return l.commonNumbersOnly;
       final max = DateTime.now().year + 1;
       if (y < 1900 || y > max) return l.addCarYearRange(max);
@@ -189,13 +188,13 @@ class _AddCarScreenState extends ConsumerState<AddCarScreen> {
     }
 
     String? validateMake(String? v) {
-      final base = required(v);
+      final base = requireNonEmpty(v, l.commonRequiredField);
       if (base != null) return base;
       return catalog.hasMake(v!.trim()) ? null : l.addCarMakeUnknown;
     }
 
     String? validateModel(String? v) {
-      final base = required(v);
+      final base = requireNonEmpty(v, l.commonRequiredField);
       if (base != null) return base;
       final make = _make.text.trim();
       return catalog.hasModel(make, v!.trim()) ? null : l.addCarModelUnknown;
