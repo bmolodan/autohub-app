@@ -80,6 +80,8 @@ OrderStage _stageFromString(String raw) {
       return OrderStage.inProgress;
     case 'done':
       return OrderStage.done;
+    case 'canceled':
+      return OrderStage.canceled;
     default:
       throw FormatException('Unknown timeline stage: $raw');
   }
@@ -91,6 +93,7 @@ String _stageToString(OrderStage s) => switch (s) {
       OrderStage.diagnostics => 'diagnostics',
       OrderStage.inProgress => 'in_progress',
       OrderStage.done => 'done',
+      OrderStage.canceled => 'canceled',
     };
 
 ActiveOrderStatus _statusFromString(String raw) {
@@ -99,6 +102,8 @@ ActiveOrderStatus _statusFromString(String raw) {
       return ActiveOrderStatus.inProgress;
     case 'pending_confirmation':
       return ActiveOrderStatus.pendingConfirmation;
+    case 'canceled':
+      return ActiveOrderStatus.canceled;
     default:
       throw FormatException('Unknown order status: $raw');
   }
@@ -107,6 +112,7 @@ ActiveOrderStatus _statusFromString(String raw) {
 String _statusToString(ActiveOrderStatus s) => switch (s) {
       ActiveOrderStatus.inProgress => 'in_progress',
       ActiveOrderStatus.pendingConfirmation => 'pending_confirmation',
+      ActiveOrderStatus.canceled => 'canceled',
     };
 
 DateTime? _parseDate(Object? raw) => raw is String ? DateTime.parse(raw) : null;

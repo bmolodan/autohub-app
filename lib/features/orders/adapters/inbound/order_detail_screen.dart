@@ -61,6 +61,7 @@ class _Detail extends StatelessWidget {
       child: switch (order.status) {
         ActiveOrderStatus.inProgress => _InProgressBody(order: order),
         ActiveOrderStatus.pendingConfirmation => _PendingBody(order: order),
+        ActiveOrderStatus.canceled => _CanceledBody(order: order),
       },
     );
   }
@@ -152,12 +153,49 @@ class _InProgressBody extends StatelessWidget {
   }
 }
 
-class _PendingBody extends StatelessWidget {
+class _PendingBody extends ConsumerStatefulWidget {
   const _PendingBody({required this.order});
   final ActiveOrder order;
 
   @override
+  ConsumerState<_PendingBody> createState() => _PendingBodyState();
+}
+
+class _PendingBodyState extends ConsumerState<_PendingBody> {
+  Future<void> _confirmCancel() async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Скасувати запис?'),
+        content: const Text('Дію не можна буде відмінити.'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(false),
+            child: const Text('Ні'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(true),
+            style: TextButton.styleFrom(foregroundColor: AppColors.error),
+            child: const Text('Так, скасувати'),
+          ),
+        ],
+      ),
+    );
+    if (confirmed != true || !mounted) return;
+
+    try {
+      await ref.read(ordersControllerProvider.notifier).cancel(widget.order.id);
+    } on Object catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Не вдалося скасувати: $e')),
+      );
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final order = widget.order;
     final scheduledLabel = order.scheduledFor != null
         ? formatDdMmHm(order.scheduledFor!)
         : 'визначимо невдовзі';
@@ -206,13 +244,56 @@ class _PendingBody extends StatelessWidget {
           const SizedBox(height: AppSpacing.lg),
         ],
         OutlinedButton(
-          onPressed: () => ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Скасування запису: TODO')),
-          ),
+          onPressed: _confirmCancel,
           style: OutlinedButton.styleFrom(foregroundColor: AppColors.error),
           child: const Text('Скасувати запис'),
         ),
         const SizedBox(height: AppSpacing.lg),
+      ],
+    );
+  }
+}
+
+class _CanceledBody extends StatelessWidget {
+  const _CanceledBody({required this.order});
+  final ActiveOrder order;
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView(
+      padding: const EdgeInsets.symmetric(vertical: AppSpacing.md),
+      children: [
+        Container(
+          padding: const EdgeInsets.all(AppSpacing.md),
+          decoration: BoxDecoration(
+            color: AppColors.errorSoft,
+            borderRadius: AppRadii.xlAll,
+            border: Border.all(color: AppColors.error, width: 0.5),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'СКАСОВАНО',
+                style: AppTypography.overline.copyWith(color: AppColors.error),
+              ),
+              const SizedBox(height: AppSpacing.xxs),
+              Text(order.title, style: AppTypography.headlineSmall),
+              const SizedBox(height: AppSpacing.xxs),
+              Text(order.vehicleSummary,
+                  style: AppTypography.bodySmall
+                      .copyWith(color: AppColors.textSecondary)),
+            ],
+          ),
+        ),
+        const SizedBox(height: AppSpacing.lg),
+        if (order.timeline.isNotEmpty) ...[
+          Text('ЖУРНАЛ',
+              style: AppTypography.overline
+                  .copyWith(color: AppColors.textSecondary)),
+          const SizedBox(height: AppSpacing.sm),
+          _Timeline(entries: order.timeline),
+        ],
       ],
     );
   }

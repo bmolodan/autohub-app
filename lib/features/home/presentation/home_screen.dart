@@ -103,6 +103,7 @@ class _OrderCard extends StatelessWidget {
       ActiveOrderStatus.inProgress => _InProgressCard(order: order),
       ActiveOrderStatus.pendingConfirmation =>
         _PendingConfirmationCard(order: order),
+      ActiveOrderStatus.canceled => _CanceledCard(order: order),
     };
     return Semantics(
       button: true,
@@ -211,6 +212,38 @@ class _PendingConfirmationCard extends StatelessWidget {
             ),
           ),
           const Icon(Icons.chevron_right, color: AppColors.textDisabled),
+        ],
+      ),
+    );
+  }
+}
+
+class _CanceledCard extends StatelessWidget {
+  const _CanceledCard({required this.order});
+  final ActiveOrder order;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(AppSpacing.md),
+      decoration: BoxDecoration(
+        color: AppColors.surfaceVariant,
+        borderRadius: AppRadii.lgAll,
+        border: Border.all(color: AppColors.border, width: 0.5),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            order.title,
+            style: AppTypography.titleMedium
+                .copyWith(color: AppColors.textSecondary),
+          ),
+          const SizedBox(height: AppSpacing.xxs),
+          Text(
+            order.statusLabel,
+            style: AppTypography.bodySmall.copyWith(color: AppColors.error),
+          ),
         ],
       ),
     );

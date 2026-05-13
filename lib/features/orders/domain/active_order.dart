@@ -4,6 +4,7 @@ enum OrderStage {
   diagnostics,
   inProgress,
   done,
+  canceled,
 }
 
 class OrderTimelineEntry {
@@ -30,9 +31,11 @@ class OrderTimelineEntry {
 
 /// Active work-order shown on the Home screen.
 ///
-/// Two shapes share the same class:
+/// Three shapes share the same class:
 ///   - [ActiveOrderStatus.inProgress] — has [progress] and [eta]
 ///   - [ActiveOrderStatus.pendingConfirmation] — has [scheduledFor]
+///   - [ActiveOrderStatus.canceled] — terminal; cancellation timestamp lives
+///     as the last [OrderTimelineEntry].
 class ActiveOrder {
   const ActiveOrder({
     required this.id,
@@ -104,4 +107,4 @@ class ActiveOrder {
       );
 }
 
-enum ActiveOrderStatus { inProgress, pendingConfirmation }
+enum ActiveOrderStatus { inProgress, pendingConfirmation, canceled }

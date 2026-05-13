@@ -85,6 +85,53 @@ void main() {
       expect(decodeActiveOrders('[]'), isEmpty);
     });
 
+    test('parses canceled order with canceled-stage timeline entry', () {
+      const json = '''
+        [
+          {
+            "id": "x1",
+            "title": "Заміна масла",
+            "status": "canceled",
+            "status_label": "Скасовано",
+            "vehicle": {"make": "Toyota", "model": "Camry", "plate": "AA 1234 BC"},
+            "timeline": [
+              {"stage": "canceled", "label": "Скасовано", "at": "2026-05-13T12:00:00Z"}
+            ]
+          }
+        ]
+      ''';
+      final o = decodeActiveOrders(json).single;
+      expect(o.status, ActiveOrderStatus.canceled);
+      expect(o.timeline.single.stage, OrderStage.canceled);
+    });
+
+    test('round-trips a canceled order', () {
+      final o = ActiveOrder(
+        id: 'x1',
+        title: 'Заміна масла',
+        status: ActiveOrderStatus.canceled,
+        statusLabel: 'Скасовано',
+        vehicleMake: 'Toyota',
+        vehicleModel: 'Camry',
+        vehiclePlate: 'AA 1234 BC',
+        progress: null,
+        eta: null,
+        scheduledFor: null,
+        totalUah: 1600,
+        timeline: [
+          OrderTimelineEntry(
+            stage: OrderStage.canceled,
+            label: 'Скасовано',
+            at: DateTime.utc(2026, 5, 13, 12),
+          ),
+        ],
+      );
+      final round = decodeActiveOrders(encodeActiveOrders([o])).single;
+      expect(round, o);
+      expect(round.status, ActiveOrderStatus.canceled);
+      expect(round.timeline.single.stage, OrderStage.canceled);
+    });
+
     test('throws on unknown status', () {
       const bad = '''
         [{"id":"x","title":"y","status":"bogus","status_label":"z",
