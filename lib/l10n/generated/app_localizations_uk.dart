@@ -586,4 +586,41 @@ class AppLocalizationsUk extends AppLocalizations {
 
   @override
   String get carUpdateSuccessSnack => 'Дані авто оновлено';
+
+  @override
+  String get registerTitle => 'Знайомство';
+
+  @override
+  String get registerHeading => 'Як до вас звертатись?';
+
+  @override
+  String get registerSubtitle =>
+      'Це допоможе майстру звертатись до вас особисто.';
+
+  @override
+  String get registerFieldName => 'Імʼя';
+
+  @override
+  String get registerFieldEmail => 'Email (необовʼязково)';
+
+  @override
+  String get registerEmailInvalid => 'Перевірте email';
+
+  @override
+  String get registerSubmit => 'Продовжити';
+
+  @override
+  String get registerEditTitle => 'Особисті дані';
+
+  @override
+  String get registerEditSubmit => 'Зберегти зміни';
+
+  @override
+  String get registerUpdatedSnack => 'Дані оновлено';
+
+  @override
+  String get profileEditSemantics => 'Редагувати';
+
+  @override
+  String get profileNoEmail => 'Email не вказано';
 }

@@ -14,6 +14,8 @@ import '../../features/history/adapters/inbound/history_screen.dart';
 import '../../features/home/presentation/home_screen.dart';
 import '../../features/onboarding/presentation/onboarding_screen.dart';
 import '../../features/orders/adapters/inbound/order_detail_screen.dart';
+import '../../features/profile/adapters/inbound/register_client_screen.dart';
+import '../../features/profile/composition/profile_providers.dart';
 import '../../features/profile/presentation/account_delete_screen.dart';
 import '../../features/profile/presentation/notifications_screen.dart';
 import '../../features/profile/presentation/profile_screen.dart';
@@ -27,6 +29,8 @@ class AppRoutes {
   static const onboarding = '/onboarding';
   static const phone = '/auth/phone';
   static const otp = '/auth/otp';
+  static const register = '/register';
+  static const profileEdit = '/profile/edit';
 
   // Shell tabs
   static const home = '/home';
@@ -63,11 +67,18 @@ const _publicRoutes = <String>{
   AppRoutes.devStates,
 };
 
-/// Bridges Riverpod auth state to GoRouter's Listenable-based refresh API.
+/// Bridges Riverpod auth and profile state to GoRouter's Listenable-based
+/// refresh API. Profile state needs to drive redirects too — first-time
+/// users get bounced to /register after session is loaded but before
+/// profile finishes loading.
 class _RouterRefresh extends ChangeNotifier {
   _RouterRefresh(Ref ref) {
     ref.listen<AsyncValue<Object?>>(
       authControllerProvider,
+      (_, __) => notifyListeners(),
+    );
+    ref.listen<AsyncValue<Object?>>(
+      clientProfileControllerProvider,
       (_, __) => notifyListeners(),
     );
   }
@@ -93,7 +104,22 @@ final appRouterProvider = Provider<GoRouter>((ref) {
           (state.matchedLocation == AppRoutes.onboarding ||
               state.matchedLocation == AppRoutes.phone ||
               state.matchedLocation == AppRoutes.otp)) {
-        return AppRoutes.home;
+        // Defer to the profile-required check below.
+      }
+      if (session != null) {
+        final profileAsync = ref.read(clientProfileControllerProvider);
+        final profile = profileAsync.asData?.value;
+        final atRegister = state.matchedLocation == AppRoutes.register;
+        if (profileAsync is AsyncData && profile == null && !atRegister) {
+          return AppRoutes.register;
+        }
+        if (profile != null &&
+            (state.matchedLocation == AppRoutes.onboarding ||
+                state.matchedLocation == AppRoutes.phone ||
+                state.matchedLocation == AppRoutes.otp ||
+                atRegister)) {
+          return AppRoutes.home;
+        }
       }
       return null;
     },
@@ -175,6 +201,14 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       ),
 
       // Profile sub-routes (outside the shell)
+      GoRoute(
+        path: AppRoutes.register,
+        builder: (_, __) => const RegisterClientScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.profileEdit,
+        builder: (_, __) => const RegisterClientScreen(editMode: true),
+      ),
       GoRoute(
         path: AppRoutes.profileNotifications,
         builder: (_, __) => const NotificationsScreen(),

@@ -204,5 +204,18 @@
   "carDeleteDialogBody": "This action cannot be undone. Service history for this car remains in your account.",
   "carDeleteDialogConfirm": "Yes, delete",
   "carDeleteSuccessSnack": "Car deleted",
-  "carUpdateSuccessSnack": "Car details updated"
+  "carUpdateSuccessSnack": "Car details updated",
+
+  "registerTitle": "Let's get acquainted",
+  "registerHeading": "How should we address you?",
+  "registerSubtitle": "Helps the mechanic greet you personally.",
+  "registerFieldName": "Name",
+  "registerFieldEmail": "Email (optional)",
+  "registerEmailInvalid": "Check the email",
+  "registerSubmit": "Continue",
+  "registerEditTitle": "Personal details",
+  "registerEditSubmit": "Save changes",
+  "registerUpdatedSnack": "Details updated",
+  "profileEditSemantics": "Edit",
+  "profileNoEmail": "Email not set"
 }

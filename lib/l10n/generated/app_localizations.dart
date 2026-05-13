@@ -1177,6 +1177,78 @@ abstract class AppLocalizations {
   /// In uk, this message translates to:
   /// **'Дані авто оновлено'**
   String get carUpdateSuccessSnack;
+
+  /// No description provided for @registerTitle.
+  ///
+  /// In uk, this message translates to:
+  /// **'Знайомство'**
+  String get registerTitle;
+
+  /// No description provided for @registerHeading.
+  ///
+  /// In uk, this message translates to:
+  /// **'Як до вас звертатись?'**
+  String get registerHeading;
+
+  /// No description provided for @registerSubtitle.
+  ///
+  /// In uk, this message translates to:
+  /// **'Це допоможе майстру звертатись до вас особисто.'**
+  String get registerSubtitle;
+
+  /// No description provided for @registerFieldName.
+  ///
+  /// In uk, this message translates to:
+  /// **'Імʼя'**
+  String get registerFieldName;
+
+  /// No description provided for @registerFieldEmail.
+  ///
+  /// In uk, this message translates to:
+  /// **'Email (необовʼязково)'**
+  String get registerFieldEmail;
+
+  /// No description provided for @registerEmailInvalid.
+  ///
+  /// In uk, this message translates to:
+  /// **'Перевірте email'**
+  String get registerEmailInvalid;
+
+  /// No description provided for @registerSubmit.
+  ///
+  /// In uk, this message translates to:
+  /// **'Продовжити'**
+  String get registerSubmit;
+
+  /// No description provided for @registerEditTitle.
+  ///
+  /// In uk, this message translates to:
+  /// **'Особисті дані'**
+  String get registerEditTitle;
+
+  /// No description provided for @registerEditSubmit.
+  ///
+  /// In uk, this message translates to:
+  /// **'Зберегти зміни'**
+  String get registerEditSubmit;
+
+  /// No description provided for @registerUpdatedSnack.
+  ///
+  /// In uk, this message translates to:
+  /// **'Дані оновлено'**
+  String get registerUpdatedSnack;
+
+  /// No description provided for @profileEditSemantics.
+  ///
+  /// In uk, this message translates to:
+  /// **'Редагувати'**
+  String get profileEditSemantics;
+
+  /// No description provided for @profileNoEmail.
+  ///
+  /// In uk, this message translates to:
+  /// **'Email не вказано'**
+  String get profileNoEmail;
 }
 
 class _AppLocalizationsDelegate

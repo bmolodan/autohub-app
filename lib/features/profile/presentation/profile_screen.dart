@@ -12,6 +12,7 @@ import '../../../l10n/l10n_extension.dart';
 import '../../auth/composition/auth_providers.dart';
 import '../../cars/composition/cars_providers.dart';
 import '../../cars/domain/vehicle.dart';
+import '../composition/profile_providers.dart';
 
 /// Mockup 09 — user profile.
 class ProfileScreen extends ConsumerWidget {
@@ -21,12 +22,22 @@ class ProfileScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final async = ref.watch(vehiclesControllerProvider);
     final session = ref.watch(authControllerProvider).asData?.value;
+    final profile = ref.watch(clientProfileControllerProvider).asData?.value;
     final phone = session?.phone ?? '+380 67 123 45 67';
+    final name = profile?.name ?? '';
 
     final l = context.l10n;
     return Scaffold(
-      appBar:
-          AppBar(title: Text(l.profileTitle, style: AppTypography.titleLarge)),
+      appBar: AppBar(
+        title: Text(l.profileTitle, style: AppTypography.titleLarge),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.edit_outlined),
+            tooltip: l.profileEditSemantics,
+            onPressed: () => context.push(AppRoutes.profileEdit),
+          ),
+        ],
+      ),
       body: SafeArea(
         child: ListView(
           padding: const EdgeInsets.symmetric(
@@ -34,7 +45,7 @@ class ProfileScreen extends ConsumerWidget {
             vertical: AppSpacing.sm,
           ),
           children: [
-            _UserHeader(name: 'Богдан М.', phone: phone),
+            _UserHeader(name: name, phone: phone, email: profile?.email),
             const SizedBox(height: AppSpacing.lg),
             Text(
               l.profileMyCars,
@@ -101,19 +112,23 @@ class ProfileScreen extends ConsumerWidget {
 }
 
 class _UserHeader extends StatelessWidget {
-  const _UserHeader({required this.name, required this.phone});
+  const _UserHeader({required this.name, required this.phone, this.email});
   final String name;
   final String phone;
+  final String? email;
 
   @override
   Widget build(BuildContext context) {
-    final initials = name
-        .trim()
-        .split(RegExp(r'\s+'))
-        .where((s) => s.isNotEmpty)
-        .map((s) => s[0].toUpperCase())
-        .take(2)
-        .join();
+    final displayName = name.isEmpty ? '—' : name;
+    final initials = name.isEmpty
+        ? '?'
+        : name
+            .trim()
+            .split(RegExp(r'\s+'))
+            .where((s) => s.isNotEmpty)
+            .map((s) => s[0].toUpperCase())
+            .take(2)
+            .join();
 
     return Container(
       padding: const EdgeInsets.all(AppSpacing.md),
@@ -128,19 +143,27 @@ class _UserHeader extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(name, style: AppTypography.titleLarge),
+                Text(displayName, style: AppTypography.titleLarge),
                 const SizedBox(height: AppSpacing.xxs),
                 Text(
                   phone,
                   style: AppTypography.bodySmall
                       .copyWith(color: AppColors.textSecondary),
                 ),
+                if (email != null && email!.isNotEmpty) ...[
+                  const SizedBox(height: AppSpacing.xxs),
+                  Text(
+                    email!,
+                    style: AppTypography.bodySmall
+                        .copyWith(color: AppColors.textSecondary),
+                  ),
+                ],
               ],
             ),
           ),
           Semantics(
             image: true,
-            label: context.l10n.profileAvatarSemantics(name),
+            label: context.l10n.profileAvatarSemantics(displayName),
             child: Container(
               width: AppSizes.avatar,
               height: AppSizes.avatar,

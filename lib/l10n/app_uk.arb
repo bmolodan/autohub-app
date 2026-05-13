@@ -227,5 +227,17 @@
   "carDeleteDialogBody": "Цю дію не можна скасувати. Історія обслуговування цього авто залишиться у вашому акаунті.",
   "carDeleteDialogConfirm": "Так, видалити",
   "carDeleteSuccessSnack": "Авто видалено",
-  "carUpdateSuccessSnack": "Дані авто оновлено"
+  "carUpdateSuccessSnack": "Дані авто оновлено",
+  "registerTitle": "Знайомство",
+  "registerHeading": "Як до вас звертатись?",
+  "registerSubtitle": "Це допоможе майстру звертатись до вас особисто.",
+  "registerFieldName": "Імʼя",
+  "registerFieldEmail": "Email (необовʼязково)",
+  "registerEmailInvalid": "Перевірте email",
+  "registerSubmit": "Продовжити",
+  "registerEditTitle": "Особисті дані",
+  "registerEditSubmit": "Зберегти зміни",
+  "registerUpdatedSnack": "Дані оновлено",
+  "profileEditSemantics": "Редагувати",
+  "profileNoEmail": "Email не вказано"
 }

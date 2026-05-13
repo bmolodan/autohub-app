@@ -585,4 +585,40 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get carUpdateSuccessSnack => 'Car details updated';
+
+  @override
+  String get registerTitle => 'Let\'s get acquainted';
+
+  @override
+  String get registerHeading => 'How should we address you?';
+
+  @override
+  String get registerSubtitle => 'Helps the mechanic greet you personally.';
+
+  @override
+  String get registerFieldName => 'Name';
+
+  @override
+  String get registerFieldEmail => 'Email (optional)';
+
+  @override
+  String get registerEmailInvalid => 'Check the email';
+
+  @override
+  String get registerSubmit => 'Continue';
+
+  @override
+  String get registerEditTitle => 'Personal details';
+
+  @override
+  String get registerEditSubmit => 'Save changes';
+
+  @override
+  String get registerUpdatedSnack => 'Details updated';
+
+  @override
+  String get profileEditSemantics => 'Edit';
+
+  @override
+  String get profileNoEmail => 'Email not set';
 }
