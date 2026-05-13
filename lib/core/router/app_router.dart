@@ -66,6 +66,12 @@ class QueryParams {
   static const challengeId = 'challengeId';
   static const serviceId = 'serviceId';
   static const customTitle = 'customTitle';
+
+  /// Route to navigate to after a screen's primary action succeeds.
+  /// Used by Add Car when entered via the empty-vehicles Home redirect:
+  /// `?next=/booking/service` sends the new user back into booking once
+  /// they save their first car.
+  static const nextRoute = 'next';
 }
 
 /// Routes accessible without a signed-in session.
@@ -194,7 +200,9 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       // Cars detail / add (outside the shell)
       GoRoute(
         path: AppRoutes.carAdd,
-        builder: (_, __) => const AddCarScreen(),
+        builder: (_, state) => AddCarScreen(
+          nextRoute: state.uri.queryParameters[QueryParams.nextRoute],
+        ),
       ),
       GoRoute(
         path: '${AppRoutes.carEdit}/:id',

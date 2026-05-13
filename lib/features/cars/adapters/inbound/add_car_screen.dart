@@ -18,11 +18,17 @@ import '../../data/car_catalog.dart';
 import '../../domain/vehicle.dart';
 
 class AddCarScreen extends ConsumerStatefulWidget {
-  const AddCarScreen({super.key, this.editVehicleId});
+  const AddCarScreen({super.key, this.editVehicleId, this.nextRoute});
 
   /// When non-null, the screen is in edit mode: it pre-fills the form
   /// with the vehicle's current values and updates instead of inserting.
   final String? editVehicleId;
+
+  /// When non-null, on successful save the user is redirected to
+  /// [nextRoute] instead of popping back. Used by the empty-vehicles
+  /// booking redirect: Home → Add Car → Service Picker without an
+  /// awkward intermediate pop.
+  final String? nextRoute;
 
   @override
   ConsumerState<AddCarScreen> createState() => _AddCarScreenState();
@@ -94,7 +100,12 @@ class _AddCarScreenState extends ConsumerState<AddCarScreen> {
           SnackBar(content: Text(snackText)),
         );
       }
-      context.pop();
+      final next = widget.nextRoute;
+      if (next != null && next.isNotEmpty) {
+        context.go(next);
+      } else {
+        context.pop();
+      }
     } on Object catch (_) {
       if (!mounted) return;
       ScaffoldMessenger.of(context)

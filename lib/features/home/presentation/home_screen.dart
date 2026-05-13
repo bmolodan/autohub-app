@@ -14,14 +14,32 @@ import '../../../core/widgets/error_state.dart';
 import '../../../l10n/l10n_extension.dart';
 import '../../orders/composition/orders_providers.dart';
 import '../../orders/domain/active_order.dart';
+import '../../cars/composition/cars_providers.dart';
 import '../../orders/presentation/order_l10n.dart';
 
 class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
 
+  /// Where the booking entry button goes. If we've resolved that the
+  /// user has zero vehicles, detour through Add Car with a `?next=` back
+  /// to booking step 1 so they don't hit the snackbar fallback on the
+  /// problem-form step. While vehicles are still loading, default to the
+  /// normal booking entry — the booking flow handles the empty edge
+  /// case itself if it slips through.
+  String _bookingTarget(List<Object>? vehicles) {
+    if (vehicles != null && vehicles.isEmpty) {
+      return '${AppRoutes.carAdd}'
+          '?${QueryParams.nextRoute}='
+          '${Uri.encodeQueryComponent(AppRoutes.bookingService)}';
+    }
+    return AppRoutes.bookingService;
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final async = ref.watch(ordersControllerProvider);
+    final vehicles = ref.watch(vehiclesControllerProvider).value;
+    final bookingTarget = _bookingTarget(vehicles);
 
     return SafeArea(
       child: Padding(
@@ -80,12 +98,13 @@ class HomeScreen extends ConsumerWidget {
                 error: (e, _) => ErrorState(
                   onRetry: () => ref.invalidate(ordersControllerProvider),
                 ),
-                data: (orders) => _buildOrderList(context, orders),
+                data: (orders) =>
+                    _buildOrderList(context, orders, bookingTarget),
               ),
             ),
             const SizedBox(height: AppSpacing.sm),
             ElevatedButton(
-              onPressed: () => context.push(AppRoutes.bookingService),
+              onPressed: () => context.push(bookingTarget),
               child: Text(context.l10n.homeBookingCta),
             ),
           ],
@@ -94,7 +113,8 @@ class HomeScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildOrderList(BuildContext context, List<ActiveOrder> orders) {
+  Widget _buildOrderList(
+      BuildContext context, List<ActiveOrder> orders, String bookingTarget) {
     final active = <ActiveOrder>[];
     final canceled = <ActiveOrder>[];
     for (final o in orders) {
@@ -109,7 +129,7 @@ class HomeScreen extends ConsumerWidget {
         title: context.l10n.homeEmptyTitle,
         subtitle: context.l10n.homeEmptySubtitle,
         ctaLabel: context.l10n.homeEmptyCta,
-        onCta: () => context.push(AppRoutes.bookingService),
+        onCta: () => context.push(bookingTarget),
       );
     }
     return ListView(
