@@ -186,7 +186,10 @@ class _ProblemFormScreenState extends ConsumerState<ProblemFormScreen> {
             ),
           );
       if (!mounted) return;
-      context.go('${AppRoutes.orderDetail}/${created.id}');
+      // Reset to Home so the entire booking sub-stack is unwound, then push
+      // the detail so the AppBar back arrow lands back on Home.
+      context.go(AppRoutes.home);
+      unawaited(context.push('${AppRoutes.orderDetail}/${created.id}'));
     } on Object catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
