@@ -15,6 +15,9 @@ class _FakeRepo implements ActiveOrderRepositoryPort {
 
   @override
   Future<void> save(ActiveOrder order) async => store[order.id] = order;
+
+  @override
+  Future<void> clear() async => store.clear();
 }
 
 final _fixedNow = DateTime.utc(2026, 5, 13, 12);

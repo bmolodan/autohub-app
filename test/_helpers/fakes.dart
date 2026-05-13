@@ -1,3 +1,5 @@
+import 'package:autohub/features/auth/application/ports/outbound/session_storage_port.dart';
+import 'package:autohub/features/auth/domain/session.dart';
 import 'package:autohub/features/cars/application/ports/outbound/car_catalog_port.dart';
 import 'package:autohub/features/cars/application/ports/outbound/vehicle_repository_port.dart';
 import 'package:autohub/features/cars/data/car_catalog.dart';
@@ -5,6 +7,8 @@ import 'package:autohub/features/cars/domain/vehicle.dart';
 import 'package:autohub/features/orders/application/ports/outbound/active_order_repository_port.dart';
 import 'package:autohub/features/orders/application/ports/outbound/photo_storage_port.dart';
 import 'package:autohub/features/orders/domain/active_order.dart';
+import 'package:autohub/features/profile/application/ports/outbound/client_profile_repository_port.dart';
+import 'package:autohub/features/profile/domain/client_profile.dart';
 
 /// Map-backed in-memory fake. `save()` replaces if id exists, appends
 /// otherwise — matches `SharedPrefsActiveOrderRepository` semantics.
@@ -26,6 +30,11 @@ class FakeActiveOrderRepository implements ActiveOrderRepositoryPort {
   @override
   Future<void> save(ActiveOrder order) async {
     _store[order.id] = order;
+  }
+
+  @override
+  Future<void> clear() async {
+    _store.clear();
   }
 }
 
@@ -59,6 +68,11 @@ class FakeVehicleRepository implements VehicleRepositoryPort {
   Future<void> delete(String id) async {
     _items.removeWhere((v) => v.id == id);
   }
+
+  @override
+  Future<void> clear() async {
+    _items.clear();
+  }
 }
 
 class FakeCarCatalogPort implements CarCatalogPort {
@@ -68,6 +82,45 @@ class FakeCarCatalogPort implements CarCatalogPort {
 
   @override
   Future<CarCatalog> load() async => _catalog;
+}
+
+class FakeClientProfileRepository implements ClientProfileRepositoryPort {
+  FakeClientProfileRepository({ClientProfile? seed}) : _stored = seed;
+
+  ClientProfile? _stored;
+
+  @override
+  Future<ClientProfile?> findByPhone(String phone) async =>
+      _stored?.phone == phone ? _stored : null;
+
+  @override
+  Future<void> save(ClientProfile profile) async {
+    _stored = profile;
+  }
+
+  @override
+  Future<void> clear() async {
+    _stored = null;
+  }
+}
+
+class FakeSessionStorage implements SessionStoragePort {
+  FakeSessionStorage({Session? seed}) : _stored = seed;
+
+  Session? _stored;
+
+  @override
+  Future<Session?> read() async => _stored;
+
+  @override
+  Future<void> write(Session session) async {
+    _stored = session;
+  }
+
+  @override
+  Future<void> clear() async {
+    _stored = null;
+  }
 }
 
 class FakePhotoStorage implements PhotoStoragePort {

@@ -35,6 +35,11 @@ class _FakeRepo implements VehicleRepositoryPort {
   Future<void> delete(String id) async {
     _store.remove(id);
   }
+
+  @override
+  Future<void> clear() async {
+    _store.clear();
+  }
 }
 
 Vehicle _v(String id, {String plate = 'AA1234BC'}) => Vehicle(

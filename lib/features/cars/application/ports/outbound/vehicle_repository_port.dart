@@ -9,4 +9,8 @@ abstract interface class VehicleRepositoryPort {
 
   /// Removes the vehicle with [id]. No-op if it doesn't exist.
   Future<void> delete(String id);
+
+  /// Wipes ALL vehicles for the current account. Used by the account-
+  /// deletion flow.
+  Future<void> clear();
 }

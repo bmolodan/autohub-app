@@ -26,6 +26,9 @@ class _FakeRepo implements ActiveOrderRepositoryPort {
   Future<void> save(ActiveOrder order) async {
     store[order.id] = order;
   }
+
+  @override
+  Future<void> clear() async => store.clear();
 }
 
 const _vehicle = Vehicle(

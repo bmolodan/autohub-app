@@ -50,6 +50,11 @@ class SharedPrefsVehicleRepository implements VehicleRepositoryPort {
     await _writeAll(next);
   }
 
+  @override
+  Future<void> clear() async {
+    await _prefs.remove(_key);
+  }
+
   List<Vehicle> _readAll() {
     final raw = _prefs.getString(_key);
     if (raw == null) return [];

@@ -15,6 +15,11 @@ class _FakeRepo implements ClientProfileRepositoryPort {
   Future<void> save(ClientProfile profile) async {
     _stored = profile;
   }
+
+  @override
+  Future<void> clear() async {
+    _stored = null;
+  }
 }
 
 void main() {

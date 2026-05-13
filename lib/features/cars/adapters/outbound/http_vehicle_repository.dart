@@ -43,4 +43,12 @@ class HttpVehicleRepository implements VehicleRepositoryPort {
       rethrow;
     }
   }
+
+  @override
+  Future<void> clear() async {
+    // Server-side account wipe is a backend-of-the-future concern; not
+    // exposed by the current API surface. The account-deletion flow only
+    // runs against the local adapter today.
+    throw UnimplementedError('Server-side vehicle wipe not supported yet');
+  }
 }

@@ -17,6 +17,9 @@ class _FakeRepo implements ActiveOrderRepositoryPort {
   Future<void> save(ActiveOrder order) async {
     _store[order.id] = order;
   }
+
+  @override
+  Future<void> clear() async => _store.clear();
 }
 
 ActiveOrder _o(String id) => ActiveOrder(

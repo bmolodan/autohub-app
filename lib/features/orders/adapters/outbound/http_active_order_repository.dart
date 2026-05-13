@@ -32,4 +32,10 @@ class HttpActiveOrderRepository implements ActiveOrderRepositoryPort {
   Future<void> save(ActiveOrder order) async {
     await _dio.post<void>('/orders', data: activeOrderToMap(order));
   }
+
+  @override
+  Future<void> clear() async {
+    // Server-side account wipe not implemented in the current API surface.
+    throw UnimplementedError('Server-side order wipe not supported yet');
+  }
 }

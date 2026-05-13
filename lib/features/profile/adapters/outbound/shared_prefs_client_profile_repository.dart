@@ -32,4 +32,9 @@ class SharedPrefsClientProfileRepository
   Future<void> save(ClientProfile profile) async {
     await _prefs.setString(_key, encodeClientProfile(profile));
   }
+
+  @override
+  Future<void> clear() async {
+    await _prefs.remove(_key);
+  }
 }

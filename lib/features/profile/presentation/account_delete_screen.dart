@@ -9,7 +9,7 @@ import '../../../core/theme/app_sizes.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_typography.dart';
 import '../../../l10n/l10n_extension.dart';
-import '../../auth/composition/auth_providers.dart';
+import '../composition/profile_providers.dart';
 
 /// Mockup 18 — destructive confirm. Signs out; full data wipe is a follow-up.
 class AccountDeleteScreen extends ConsumerWidget {
@@ -92,7 +92,9 @@ class AccountDeleteScreen extends ConsumerWidget {
                   foregroundColor: AppColors.onError,
                 ),
                 onPressed: () async {
-                  await ref.read(authControllerProvider.notifier).signOut();
+                  // Wipe order: photos → orders → vehicles → profile →
+                  // session (router redirect kicks in once session clears).
+                  await ref.read(wipeAccountUseCaseProvider).execute();
                   if (!context.mounted) return;
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(content: Text(l.accountDeleteSuccessSnack)),

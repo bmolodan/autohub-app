@@ -2,10 +2,13 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/storage/shared_prefs_provider.dart';
 import '../../auth/composition/auth_providers.dart';
+import '../../cars/composition/cars_providers.dart';
+import '../../orders/composition/orders_providers.dart';
 import '../adapters/outbound/shared_prefs_client_profile_repository.dart';
 import '../application/ports/outbound/client_profile_repository_port.dart';
 import '../application/use_cases/get_client_profile.dart';
 import '../application/use_cases/save_client_profile.dart';
+import '../application/use_cases/wipe_account.dart';
 import '../domain/client_profile.dart';
 
 /// Storage for the registered client (name, email). Single-tenant for now
@@ -22,6 +25,16 @@ final getClientProfileUseCaseProvider = Provider<GetClientProfileUseCase>(
 
 final saveClientProfileUseCaseProvider = Provider<SaveClientProfileUseCase>(
   (ref) => SaveClientProfileUseCase(ref.watch(clientProfileRepositoryProvider)),
+);
+
+final wipeAccountUseCaseProvider = Provider<WipeAccountUseCase>(
+  (ref) => WipeAccountUseCase(
+    orders: ref.watch(activeOrderRepositoryProvider),
+    vehicles: ref.watch(vehicleRepositoryProvider),
+    profile: ref.watch(clientProfileRepositoryProvider),
+    session: ref.watch(sessionStorageProvider),
+    photos: ref.watch(photoStorageProvider),
+  ),
 );
 
 /// Current client's profile, scoped to the active session's phone.

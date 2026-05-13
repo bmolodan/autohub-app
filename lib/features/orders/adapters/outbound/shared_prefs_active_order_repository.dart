@@ -49,6 +49,11 @@ class SharedPrefsActiveOrderRepository implements ActiveOrderRepositoryPort {
     await _writeAll(current);
   }
 
+  @override
+  Future<void> clear() async {
+    await _prefs.remove(_key);
+  }
+
   List<ActiveOrder> _readAll() {
     final raw = _prefs.getString(_key);
     if (raw == null) return [];
