@@ -38,6 +38,7 @@ Brand palette is a warm-mustard / cream / near-black trio inherited from `nesemo
 | `border.strong` | `#C8C5BD` | Focused input border |
 | `semantic.error` | `#C04545` | Destructive CTA, canceled status badge |
 | `semantic.errorSoft` | `#C04545 @ 10%` | Warning bubble background |
+| `semantic.onError` | `#FFFFFF` | Text on destructive button (account delete) |
 
 **Contrast quick-check** (WCAG AA target: 4.5:1 body, 3:1 large):
 
@@ -51,6 +52,7 @@ Brand palette is a warm-mustard / cream / near-black trio inherited from `nesemo
 | `brand.yellow` on `brand.black` (overline) | 11.5:1 | ✓ AAA |
 | `onBlack` (white) on `brand.black` | 17.4:1 | ✓ AAA |
 | `semantic.error` on `surface.background` | 4.9:1 | ✓ AA |
+| `onError` (white) on `semantic.error` | 5.2:1 | ✓ AA |
 
 ---
 
@@ -200,6 +202,14 @@ Floating, `radius.md`, `brand.black` background, `onBlack` text, `brand.yellow` 
 
 `background` fill, no elevation, selected `text.primary`, unselected `text.disabled`, labels hidden — icons only. Tooltip + semantic label per tab.
 
+### ButtonSpinner
+
+`core/widgets/button_spinner.dart`: inline 16pt CircularProgressIndicator sized for pill CTAs. Use as the `child` of an `ElevatedButton`/`FilledButton` whose `onPressed` is in-flight — replaces the label text without resizing the button. Stroke colour follows the active button foreground (`onYellow` / `onBlack` / `onError`).
+
+### showConfirmDialog
+
+`core/widgets/confirm_dialog.dart`: `Future<bool> showConfirmDialog(context, {required title, body, confirmLabel, cancelLabel, destructive = false})`. Wraps an `AlertDialog` with the project's `radius.xl` + typography defaults. `destructive: true` flips the confirm button to the `error` palette with `onError` foreground. Used by Order cancel + Account delete.
+
 ---
 
 ## 8. Patterns
@@ -247,11 +257,16 @@ Same shape as Empty, but bubble flipped: black background, yellow icon.
 | Item | Reason |
 |---|---|
 | Dark theme | Brand reference is light-first; revisit after launch |
-| Shared-element Hero transitions | Coordination across home card + order detail; cosmetic |
 | Tablet/desktop layouts | Phone-only target; clamp at 480pt is the placeholder |
-| Skeleton loaders | Spinner is sufficient for current network volumes |
 | Custom font face | Inter is the working stand-in; brand custom can swap in `_base()` |
 | Cupertino route transitions | Material slides are the framework default; no project-wide override yet |
+
+**Landed since the previous audit:**
+
+- Shared-element `Hero` on in-progress, pending, and canceled order cards → matching detail blocks.
+- `Skeletonizer` loading shimmer on OrderDetail + History (replaces the previous spinner).
+- ARB-based localization (`uk`, `en`) — `context.l10n` extension wired into every screen.
+- Sentry telemetry (`bootstrapSentry`) — no-op when `SENTRY_DSN` is unset.
 
 ---
 

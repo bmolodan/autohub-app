@@ -1,7 +1,7 @@
 {
   "$schema": "https://design-tokens.github.io/community-group/format/",
   "$description": "NESEMOS AutoHub design tokens. Mirror of lib/core/theme/* — keep in sync with the Dart definitions.",
-  "$version": "1.0.0",
+  "$version": "1.1.0",
 
   "color": {
     "brand": {
@@ -28,6 +28,7 @@
     "semantic": {
       "error":         { "$value": "#C04545", "$description": "Destructive actions, canceled status." },
       "errorSoft":     { "$value": "rgba(192, 69, 69, 0.10)", "$description": "Soft error background (warning bubble)." },
+      "onError":       { "$value": "#FFFFFF", "$description": "Foreground on destructive button (account delete)." },
       "success":       { "$value": "#1D9E75", "$description": "Reserved." },
       "warning":       { "$value": "#E0A040", "$description": "Reserved." }
     },
