@@ -3,11 +3,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../core/router/app_router.dart';
-import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_radii.dart';
 import '../../../../core/theme/app_sizes.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_typography.dart';
+import '../../../../core/theme/brand_colors.dart';
 import '../../../../core/widgets/confirm_dialog.dart';
 import '../../../../core/widgets/stat_card.dart';
 import '../../../../l10n/l10n_extension.dart';
@@ -63,7 +63,7 @@ class CarDetailScreen extends ConsumerWidget {
                 : () => context.push('${AppRoutes.carEdit}/$vehicleId'),
           ),
           IconButton(
-            icon: const Icon(Icons.delete_outline, color: AppColors.error),
+            icon: Icon(Icons.delete_outline, color: context.colors.error),
             tooltip: l.carDetailDeleteSemantics,
             onPressed:
                 async.value == null ? null : () => _confirmDelete(context, ref),
@@ -106,12 +106,12 @@ class _Detail extends StatelessWidget {
             child: Container(
               width: AppSizes.iconBubble,
               height: AppSizes.iconBubble,
-              decoration: const BoxDecoration(
-                color: AppColors.brandYellowSoft,
+              decoration: BoxDecoration(
+                color: context.colors.brandYellowSoft,
                 borderRadius: AppRadii.lgAll,
               ),
-              child: const Icon(Icons.directions_car,
-                  size: AppIconSize.hero, color: AppColors.brandBlack),
+              child: Icon(Icons.directions_car,
+                  size: AppIconSize.hero, color: context.colors.brandBlack),
             ),
           ),
           const SizedBox(height: AppSpacing.md),
@@ -120,7 +120,7 @@ class _Detail extends StatelessWidget {
           const SizedBox(height: AppSpacing.xxs),
           Text('${vehicle.year} · ${vehicle.plate}',
               style: AppTypography.bodyMedium
-                  .copyWith(color: AppColors.textSecondary),
+                  .copyWith(color: context.colors.textSecondary),
               textAlign: TextAlign.center),
           const SizedBox(height: AppSpacing.xl),
           if (vehicle.nextServiceMileageKm != null)
@@ -172,13 +172,13 @@ class _NextServiceBanner extends StatelessWidget {
     final remaining = nextKm - currentKm;
     return Container(
       padding: const EdgeInsets.all(AppSpacing.md),
-      decoration: const BoxDecoration(
-        color: AppColors.brandYellow,
+      decoration: BoxDecoration(
+        color: context.colors.brandYellow,
         borderRadius: AppRadii.lgAll,
       ),
       child: Row(
         children: [
-          const Icon(Icons.event, color: AppColors.brandBlack),
+          Icon(Icons.event, color: context.colors.brandBlack),
           const SizedBox(width: AppSpacing.sm),
           Expanded(
             child: Column(
@@ -186,14 +186,14 @@ class _NextServiceBanner extends StatelessWidget {
               children: [
                 Text(context.l10n.carDetailNextService,
                     style: AppTypography.labelMedium
-                        .copyWith(color: AppColors.brandBlack)),
+                        .copyWith(color: context.colors.brandBlack)),
                 const SizedBox(height: AppSpacing.xxs),
                 Text(
                   remaining > 0
                       ? context.l10n.carDetailDueIn(remaining)
                       : context.l10n.carDetailOverdue,
                   style: AppTypography.titleMedium
-                      .copyWith(color: AppColors.brandBlack),
+                      .copyWith(color: context.colors.brandBlack),
                 ),
               ],
             ),

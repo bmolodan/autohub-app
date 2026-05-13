@@ -3,10 +3,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
-import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_radii.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_typography.dart';
+import '../../../../core/theme/brand_colors.dart';
 import '../../../../core/util/date_format.dart';
 import '../../../../core/widgets/confirm_dialog.dart';
 import '../../../../core/widgets/empty_state.dart';
@@ -88,8 +88,8 @@ class _InProgressBody extends StatelessWidget {
             type: MaterialType.transparency,
             child: Container(
               padding: const EdgeInsets.all(AppSpacing.md),
-              decoration: const BoxDecoration(
-                color: AppColors.brandBlack,
+              decoration: BoxDecoration(
+                color: context.colors.heroSurface,
                 borderRadius: AppRadii.xlAll,
               ),
               child: Column(
@@ -98,16 +98,16 @@ class _InProgressBody extends StatelessWidget {
                   Text(
                     orderStatusLabel(context.l10n, order.status).toUpperCase(),
                     style: AppTypography.overline
-                        .copyWith(color: AppColors.brandYellow),
+                        .copyWith(color: context.colors.brandYellow),
                   ),
                   const SizedBox(height: AppSpacing.xxs),
                   Text(order.title,
                       style: AppTypography.headlineSmall
-                          .copyWith(color: AppColors.onBlack)),
+                          .copyWith(color: context.colors.onBlack)),
                   const SizedBox(height: AppSpacing.xxs),
                   Text(order.vehicleSummary,
                       style: AppTypography.bodySmall
-                          .copyWith(color: AppColors.textDisabled)),
+                          .copyWith(color: context.colors.textDisabled)),
                   const SizedBox(height: AppSpacing.md),
                   Row(
                     children: [
@@ -118,9 +118,9 @@ class _InProgressBody extends StatelessWidget {
                             value: order.progress ?? 0,
                             minHeight: 6,
                             backgroundColor:
-                                AppColors.borderStrong.withValues(alpha: 0.4),
-                            valueColor: const AlwaysStoppedAnimation(
-                                AppColors.brandYellow),
+                                context.colors.borderStrong.withValues(alpha: 0.4),
+                            valueColor: AlwaysStoppedAnimation(
+                                context.colors.brandYellow),
                           ),
                         ),
                       ),
@@ -128,7 +128,7 @@ class _InProgressBody extends StatelessWidget {
                       Text(
                         '~$etaLabel',
                         style: AppTypography.labelMedium
-                            .copyWith(color: AppColors.brandYellow),
+                            .copyWith(color: context.colors.brandYellow),
                       ),
                     ],
                   ),
@@ -140,7 +140,7 @@ class _InProgressBody extends StatelessWidget {
         const SizedBox(height: AppSpacing.lg),
         Text(context.l10n.orderTimelineHeading,
             style: AppTypography.overline
-                .copyWith(color: AppColors.textSecondary)),
+                .copyWith(color: context.colors.textSecondary)),
         const SizedBox(height: AppSpacing.sm),
         _Timeline(entries: order.timeline),
         const SizedBox(height: AppSpacing.lg),
@@ -201,8 +201,8 @@ class _PendingBodyState extends ConsumerState<_PendingBody> {
             type: MaterialType.transparency,
             child: Container(
               padding: const EdgeInsets.all(AppSpacing.md),
-              decoration: const BoxDecoration(
-                color: AppColors.brandYellow,
+              decoration: BoxDecoration(
+                color: context.colors.brandYellow,
                 borderRadius: AppRadii.xlAll,
               ),
               child: Column(
@@ -211,16 +211,16 @@ class _PendingBodyState extends ConsumerState<_PendingBody> {
                   Text(
                     l.orderPendingHeroLabel,
                     style: AppTypography.overline
-                        .copyWith(color: AppColors.brandBlack),
+                        .copyWith(color: context.colors.onYellow),
                   ),
                   const SizedBox(height: AppSpacing.xxs),
                   Text(order.title,
                       style: AppTypography.headlineSmall
-                          .copyWith(color: AppColors.brandBlack)),
+                          .copyWith(color: context.colors.onYellow)),
                   const SizedBox(height: AppSpacing.xxs),
                   Text(order.vehicleSummary,
                       style: AppTypography.bodySmall
-                          .copyWith(color: AppColors.brandBlack)),
+                          .copyWith(color: context.colors.onYellow)),
                 ],
               ),
             ),
@@ -239,14 +239,14 @@ class _PendingBodyState extends ConsumerState<_PendingBody> {
         if (order.timeline.isNotEmpty) ...[
           Text(l.orderJournalHeading,
               style: AppTypography.overline
-                  .copyWith(color: AppColors.textSecondary)),
+                  .copyWith(color: context.colors.textSecondary)),
           const SizedBox(height: AppSpacing.sm),
           _Timeline(entries: order.timeline),
           const SizedBox(height: AppSpacing.lg),
         ],
         OutlinedButton(
           onPressed: _confirmCancel,
-          style: OutlinedButton.styleFrom(foregroundColor: AppColors.error),
+          style: OutlinedButton.styleFrom(foregroundColor: context.colors.error),
           child: Text(l.orderCancelLabel),
         ),
         const SizedBox(height: AppSpacing.lg),
@@ -271,9 +271,9 @@ class _CanceledBody extends StatelessWidget {
             child: Container(
               padding: const EdgeInsets.all(AppSpacing.md),
               decoration: BoxDecoration(
-                color: AppColors.errorSoft,
+                color: context.colors.errorSoft,
                 borderRadius: AppRadii.xlAll,
-                border: Border.all(color: AppColors.error, width: 0.5),
+                border: Border.all(color: context.colors.error, width: 0.5),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -281,14 +281,14 @@ class _CanceledBody extends StatelessWidget {
                   Text(
                     context.l10n.orderCanceledHeroLabel,
                     style:
-                        AppTypography.overline.copyWith(color: AppColors.error),
+                        AppTypography.overline.copyWith(color: context.colors.error),
                   ),
                   const SizedBox(height: AppSpacing.xxs),
                   Text(order.title, style: AppTypography.headlineSmall),
                   const SizedBox(height: AppSpacing.xxs),
                   Text(order.vehicleSummary,
                       style: AppTypography.bodySmall
-                          .copyWith(color: AppColors.textSecondary)),
+                          .copyWith(color: context.colors.textSecondary)),
                 ],
               ),
             ),
@@ -298,7 +298,7 @@ class _CanceledBody extends StatelessWidget {
         if (order.timeline.isNotEmpty) ...[
           Text(context.l10n.orderJournalHeading,
               style: AppTypography.overline
-                  .copyWith(color: AppColors.textSecondary)),
+                  .copyWith(color: context.colors.textSecondary)),
           const SizedBox(height: AppSpacing.sm),
           _Timeline(entries: order.timeline),
         ],
@@ -317,14 +317,14 @@ class _Timeline extends StatelessWidget {
       return Container(
         padding: const EdgeInsets.all(AppSpacing.md),
         decoration: BoxDecoration(
-          color: AppColors.surface,
+          color: context.colors.surface,
           borderRadius: AppRadii.lgAll,
-          border: Border.all(color: AppColors.border, width: 0.5),
+          border: Border.all(color: context.colors.border, width: 0.5),
         ),
         child: Text(
           context.l10n.orderTimelineEmpty,
           style:
-              AppTypography.bodySmall.copyWith(color: AppColors.textSecondary),
+              AppTypography.bodySmall.copyWith(color: context.colors.textSecondary),
         ),
       );
     }
@@ -370,6 +370,9 @@ class _TimelineRow extends StatelessWidget {
               isFirst: isFirst,
               isLast: isLast,
               isCurrent: isCurrent,
+              rail: context.colors.borderStrong,
+              currentDot: context.colors.brandYellow,
+              dot: context.colors.brandBlack,
             ),
           ),
         ),
@@ -386,7 +389,7 @@ class _TimelineRow extends StatelessWidget {
                 Text(
                   stamp,
                   style: AppTypography.bodySmall
-                      .copyWith(color: AppColors.textSecondary),
+                      .copyWith(color: context.colors.textSecondary),
                 ),
               ],
             ),
@@ -404,11 +407,17 @@ class _TimelineRailPainter extends CustomPainter {
     required this.isFirst,
     required this.isLast,
     required this.isCurrent,
+    required this.rail,
+    required this.currentDot,
+    required this.dot,
   });
 
   final bool isFirst;
   final bool isLast;
   final bool isCurrent;
+  final Color rail;
+  final Color currentDot;
+  final Color dot;
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -416,7 +425,7 @@ class _TimelineRailPainter extends CustomPainter {
     const dotRadius = 6.0;
     const dotCenterY = 16.0;
     final line = Paint()
-      ..color = AppColors.borderStrong
+      ..color = rail
       ..strokeWidth = 2
       ..style = PaintingStyle.fill;
 
@@ -441,13 +450,13 @@ class _TimelineRailPainter extends CustomPainter {
     canvas.drawCircle(
       Offset(centerX, dotCenterY),
       dotRadius,
-      Paint()..color = isCurrent ? AppColors.brandYellow : AppColors.brandBlack,
+      Paint()..color = isCurrent ? currentDot : dot,
     );
     canvas.drawCircle(
       Offset(centerX, dotCenterY),
       dotRadius,
       Paint()
-        ..color = AppColors.brandBlack
+        ..color = dot
         ..style = PaintingStyle.stroke
         ..strokeWidth = 2,
     );
@@ -457,7 +466,10 @@ class _TimelineRailPainter extends CustomPainter {
   bool shouldRepaint(_TimelineRailPainter old) =>
       old.isFirst != isFirst ||
       old.isLast != isLast ||
-      old.isCurrent != isCurrent;
+      old.isCurrent != isCurrent ||
+      old.rail != rail ||
+      old.currentDot != currentDot ||
+      old.dot != dot;
 }
 
 /// Generic loading skeleton used while the order is loading — the status is
@@ -479,8 +491,8 @@ class _LoadingSkeleton extends StatelessWidget {
         children: [
           Container(
             padding: const EdgeInsets.all(AppSpacing.md),
-            decoration: const BoxDecoration(
-              color: AppColors.surfaceVariant,
+            decoration: BoxDecoration(
+              color: context.colors.surfaceVariant,
               borderRadius: AppRadii.xlAll,
             ),
             child: Column(

@@ -4,11 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../core/router/app_router.dart';
-import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_radii.dart';
 import '../../../core/theme/app_sizes.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_typography.dart';
+import '../../../core/theme/brand_colors.dart';
 import '../../../l10n/l10n_extension.dart';
 import '../data/service_catalog.dart';
 import 'service_l10n.dart';
@@ -124,8 +124,8 @@ class _ServiceTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final bg = selected ? AppColors.brandYellow : AppColors.surface;
-    final border = selected ? AppColors.brandYellow : AppColors.border;
+    final bg = selected ? context.colors.brandYellow : context.colors.surface;
+    final border = selected ? context.colors.brandYellow : context.colors.border;
 
     return Material(
       color: bg,
@@ -145,7 +145,7 @@ class _ServiceTile extends StatelessWidget {
           child: Row(
             children: [
               Icon(item.icon,
-                  size: AppIconSize.xl, color: AppColors.textPrimary),
+                  size: AppIconSize.xl, color: context.colors.textPrimary),
               const SizedBox(width: AppSpacing.md),
               Expanded(
                 child: Column(
@@ -160,15 +160,15 @@ class _ServiceTile extends StatelessWidget {
                         item.priceFromUah,
                       ),
                       style: AppTypography.bodySmall.copyWith(
-                        color: AppColors.textSecondary,
+                        color: context.colors.textSecondary,
                       ),
                     ),
                   ],
                 ),
               ),
               if (selected)
-                const Icon(Icons.check_circle,
-                    color: AppColors.brandBlack, size: AppIconSize.lg),
+                Icon(Icons.check_circle,
+                    color: context.colors.brandBlack, size: AppIconSize.lg),
             ],
           ),
         ),

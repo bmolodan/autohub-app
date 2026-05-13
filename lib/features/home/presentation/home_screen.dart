@@ -4,10 +4,10 @@ import 'package:go_router/go_router.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
 import '../../../core/router/app_router.dart';
-import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_radii.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_typography.dart';
+import '../../../core/theme/brand_colors.dart';
 import '../../../core/util/date_format.dart';
 import '../../../core/widgets/empty_state.dart';
 import '../../../core/widgets/error_state.dart';
@@ -75,7 +75,7 @@ class HomeScreen extends ConsumerWidget {
             Text(
               context.l10n.homeGreetingPrefix,
               style: AppTypography.bodyMedium
-                  .copyWith(color: AppColors.textSecondary),
+                  .copyWith(color: context.colors.textSecondary),
             ),
             Text(context.l10n.homeUserName,
                 style: AppTypography.headlineMedium),
@@ -189,7 +189,7 @@ class _CanceledArchive extends StatelessWidget {
           subtitle: Text(
             l.homeArchiveCount(orders.length),
             style: AppTypography.bodySmall
-                .copyWith(color: AppColors.textSecondary),
+                .copyWith(color: context.colors.textSecondary),
           ),
           children: [
             for (int i = 0; i < visible.length; i++) ...[
@@ -246,8 +246,11 @@ class _InProgressCard extends StatelessWidget {
         type: MaterialType.transparency,
         child: Container(
           padding: const EdgeInsets.all(AppSpacing.md),
-          decoration: const BoxDecoration(
-            color: AppColors.brandBlack,
+          decoration: BoxDecoration(
+            // heroSurface: dark anchor in both modes (slightly raised in
+            // dark; brandBlack in light) — a brandBlack-on-dark card would
+            // flip light and lose the hero contrast.
+            color: context.colors.heroSurface,
             borderRadius: AppRadii.xlAll,
           ),
           child: Column(
@@ -256,20 +259,20 @@ class _InProgressCard extends StatelessWidget {
               Text(
                 orderStatusLabel(context.l10n, order.status).toUpperCase(),
                 style: AppTypography.overline.copyWith(
-                  color: AppColors.brandYellow,
+                  color: context.colors.brandYellow,
                 ),
               ),
               const SizedBox(height: AppSpacing.xxs),
               Text(
                 order.title,
                 style:
-                    AppTypography.titleLarge.copyWith(color: AppColors.onBlack),
+                    AppTypography.titleLarge.copyWith(color: context.colors.onBlack),
               ),
               const SizedBox(height: AppSpacing.xxs),
               Text(
                 order.vehicleSummary,
                 style: AppTypography.bodySmall
-                    .copyWith(color: AppColors.textDisabled),
+                    .copyWith(color: context.colors.textDisabled),
               ),
               const SizedBox(height: AppSpacing.sm),
               Row(
@@ -281,9 +284,9 @@ class _InProgressCard extends StatelessWidget {
                         value: order.progress ?? 0,
                         minHeight: 4,
                         backgroundColor:
-                            AppColors.borderStrong.withValues(alpha: 0.4),
+                            context.colors.borderStrong.withValues(alpha: 0.4),
                         valueColor:
-                            const AlwaysStoppedAnimation(AppColors.brandYellow),
+                            AlwaysStoppedAnimation(context.colors.brandYellow),
                       ),
                     ),
                   ),
@@ -291,7 +294,7 @@ class _InProgressCard extends StatelessWidget {
                   Text(
                     etaLabel,
                     style: AppTypography.labelMedium.copyWith(
-                      color: AppColors.brandYellow,
+                      color: context.colors.brandYellow,
                     ),
                   ),
                 ],
@@ -317,9 +320,9 @@ class _PendingConfirmationCard extends StatelessWidget {
         child: Container(
           padding: const EdgeInsets.all(AppSpacing.md),
           decoration: BoxDecoration(
-            color: AppColors.surface,
+            color: context.colors.surface,
             borderRadius: AppRadii.lgAll,
-            border: Border.all(color: AppColors.border, width: 0.5),
+            border: Border.all(color: context.colors.border, width: 0.5),
           ),
           child: Row(
             children: [
@@ -334,7 +337,7 @@ class _PendingConfirmationCard extends StatelessWidget {
                   ],
                 ),
               ),
-              const Icon(Icons.chevron_right, color: AppColors.textDisabled),
+              Icon(Icons.chevron_right, color: context.colors.textDisabled),
             ],
           ),
         ),
@@ -356,9 +359,9 @@ class _CanceledCard extends StatelessWidget {
         child: Container(
           padding: const EdgeInsets.all(AppSpacing.md),
           decoration: BoxDecoration(
-            color: AppColors.surfaceVariant,
+            color: context.colors.surfaceVariant,
             borderRadius: AppRadii.lgAll,
-            border: Border.all(color: AppColors.border, width: 0.5),
+            border: Border.all(color: context.colors.border, width: 0.5),
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -366,12 +369,12 @@ class _CanceledCard extends StatelessWidget {
               Text(
                 order.title,
                 style: AppTypography.titleMedium
-                    .copyWith(color: AppColors.textSecondary),
+                    .copyWith(color: context.colors.textSecondary),
               ),
               const SizedBox(height: AppSpacing.xxs),
               Text(
                 orderStatusLabel(context.l10n, order.status),
-                style: AppTypography.bodySmall.copyWith(color: AppColors.error),
+                style: AppTypography.bodySmall.copyWith(color: context.colors.error),
               ),
             ],
           ),

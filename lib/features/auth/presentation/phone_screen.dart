@@ -5,10 +5,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../core/router/app_router.dart';
-import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_radii.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_typography.dart';
+import '../../../core/theme/brand_colors.dart';
 import '../../../core/widgets/button_spinner.dart';
 import '../../../l10n/l10n_extension.dart';
 import '../composition/auth_providers.dart';
@@ -88,14 +88,14 @@ class _PhoneScreenState extends ConsumerState<PhoneScreen> {
               Text(
                 context.l10n.phoneInstruction,
                 style: AppTypography.bodyMedium
-                    .copyWith(color: AppColors.textSecondary),
+                    .copyWith(color: context.colors.textSecondary),
               ),
               const SizedBox(height: AppSpacing.xl),
               Container(
                 padding:
                     const EdgeInsets.symmetric(horizontal: AppSpacing.inputH),
-                decoration: const BoxDecoration(
-                  color: AppColors.surface,
+                decoration: BoxDecoration(
+                  color: context.colors.surface,
                   borderRadius: AppRadii.mdAll,
                 ),
                 child: Row(
@@ -103,7 +103,7 @@ class _PhoneScreenState extends ConsumerState<PhoneScreen> {
                     Text(
                       '+380',
                       style: AppTypography.titleMedium
-                          .copyWith(color: AppColors.textTertiary),
+                          .copyWith(color: context.colors.textTertiary),
                     ),
                     const SizedBox(width: AppSpacing.sm),
                     Expanded(
@@ -137,7 +137,7 @@ class _PhoneScreenState extends ConsumerState<PhoneScreen> {
                   child: Text(
                     context.l10n.phoneDevHint,
                     style: AppTypography.labelSmall.copyWith(
-                      color: AppColors.textTertiary,
+                      color: context.colors.textTertiary,
                     ),
                   ),
                 ),
@@ -158,19 +158,19 @@ class _PhoneScreenState extends ConsumerState<PhoneScreen> {
                         alignment: Alignment.center,
                         decoration: BoxDecoration(
                           color: _consent
-                              ? AppColors.brandYellow
+                              ? context.colors.brandYellow
                               : Colors.transparent,
                           borderRadius: AppRadii.xsAll,
                           border: Border.all(
                             color: _consent
-                                ? AppColors.brandYellow
-                                : AppColors.borderStrong,
+                                ? context.colors.brandYellow
+                                : context.colors.borderStrong,
                             width: 1.5,
                           ),
                         ),
                         child: _consent
-                            ? const Icon(Icons.check,
-                                size: 16, color: AppColors.brandBlack)
+                            ? Icon(Icons.check,
+                                size: 16, color: context.colors.brandBlack)
                             : null,
                       ),
                       const SizedBox(width: AppSpacing.sm),
@@ -238,13 +238,23 @@ class _BrandPin extends StatelessWidget {
       child: SizedBox(
         width: 40,
         height: 50,
-        child: CustomPaint(painter: _PinPainter()),
+        child: CustomPaint(
+          painter: _PinPainter(
+            body: context.colors.brandBlack,
+            dot: context.colors.brandYellow,
+          ),
+        ),
       ),
     );
   }
 }
 
 class _PinPainter extends CustomPainter {
+  const _PinPainter({required this.body, required this.dot});
+
+  final Color body;
+  final Color dot;
+
   @override
   void paint(Canvas canvas, Size size) {
     final w = size.width;
@@ -257,15 +267,15 @@ class _PinPainter extends CustomPainter {
           radius: Radius.circular(w / 2), clockwise: true)
       ..quadraticBezierTo(w, h * 0.65, w / 2, h)
       ..close();
-    canvas.drawPath(pinPath, Paint()..color = AppColors.brandBlack);
+    canvas.drawPath(pinPath, Paint()..color = body);
 
     canvas.drawCircle(
       Offset(w / 2, w / 2),
       w * 0.22,
-      Paint()..color = AppColors.brandYellow,
+      Paint()..color = dot,
     );
   }
 
   @override
-  bool shouldRepaint(_) => false;
+  bool shouldRepaint(_PinPainter old) => old.body != body || old.dot != dot;
 }

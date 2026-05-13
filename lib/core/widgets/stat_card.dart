@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
-import '../theme/app_colors.dart';
 import '../theme/app_radii.dart';
 import '../theme/app_spacing.dart';
 import '../theme/app_typography.dart';
+import '../theme/brand_colors.dart';
 
 /// Surface card with a muted label + emphasized value.
 /// [Axis.horizontal] puts label on the left, value on the right.
@@ -23,15 +23,15 @@ class StatCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final labelStyle =
-        AppTypography.bodySmall.copyWith(color: AppColors.textSecondary);
+        AppTypography.bodySmall.copyWith(color: context.colors.textSecondary);
     final valueStyle = AppTypography.titleSmall;
 
     return Container(
       padding: const EdgeInsets.all(AppSpacing.md),
       decoration: BoxDecoration(
-        color: AppColors.surface,
+        color: context.colors.surface,
         borderRadius: AppRadii.lgAll,
-        border: Border.all(color: AppColors.border, width: 0.5),
+        border: Border.all(color: context.colors.border, width: 0.5),
       ),
       child: switch (axis) {
         Axis.horizontal => Row(

@@ -4,11 +4,11 @@ import 'package:go_router/go_router.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
 import '../../../../core/router/app_router.dart';
-import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_radii.dart';
 import '../../../../core/theme/app_sizes.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_typography.dart';
+import '../../../../core/theme/brand_colors.dart';
 import '../../../../l10n/l10n_extension.dart';
 import '../../composition/cars_providers.dart';
 import '../../domain/vehicle.dart';
@@ -75,7 +75,7 @@ class _VehicleCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Material(
-      color: AppColors.surface,
+      color: context.colors.surface,
       borderRadius: AppRadii.lgAll,
       child: InkWell(
         borderRadius: AppRadii.lgAll,
@@ -84,19 +84,19 @@ class _VehicleCard extends StatelessWidget {
           padding: const EdgeInsets.all(AppSpacing.md),
           decoration: BoxDecoration(
             borderRadius: AppRadii.lgAll,
-            border: Border.all(color: AppColors.border, width: 0.5),
+            border: Border.all(color: context.colors.border, width: 0.5),
           ),
           child: Row(
             children: [
               Container(
                 width: AppSizes.avatar,
                 height: AppSizes.avatar,
-                decoration: const BoxDecoration(
-                  color: AppColors.brandYellowSoft,
+                decoration: BoxDecoration(
+                  color: context.colors.brandYellowSoft,
                   borderRadius: AppRadii.mdAll,
                 ),
-                child: const Icon(Icons.directions_car,
-                    color: AppColors.brandBlack),
+                child: Icon(Icons.directions_car,
+                    color: context.colors.brandBlack),
               ),
               const SizedBox(width: AppSpacing.md),
               Expanded(
@@ -109,12 +109,12 @@ class _VehicleCard extends StatelessWidget {
                     Text(
                       '${vehicle.year} · ${vehicle.plate}',
                       style: AppTypography.bodySmall
-                          .copyWith(color: AppColors.textSecondary),
+                          .copyWith(color: context.colors.textSecondary),
                     ),
                   ],
                 ),
               ),
-              const Icon(Icons.chevron_right, color: AppColors.textDisabled),
+              Icon(Icons.chevron_right, color: context.colors.textDisabled),
             ],
           ),
         ),

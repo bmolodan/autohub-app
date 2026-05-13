@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
-import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_radii.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_typography.dart';
+import '../../../../core/theme/brand_colors.dart';
 import '../../../../core/widgets/empty_state.dart';
 import '../../../../core/widgets/error_state.dart';
 import '../../../../l10n/generated/app_localizations.dart';
@@ -82,7 +82,7 @@ class _HistoryView extends StatelessWidget {
         Text(
           context.l10n.historyTotalLabel,
           style:
-              AppTypography.bodySmall.copyWith(color: AppColors.textSecondary),
+              AppTypography.bodySmall.copyWith(color: context.colors.textSecondary),
         ),
         const SizedBox(height: AppSpacing.xxs),
         Text('${output.totalUah} ₴', style: AppTypography.headlineLarge),
@@ -111,13 +111,13 @@ class _VehicleChip extends StatelessWidget {
           horizontal: AppSpacing.md,
           vertical: AppSpacing.xs,
         ),
-        decoration: const BoxDecoration(
-          color: AppColors.brandYellow,
+        decoration: BoxDecoration(
+          color: context.colors.brandYellow,
           borderRadius: AppRadii.pillAll,
         ),
         child: Text(label,
             style:
-                AppTypography.labelMedium.copyWith(color: AppColors.onYellow)),
+                AppTypography.labelMedium.copyWith(color: context.colors.onYellow)),
       ),
     );
   }
@@ -135,7 +135,7 @@ class _MonthHeader extends StatelessWidget {
       padding: const EdgeInsets.only(bottom: AppSpacing.xxs),
       child: Text(
         '$label $year',
-        style: AppTypography.overline.copyWith(color: AppColors.textSecondary),
+        style: AppTypography.overline.copyWith(color: context.colors.textSecondary),
       ),
     );
   }
@@ -154,9 +154,9 @@ class _RecordTile extends StatelessWidget {
         vertical: AppSpacing.md,
       ),
       decoration: BoxDecoration(
-        color: AppColors.surface,
+        color: context.colors.surface,
         borderRadius: AppRadii.lgAll,
-        border: Border.all(color: AppColors.border, width: 0.5),
+        border: Border.all(color: context.colors.border, width: 0.5),
       ),
       child: Row(
         children: [
@@ -169,7 +169,7 @@ class _RecordTile extends StatelessWidget {
                 Text(
                   '${record.completedAt.day} ${_monthName(context.l10n, record.completedAt.month).toLowerCase()}',
                   style: AppTypography.bodySmall
-                      .copyWith(color: AppColors.textSecondary),
+                      .copyWith(color: context.colors.textSecondary),
                 ),
               ],
             ),
@@ -200,9 +200,9 @@ class _HistorySkeleton extends StatelessWidget {
           padding: const EdgeInsets.symmetric(
               horizontal: AppSpacing.md, vertical: AppSpacing.md),
           decoration: BoxDecoration(
-            color: AppColors.surface,
+            color: context.colors.surface,
             borderRadius: AppRadii.lgAll,
-            border: Border.all(color: AppColors.border, width: 0.5),
+            border: Border.all(color: context.colors.border, width: 0.5),
           ),
           child: Row(
             children: [
@@ -215,7 +215,7 @@ class _HistorySkeleton extends StatelessWidget {
                     const SizedBox(height: AppSpacing.xxs),
                     Text('Jan 1 · 0 km',
                         style: AppTypography.bodySmall
-                            .copyWith(color: AppColors.textSecondary)),
+                            .copyWith(color: context.colors.textSecondary)),
                   ],
                 ),
               ),

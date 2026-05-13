@@ -3,11 +3,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../core/router/app_router.dart';
-import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_radii.dart';
 import '../../../core/theme/app_sizes.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_typography.dart';
+import '../../../core/theme/brand_colors.dart';
 import '../../../l10n/l10n_extension.dart';
 import '../../auth/composition/auth_providers.dart';
 import '../../cars/composition/cars_providers.dart';
@@ -52,7 +52,7 @@ class ProfileScreen extends ConsumerWidget {
             Text(
               l.profileMyCars,
               style: AppTypography.overline
-                  .copyWith(color: AppColors.textSecondary),
+                  .copyWith(color: context.colors.textSecondary),
             ),
             const SizedBox(height: AppSpacing.sm),
             async.when(
@@ -103,7 +103,7 @@ class ProfileScreen extends ConsumerWidget {
             const SizedBox(height: AppSpacing.sm),
             TextButton(
               onPressed: () => context.push(AppRoutes.profileAccountDelete),
-              style: TextButton.styleFrom(foregroundColor: AppColors.error),
+              style: TextButton.styleFrom(foregroundColor: context.colors.error),
               child: Text(l.profileDeleteAccount),
             ),
             const SizedBox(height: AppSpacing.lg),
@@ -136,9 +136,9 @@ class _UserHeader extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(AppSpacing.md),
       decoration: BoxDecoration(
-        color: AppColors.surface,
+        color: context.colors.surface,
         borderRadius: AppRadii.lgAll,
-        border: Border.all(color: AppColors.border, width: 0.5),
+        border: Border.all(color: context.colors.border, width: 0.5),
       ),
       child: Row(
         children: [
@@ -151,14 +151,14 @@ class _UserHeader extends StatelessWidget {
                 Text(
                   phone,
                   style: AppTypography.bodySmall
-                      .copyWith(color: AppColors.textSecondary),
+                      .copyWith(color: context.colors.textSecondary),
                 ),
                 if (email != null && email!.isNotEmpty) ...[
                   const SizedBox(height: AppSpacing.xxs),
                   Text(
                     email!,
                     style: AppTypography.bodySmall
-                        .copyWith(color: AppColors.textSecondary),
+                        .copyWith(color: context.colors.textSecondary),
                   ),
                 ],
               ],
@@ -170,8 +170,8 @@ class _UserHeader extends StatelessWidget {
             child: Container(
               width: AppSizes.avatar,
               height: AppSizes.avatar,
-              decoration: const BoxDecoration(
-                color: AppColors.brandBlack,
+              decoration: BoxDecoration(
+                color: context.colors.brandBlack,
                 shape: BoxShape.circle,
               ),
               alignment: Alignment.center,
@@ -179,7 +179,7 @@ class _UserHeader extends StatelessWidget {
                 child: Text(
                   initials,
                   style: AppTypography.titleMedium
-                      .copyWith(color: AppColors.brandYellow),
+                      .copyWith(color: context.colors.brandYellow),
                 ),
               ),
             ),
@@ -203,9 +203,9 @@ class _VehicleSummary extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: AppSpacing.sm),
       padding: const EdgeInsets.all(AppSpacing.md),
       decoration: BoxDecoration(
-        color: AppColors.surface,
+        color: context.colors.surface,
         borderRadius: AppRadii.lgAll,
-        border: Border.all(color: AppColors.border, width: 0.5),
+        border: Border.all(color: context.colors.border, width: 0.5),
       ),
       child: Row(
         children: [
@@ -219,7 +219,7 @@ class _VehicleSummary extends StatelessWidget {
                 Text(
                   '${vehicle.year} · ${vehicle.plate}',
                   style: AppTypography.bodySmall
-                      .copyWith(color: AppColors.textSecondary),
+                      .copyWith(color: context.colors.textSecondary),
                 ),
               ],
             ),
@@ -230,14 +230,14 @@ class _VehicleSummary extends StatelessWidget {
                 horizontal: AppSpacing.sm,
                 vertical: AppSpacing.xxs,
               ),
-              decoration: const BoxDecoration(
-                color: AppColors.brandYellow,
+              decoration: BoxDecoration(
+                color: context.colors.brandYellow,
                 borderRadius: AppRadii.pillAll,
               ),
               child: Text(
                 context.l10n.profileTOLeftPill(remaining),
                 style: AppTypography.labelSmall
-                    .copyWith(color: AppColors.onYellow),
+                    .copyWith(color: context.colors.onYellow),
               ),
             ),
         ],
@@ -265,7 +265,7 @@ class _SettingsRow extends StatelessWidget {
       button: true,
       label: trailing == null ? label : '$label, $trailing',
       child: Material(
-        color: AppColors.surface,
+        color: context.colors.surface,
         child: InkWell(
           onTap: onTap,
           child: Container(
@@ -273,14 +273,14 @@ class _SettingsRow extends StatelessWidget {
               horizontal: AppSpacing.md,
               vertical: AppSpacing.md,
             ),
-            decoration: const BoxDecoration(
+            decoration: BoxDecoration(
               border: Border(
-                bottom: BorderSide(color: AppColors.border, width: 0.5),
+                bottom: BorderSide(color: context.colors.border, width: 0.5),
               ),
             ),
             child: Row(
               children: [
-                Icon(icon, size: AppIconSize.lg, color: AppColors.textPrimary),
+                Icon(icon, size: AppIconSize.lg, color: context.colors.textPrimary),
                 const SizedBox(width: AppSpacing.md),
                 Expanded(
                   child: Text(label, style: AppTypography.titleSmall),
@@ -289,11 +289,11 @@ class _SettingsRow extends StatelessWidget {
                   Text(
                     trailing!,
                     style: AppTypography.labelMedium
-                        .copyWith(color: AppColors.textSecondary),
+                        .copyWith(color: context.colors.textSecondary),
                   ),
                   const SizedBox(width: AppSpacing.xs),
                 ],
-                const Icon(Icons.chevron_right, color: AppColors.textDisabled),
+                Icon(Icons.chevron_right, color: context.colors.textDisabled),
               ],
             ),
           ),

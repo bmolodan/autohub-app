@@ -3,10 +3,10 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_sizes.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_typography.dart';
+import '../../../../core/theme/brand_colors.dart';
 import '../../../../core/util/ua_plate_formatter.dart';
 import '../../../../core/util/validators.dart';
 import '../../../../core/widgets/button_spinner.dart';
@@ -226,7 +226,7 @@ class _AddCarScreenState extends ConsumerState<AddCarScreen> {
             Text(
               l.addCarSubtitle,
               style: AppTypography.bodySmall
-                  .copyWith(color: AppColors.textSecondary),
+                  .copyWith(color: context.colors.textSecondary),
             ),
             const SizedBox(height: AppSpacing.md),
             TextFormField(
@@ -250,8 +250,8 @@ class _AddCarScreenState extends ConsumerState<AddCarScreen> {
                     validator: validateMake,
                     decoration: InputDecoration(
                       labelText: l.addCarFieldMake,
-                      suffixIcon: const Icon(Icons.arrow_drop_down,
-                          color: AppColors.textSecondary),
+                      suffixIcon: Icon(Icons.arrow_drop_down,
+                          color: context.colors.textSecondary),
                     ),
                   ),
                 ),
@@ -264,8 +264,8 @@ class _AddCarScreenState extends ConsumerState<AddCarScreen> {
                     validator: validateModel,
                     decoration: InputDecoration(
                       labelText: l.addCarFieldModel,
-                      suffixIcon: const Icon(Icons.arrow_drop_down,
-                          color: AppColors.textSecondary),
+                      suffixIcon: Icon(Icons.arrow_drop_down,
+                          color: context.colors.textSecondary),
                     ),
                   ),
                 ),

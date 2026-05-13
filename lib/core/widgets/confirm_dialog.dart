@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../l10n/l10n_extension.dart';
-import '../theme/app_colors.dart';
+import '../theme/brand_colors.dart';
 
 /// Shows a Material confirm dialog with localized No + destructive Confirm
 /// buttons. Returns `true` when the user confirms, `false`/null otherwise.
@@ -30,7 +30,7 @@ Future<bool> showConfirmDialog(
         TextButton(
           onPressed: () => Navigator.of(ctx).pop(true),
           style: destructive
-              ? TextButton.styleFrom(foregroundColor: AppColors.error)
+              ? TextButton.styleFrom(foregroundColor: context.colors.error)
               : null,
           child: Text(confirmLabel),
         ),

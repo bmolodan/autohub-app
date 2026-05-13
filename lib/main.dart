@@ -107,6 +107,8 @@ class AutoHubApp extends ConsumerWidget {
       title: 'AutoHub',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.light(),
+      darkTheme: AppTheme.dark(),
+      themeMode: ThemeMode.system,
       routerConfig: router,
       locale: const Locale('uk'),
       localizationsDelegates: AppLocalizations.localizationsDelegates,

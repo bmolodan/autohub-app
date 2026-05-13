@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 
-import '../theme/app_colors.dart';
 import '../theme/app_radii.dart';
 import '../theme/app_sizes.dart';
 import '../theme/app_spacing.dart';
 import '../theme/app_typography.dart';
+import '../theme/brand_colors.dart';
 
 /// Centered illustration + title + subtitle + optional CTA.
 /// Mockup 16 — "Поки тиша" empty state.
@@ -36,12 +36,12 @@ class EmptyState extends StatelessWidget {
             child: Container(
               width: 88,
               height: 88,
-              decoration: const BoxDecoration(
-                color: AppColors.brandYellowSoft,
+              decoration: BoxDecoration(
+                color: context.colors.brandYellowSoft,
                 borderRadius: AppRadii.pillAll,
               ),
               child: Icon(icon,
-                  size: AppIconSize.hero, color: AppColors.brandBlack),
+                  size: AppIconSize.hero, color: context.colors.brandBlack),
             ),
           ),
           const SizedBox(height: AppSpacing.lg),
@@ -51,7 +51,7 @@ class EmptyState extends StatelessWidget {
           Text(
             subtitle,
             style: AppTypography.bodyMedium
-                .copyWith(color: AppColors.textSecondary),
+                .copyWith(color: context.colors.textSecondary),
             textAlign: TextAlign.center,
           ),
           if (ctaLabel != null) ...[

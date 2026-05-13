@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../core/router/app_router.dart';
-import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_radii.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_typography.dart';
+import '../../../core/theme/brand_colors.dart';
 import '../../../l10n/l10n_extension.dart';
 
 /// Three-slide intro shown only on first launch.
@@ -36,14 +36,14 @@ class OnboardingScreen extends StatelessWidget {
               // Hero illustration placeholder (replace with photo / Lottie later)
               Container(
                 height: 220,
-                decoration: const BoxDecoration(
-                  color: AppColors.brandBlack,
+                decoration: BoxDecoration(
+                  color: context.colors.brandBlack,
                   borderRadius: AppRadii.xlAll,
                 ),
-                child: const Center(
+                child: Center(
                   child: Icon(
                     Icons.calendar_month_outlined,
-                    color: AppColors.brandYellow,
+                    color: context.colors.brandYellow,
                     size: 64,
                   ),
                 ),
@@ -59,7 +59,7 @@ class OnboardingScreen extends StatelessWidget {
               Text(
                 context.l10n.onboardingSubtitle,
                 style: AppTypography.bodyLarge.copyWith(
-                  color: AppColors.textSecondary,
+                  color: context.colors.textSecondary,
                 ),
               ),
 
@@ -101,7 +101,7 @@ class _Dot extends StatelessWidget {
         width: active ? 24 : 5,
         height: 5,
         decoration: BoxDecoration(
-          color: active ? AppColors.brandBlack : AppColors.borderStrong,
+          color: active ? context.colors.brandBlack : context.colors.borderStrong,
           borderRadius: AppRadii.pillAll,
         ),
       );

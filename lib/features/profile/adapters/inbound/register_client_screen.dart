@@ -5,9 +5,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../core/router/app_router.dart';
-import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_typography.dart';
+import '../../../../core/theme/brand_colors.dart';
 import '../../../../core/util/validators.dart';
 import '../../../../core/widgets/button_spinner.dart';
 import '../../../../l10n/l10n_extension.dart';
@@ -124,7 +124,7 @@ class _RegisterClientScreenState extends ConsumerState<RegisterClientScreen> {
                 Text(
                   l.registerSubtitle,
                   style: AppTypography.bodySmall
-                      .copyWith(color: AppColors.textSecondary),
+                      .copyWith(color: context.colors.textSecondary),
                 ),
                 const SizedBox(height: AppSpacing.lg),
                 TextFormField(

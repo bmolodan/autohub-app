@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 
 import '../../l10n/l10n_extension.dart';
-import '../theme/app_colors.dart';
 import '../theme/app_radii.dart';
 import '../theme/app_sizes.dart';
 import '../theme/app_spacing.dart';
 import '../theme/app_typography.dart';
+import '../theme/brand_colors.dart';
 
 /// Connection / error screen — mockup 17 "Немає звʼязку".
 class ErrorState extends StatelessWidget {
@@ -35,12 +35,12 @@ class ErrorState extends StatelessWidget {
             child: Container(
               width: 88,
               height: 88,
-              decoration: const BoxDecoration(
-                color: AppColors.brandBlack,
+              decoration: BoxDecoration(
+                color: context.colors.brandBlack,
                 borderRadius: AppRadii.pillAll,
               ),
-              child: const Icon(Icons.wifi_off,
-                  size: AppIconSize.hero, color: AppColors.brandYellow),
+              child: Icon(Icons.wifi_off,
+                  size: AppIconSize.hero, color: context.colors.brandYellow),
             ),
           ),
           const SizedBox(height: AppSpacing.lg),
@@ -50,7 +50,7 @@ class ErrorState extends StatelessWidget {
           Text(
             subtitle ?? l.stateOfflineSubtitle,
             style: AppTypography.bodyMedium
-                .copyWith(color: AppColors.textSecondary),
+                .copyWith(color: context.colors.textSecondary),
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: AppSpacing.xl),

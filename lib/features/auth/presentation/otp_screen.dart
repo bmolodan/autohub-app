@@ -6,11 +6,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../core/router/app_router.dart';
-import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_radii.dart';
 import '../../../core/theme/app_sizes.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_typography.dart';
+import '../../../core/theme/brand_colors.dart';
 import '../../../core/widgets/button_spinner.dart';
 import '../../../l10n/l10n_extension.dart';
 import '../application/ports/outbound/otp_gateway_port.dart';
@@ -120,7 +120,7 @@ class _OtpScreenState extends ConsumerState<OtpScreen> {
               const SizedBox(height: AppSpacing.xs),
               Text(_maskedPhone(),
                   style: AppTypography.bodyMedium
-                      .copyWith(color: AppColors.textSecondary)),
+                      .copyWith(color: context.colors.textSecondary)),
               const SizedBox(height: AppSpacing.xxl),
               GestureDetector(
                 onTap: () => FocusScope.of(context).requestFocus(_focus),
@@ -135,13 +135,13 @@ class _OtpScreenState extends ConsumerState<OtpScreen> {
                             EdgeInsets.only(right: i < 3 ? AppSpacing.xs : 0),
                         height: AppSizes.otpSlotHeight,
                         decoration: BoxDecoration(
-                          color: AppColors.surface,
+                          color: context.colors.surface,
                           borderRadius: AppRadii.mdAll,
                           border: hasError
-                              ? Border.all(color: AppColors.error, width: 2)
+                              ? Border.all(color: context.colors.error, width: 2)
                               : isCurrent
                                   ? Border.all(
-                                      color: AppColors.brandYellow, width: 2)
+                                      color: context.colors.brandYellow, width: 2)
                                   : null,
                         ),
                         alignment: Alignment.center,
@@ -174,7 +174,7 @@ class _OtpScreenState extends ConsumerState<OtpScreen> {
               if (_error != null)
                 Text(_error!,
                     style: AppTypography.bodySmall
-                        .copyWith(color: AppColors.error)),
+                        .copyWith(color: context.colors.error)),
               const SizedBox(height: AppSpacing.md),
               Center(
                 child: _secondsLeft > 0

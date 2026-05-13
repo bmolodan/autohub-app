@@ -6,11 +6,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../core/router/app_router.dart';
-import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_radii.dart';
 import '../../../core/theme/app_sizes.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_typography.dart';
+import '../../../core/theme/brand_colors.dart';
 import '../../../core/widgets/button_spinner.dart';
 import '../../../l10n/l10n_extension.dart';
 import '../../cars/composition/cars_providers.dart';
@@ -164,7 +164,7 @@ class _ProblemFormScreenState extends ConsumerState<ProblemFormScreen> {
                   trailing: v.id == _selectedVehicleId ||
                           (_selectedVehicleId == null &&
                               v.id == vehicles.first.id)
-                      ? const Icon(Icons.check, color: AppColors.brandBlack)
+                      ? Icon(Icons.check, color: ctx.colors.brandBlack)
                       : null,
                   onTap: () => Navigator.of(ctx).pop(v.id),
                 ),
@@ -254,7 +254,7 @@ class _ProblemFormScreenState extends ConsumerState<ProblemFormScreen> {
               Text(
                 l.problemSubtitle,
                 style: AppTypography.bodySmall
-                    .copyWith(color: AppColors.textSecondary),
+                    .copyWith(color: context.colors.textSecondary),
               ),
               const SizedBox(height: AppSpacing.md),
               TextField(
@@ -273,7 +273,7 @@ class _ProblemFormScreenState extends ConsumerState<ProblemFormScreen> {
               Text(
                 l.problemPhotosCount(_photos.length, _maxPhotos),
                 style: AppTypography.labelMedium
-                    .copyWith(color: AppColors.textSecondary),
+                    .copyWith(color: context.colors.textSecondary),
               ),
               const SizedBox(height: AppSpacing.sm),
               Row(
@@ -366,11 +366,11 @@ class _PhotoSlot extends StatelessWidget {
                       Image.file(
                         File(photo!.localPath),
                         fit: BoxFit.cover,
-                        errorBuilder: (_, __, ___) => const ColoredBox(
-                          color: AppColors.surfaceVariant,
+                        errorBuilder: (_, __, ___) => ColoredBox(
+                          color: context.colors.surfaceVariant,
                           child: Icon(
                             Icons.broken_image_outlined,
-                            color: AppColors.textSecondary,
+                            color: context.colors.textSecondary,
                           ),
                         ),
                       ),
@@ -380,27 +380,27 @@ class _PhotoSlot extends StatelessWidget {
                         child: Container(
                           width: 24,
                           height: 24,
-                          decoration: const BoxDecoration(
-                            color: AppColors.brandBlack,
+                          decoration: BoxDecoration(
+                            color: context.colors.brandBlack,
                             shape: BoxShape.circle,
                           ),
-                          child: const Icon(Icons.close,
-                              size: 14, color: AppColors.onBlack),
+                          child: Icon(Icons.close,
+                              size: 14, color: context.colors.onBlack),
                         ),
                       ),
                     ],
                   )
                 : DecoratedBox(
                     decoration: BoxDecoration(
-                      color: AppColors.surface,
+                      color: context.colors.surface,
                       borderRadius: AppRadii.mdAll,
                       border: Border.all(
-                        color: AppColors.borderStrong,
+                        color: context.colors.borderStrong,
                         width: 0.5,
                       ),
                     ),
                     child:
-                        const Icon(Icons.add, color: AppColors.textSecondary),
+                        Icon(Icons.add, color: context.colors.textSecondary),
                   ),
           ),
         ),
@@ -432,14 +432,14 @@ class _SummaryRow extends StatelessWidget {
             child: Text(
               label,
               style: AppTypography.bodySmall
-                  .copyWith(color: AppColors.textSecondary),
+                  .copyWith(color: context.colors.textSecondary),
             ),
           ),
           Text(value, style: AppTypography.labelMedium),
           if (onTap != null) ...[
             const SizedBox(width: AppSpacing.xs),
-            const Icon(Icons.chevron_right,
-                size: AppIconSize.md, color: AppColors.textDisabled),
+            Icon(Icons.chevron_right,
+                size: AppIconSize.md, color: context.colors.textDisabled),
           ],
         ],
       ),
