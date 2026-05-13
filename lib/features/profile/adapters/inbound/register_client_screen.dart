@@ -11,6 +11,9 @@ import '../../../../core/theme/app_typography.dart';
 import '../../../../l10n/l10n_extension.dart';
 import '../../composition/profile_providers.dart';
 
+/// Pragmatic email regex — RFC-compliant is overkill for a UI nudge.
+final _emailRegex = RegExp(r'^[^@\s]+@[^@\s]+\.[^@\s]+$');
+
 /// First-time onboarding form. Also reused as a profile-edit screen by
 /// passing `editMode: true` — in that case the form prefills from the
 /// current profile and submits with an "updated" snackbar without pushing
@@ -32,8 +35,18 @@ class _RegisterClientScreenState extends ConsumerState<RegisterClientScreen> {
   bool _submitting = false;
   bool _prefilled = false;
 
-  // Pragmatic email regex — RFC-compliant is overkill for a UI nudge.
-  static final _emailRegex = RegExp(r'^[^@\s]+@[^@\s]+\.[^@\s]+$');
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (widget.editMode && !_prefilled) {
+      final current = ref.read(clientProfileControllerProvider).valueOrNull;
+      if (current != null) {
+        _prefilled = true;
+        _name.text = current.name;
+        _email.text = current.email ?? '';
+      }
+    }
+  }
 
   @override
   void dispose() {
@@ -62,10 +75,10 @@ class _RegisterClientScreenState extends ConsumerState<RegisterClientScreen> {
         context.go(AppRoutes.home);
         unawaited(context.push(AppRoutes.carAdd));
       }
-    } on Object catch (e) {
+    } on Object catch (_) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('$e')),
+        SnackBar(content: Text(context.l10n.errorGeneric)),
       );
     } finally {
       if (mounted) setState(() => _submitting = false);
@@ -75,15 +88,6 @@ class _RegisterClientScreenState extends ConsumerState<RegisterClientScreen> {
   @override
   Widget build(BuildContext context) {
     final l = context.l10n;
-
-    if (widget.editMode && !_prefilled) {
-      final current = ref.watch(clientProfileControllerProvider).valueOrNull;
-      if (current != null) {
-        _prefilled = true;
-        _name.text = current.name;
-        _email.text = current.email ?? '';
-      }
-    }
 
     String? validateName(String? v) {
       if (v == null || v.trim().isEmpty) return l.commonRequiredField;

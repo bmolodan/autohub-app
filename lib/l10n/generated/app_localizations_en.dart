@@ -618,7 +618,4 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get profileEditSemantics => 'Edit';
-
-  @override
-  String get profileNoEmail => 'Email not set';
 }

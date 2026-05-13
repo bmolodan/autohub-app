@@ -238,6 +238,5 @@
   "registerEditTitle": "Особисті дані",
   "registerEditSubmit": "Зберегти зміни",
   "registerUpdatedSnack": "Дані оновлено",
-  "profileEditSemantics": "Редагувати",
-  "profileNoEmail": "Email не вказано"
+  "profileEditSemantics": "Редагувати"
 }

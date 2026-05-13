@@ -216,6 +216,5 @@
   "registerEditTitle": "Personal details",
   "registerEditSubmit": "Save changes",
   "registerUpdatedSnack": "Details updated",
-  "profileEditSemantics": "Edit",
-  "profileNoEmail": "Email not set"
+  "profileEditSemantics": "Edit"
 }

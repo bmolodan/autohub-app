@@ -31,7 +31,10 @@ final saveClientProfileUseCaseProvider = Provider<SaveClientProfileUseCase>(
 class ClientProfileController extends AsyncNotifier<ClientProfile?> {
   @override
   Future<ClientProfile?> build() async {
-    final session = await ref.watch(authControllerProvider.future);
+    // Watch the sync state, not the future — this lets us short-circuit on
+    // signed-out without an AsyncLoading window that the router redirect
+    // would have to special-case.
+    final session = ref.watch(authControllerProvider).asData?.value;
     if (session == null) return null;
     return ref.read(getClientProfileUseCaseProvider).execute(session.phone);
   }

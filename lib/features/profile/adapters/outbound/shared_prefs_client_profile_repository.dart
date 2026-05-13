@@ -23,8 +23,14 @@ class SharedPrefsClientProfileRepository
         name: decoded['name'] as String,
         email: decoded['email'] as String?,
       );
-      return stored.phone == phone ? stored : null;
+      if (stored.phone == phone) return stored;
+      // Different user signed in — drop the stale row so PII for the
+      // previous user doesn't linger in plaintext storage.
+      await _prefs.remove(_key);
+      return null;
     } on Object catch (_) {
+      // Corrupt entry — purge so subsequent reads start clean.
+      await _prefs.remove(_key);
       return null;
     }
   }

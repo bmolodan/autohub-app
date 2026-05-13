@@ -1243,12 +1243,6 @@ abstract class AppLocalizations {
   /// In uk, this message translates to:
   /// **'Редагувати'**
   String get profileEditSemantics;
-
-  /// No description provided for @profileNoEmail.
-  ///
-  /// In uk, this message translates to:
-  /// **'Email не вказано'**
-  String get profileNoEmail;
 }
 
 class _AppLocalizationsDelegate

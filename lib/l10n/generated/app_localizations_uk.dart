@@ -620,7 +620,4 @@ class AppLocalizationsUk extends AppLocalizations {
 
   @override
   String get profileEditSemantics => 'Редагувати';
-
-  @override
-  String get profileNoEmail => 'Email не вказано';
 }

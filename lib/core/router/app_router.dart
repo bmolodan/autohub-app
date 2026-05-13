@@ -100,12 +100,6 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       if (session == null && !isPublic) {
         return AppRoutes.onboarding;
       }
-      if (session != null &&
-          (state.matchedLocation == AppRoutes.onboarding ||
-              state.matchedLocation == AppRoutes.phone ||
-              state.matchedLocation == AppRoutes.otp)) {
-        // Defer to the profile-required check below.
-      }
       if (session != null) {
         final profileAsync = ref.read(clientProfileControllerProvider);
         final profile = profileAsync.asData?.value;

@@ -11,10 +11,16 @@ class ClientProfile {
   final String name;
   final String? email;
 
-  ClientProfile copyWith({String? name, String? email}) => ClientProfile(
+  static const Object _keep = Object();
+
+  /// Email is nullable, so the standard `field ?? this.field` pattern can't
+  /// clear it. Pass [email] explicitly as `null` to clear; omit (default
+  /// sentinel) to keep the current value.
+  ClientProfile copyWith({String? name, Object? email = _keep}) =>
+      ClientProfile(
         phone: phone,
         name: name ?? this.name,
-        email: email ?? this.email,
+        email: identical(email, _keep) ? this.email : email as String?,
       );
 
   @override

@@ -23,7 +23,9 @@ class ProfileScreen extends ConsumerWidget {
     final async = ref.watch(vehiclesControllerProvider);
     final session = ref.watch(authControllerProvider).asData?.value;
     final profile = ref.watch(clientProfileControllerProvider).asData?.value;
-    final phone = session?.phone ?? '+380 67 123 45 67';
+    // Session is guaranteed non-null inside the shell (router redirects
+    // unauthenticated users to /onboarding before they can land here).
+    final phone = session?.phone ?? '—';
     final name = profile?.name ?? '';
 
     final l = context.l10n;
