@@ -5,6 +5,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import 'core/router/app_router.dart';
 import 'core/storage/shared_prefs_provider.dart';
+import 'core/telemetry/sentry.dart';
 import 'core/theme/app_colors.dart';
 import 'core/theme/app_radii.dart';
 import 'core/theme/app_spacing.dart';
@@ -17,28 +18,30 @@ Future<void> main() async {
 
   _wireGlobalErrorHandling();
 
-  final prefs = await SharedPreferences.getInstance();
-
-  runApp(
-    ProviderScope(
-      overrides: [
-        sharedPreferencesProvider.overrideWithValue(prefs),
-      ],
-      child: const AutoHubApp(),
-    ),
-  );
+  await bootstrapSentry(runApp: () async {
+    final prefs = await SharedPreferences.getInstance();
+    runApp(
+      ProviderScope(
+        overrides: [
+          sharedPreferencesProvider.overrideWithValue(prefs),
+        ],
+        child: const AutoHubApp(),
+      ),
+    );
+  });
 }
 
 void _wireGlobalErrorHandling() {
   // Framework-thrown errors (build/layout/paint).
   FlutterError.onError = (details) {
     FlutterError.presentError(details);
-    // Hook to Crashlytics/Sentry here when wired.
+    reportError(details.exception, details.stack);
   };
 
   // Platform-thread async errors that don't propagate to the zone.
   PlatformDispatcher.instance.onError = (error, stack) {
     debugPrint('Uncaught platform error: $error\n$stack');
+    reportError(error, stack);
     return true;
   };
 
