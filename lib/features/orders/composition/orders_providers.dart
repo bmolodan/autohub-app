@@ -4,8 +4,10 @@ import '../../../core/storage/shared_prefs_provider.dart';
 import '../../../core/util/clock.dart';
 import '../../../core/util/id_generator.dart';
 import '../adapters/outbound/_seed.dart';
+import '../adapters/outbound/image_picker_photo_storage.dart';
 import '../adapters/outbound/shared_prefs_active_order_repository.dart';
 import '../application/ports/outbound/active_order_repository_port.dart';
+import '../application/ports/outbound/photo_storage_port.dart';
 import '../application/use_cases/cancel_order.dart';
 import '../application/use_cases/create_order.dart';
 import '../application/use_cases/get_active_orders.dart';
@@ -14,6 +16,10 @@ import '../application/use_cases/update_order_progress.dart';
 import '../domain/active_order.dart';
 
 /// Composition root for the orders feature.
+final photoStorageProvider = Provider<PhotoStoragePort>(
+  (ref) => ImagePickerPhotoStorage(clock: ref.watch(clockProvider)),
+);
+
 final activeOrderRepositoryProvider = Provider<ActiveOrderRepositoryPort>(
   (ref) {
     final clock = ref.watch(clockProvider);

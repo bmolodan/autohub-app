@@ -44,12 +44,14 @@ CreateOrderInput _input({
   int servicePriceUah = 1600,
   String description = '',
   Vehicle vehicle = _vehicle,
+  List<OrderPhoto> photos = const [],
 }) =>
     CreateOrderInput(
       serviceTitle: serviceTitle,
       servicePriceUah: servicePriceUah,
       description: description,
       vehicle: vehicle,
+      photos: photos,
     );
 
 void main() {
@@ -98,6 +100,24 @@ void main() {
       final repo = _FakeRepo();
       final created = await _useCase(repo).execute(_input());
       expect(created.id, isNotEmpty);
+    });
+
+    test('attaches photos when provided', () async {
+      final repo = _FakeRepo();
+      final photos = [
+        OrderPhoto(
+          localPath: '/tmp/a.jpg',
+          takenAt: DateTime.utc(2026, 5, 13),
+        ),
+        OrderPhoto(
+          localPath: '/tmp/b.jpg',
+          takenAt: DateTime.utc(2026, 5, 13, 0, 1),
+        ),
+      ];
+
+      final created = await _useCase(repo).execute(_input(photos: photos));
+      expect(created.photos, photos);
+      expect((await repo.findById(created.id))!.photos, photos);
     });
 
     test('generates unique ids on successive calls', () async {

@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -12,7 +13,10 @@ import '../../../core/theme/app_typography.dart';
 import '../../cars/composition/cars_providers.dart';
 import '../../orders/application/use_cases/create_order.dart';
 import '../../orders/composition/orders_providers.dart';
+import '../../orders/domain/order_photo.dart';
 import '../data/service_catalog.dart';
+
+const _maxPhotos = 3;
 
 /// Step 3/3 of booking: describe the problem + attach photos.
 class ProblemFormScreen extends ConsumerStatefulWidget {
@@ -25,8 +29,9 @@ class ProblemFormScreen extends ConsumerStatefulWidget {
 
 class _ProblemFormScreenState extends ConsumerState<ProblemFormScreen> {
   final _descController = TextEditingController();
-  int _photos = 2;
+  final List<OrderPhoto> _photos = [];
   bool _submitting = false;
+  bool _pickingPhoto = false;
 
   @override
   void dispose() {
@@ -36,6 +41,64 @@ class _ProblemFormScreenState extends ConsumerState<ProblemFormScreen> {
 
   ServiceCatalogItem? get _service =>
       serviceCatalog.where((s) => s.id == widget.serviceId).firstOrNull;
+
+  Future<void> _addPhoto() async {
+    if (_pickingPhoto || _photos.length >= _maxPhotos) return;
+    _pickingPhoto = true;
+    final source = await showModalBottomSheet<_PhotoSource>(
+      context: context,
+      builder: (ctx) => SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ListTile(
+              leading: const Icon(Icons.photo_camera_outlined),
+              title: const Text('Камера'),
+              onTap: () => Navigator.of(ctx).pop(_PhotoSource.camera),
+            ),
+            ListTile(
+              leading: const Icon(Icons.photo_library_outlined),
+              title: const Text('Галерея'),
+              onTap: () => Navigator.of(ctx).pop(_PhotoSource.gallery),
+            ),
+            ListTile(
+              leading: const Icon(Icons.close),
+              title: const Text('Скасувати'),
+              onTap: () => Navigator.of(ctx).pop(),
+            ),
+          ],
+        ),
+      ),
+    );
+    if (source == null || !mounted) return;
+
+    final port = ref.read(photoStorageProvider);
+    try {
+      final picked = switch (source) {
+        _PhotoSource.camera => await port.pickFromCamera(),
+        _PhotoSource.gallery => await port.pickFromGallery(),
+      };
+      if (picked == null || !mounted) return;
+      setState(() => _photos.add(picked));
+    } on Object catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Не вдалося додати фото: $e')),
+      );
+    } finally {
+      _pickingPhoto = false;
+    }
+  }
+
+  Future<void> _removePhoto(int index) async {
+    final removed = _photos[index];
+    setState(() => _photos.removeAt(index));
+    try {
+      await ref.read(photoStorageProvider).remove(removed);
+    } on Object catch (_) {
+      // Best-effort delete; ignore I/O failures.
+    }
+  }
 
   Future<void> _submit() async {
     if (_submitting) return;
@@ -59,6 +122,7 @@ class _ProblemFormScreenState extends ConsumerState<ProblemFormScreen> {
               servicePriceUah: service.priceFromUah,
               description: _descController.text.trim(),
               vehicle: vehicles.first,
+              photos: List.unmodifiable(_photos),
             ),
           );
       if (!mounted) return;
@@ -76,6 +140,10 @@ class _ProblemFormScreenState extends ConsumerState<ProblemFormScreen> {
   @override
   Widget build(BuildContext context) {
     final service = _service;
+    final vehicles = ref.watch(vehiclesControllerProvider).value;
+    final vehicleLabel = vehicles == null || vehicles.isEmpty
+        ? '—'
+        : '${vehicles.first.make} ${vehicles.first.model}';
 
     return Scaffold(
       appBar: AppBar(
@@ -109,33 +177,30 @@ class _ProblemFormScreenState extends ConsumerState<ProblemFormScreen> {
               ),
               const SizedBox(height: AppSpacing.lg),
               Text(
-                'Фото ($_photos / 3)',
+                'Фото (${_photos.length} / $_maxPhotos)',
                 style: AppTypography.labelMedium
                     .copyWith(color: AppColors.textSecondary),
               ),
               const SizedBox(height: AppSpacing.sm),
               Row(
                 children: [
-                  for (int i = 0; i < 3; i++) ...[
+                  for (int i = 0; i < _maxPhotos; i++) ...[
                     Expanded(
-                      child: _PhotoSlot(
-                        filled: i < _photos,
-                        onTap: () => setState(() {
-                          if (i < _photos) {
-                            _photos = i;
-                          } else if (_photos < 3) {
-                            _photos++;
-                          }
-                        }),
-                      ),
+                      child: i < _photos.length
+                          ? _PhotoSlot.filled(
+                              photo: _photos[i],
+                              onRemove: () => _removePhoto(i),
+                            )
+                          : _PhotoSlot.empty(onAdd: _addPhoto),
                     ),
-                    if (i < 2) const SizedBox(width: AppSpacing.sm),
+                    if (i < _maxPhotos - 1)
+                      const SizedBox(width: AppSpacing.sm),
                   ],
                 ],
               ),
               const SizedBox(height: AppSpacing.lg),
               _SummaryRow(label: 'Послуга', value: service?.title ?? '—'),
-              _SummaryRow(label: 'Авто', value: _vehicleLabel()),
+              _SummaryRow(label: 'Авто', value: vehicleLabel),
               _SummaryRow(
                 label: 'Орієнтовно',
                 value: 'від ${service?.priceFromUah ?? 0} ₴',
@@ -158,40 +223,80 @@ class _ProblemFormScreenState extends ConsumerState<ProblemFormScreen> {
       ),
     );
   }
-
-  String _vehicleLabel() {
-    final v = ref.watch(vehiclesControllerProvider).value;
-    if (v == null || v.isEmpty) return '—';
-    final car = v.first;
-    return '${car.make} ${car.model}';
-  }
 }
 
+enum _PhotoSource { camera, gallery }
+
 class _PhotoSlot extends StatelessWidget {
-  const _PhotoSlot({required this.filled, required this.onTap});
-  final bool filled;
-  final VoidCallback onTap;
+  const _PhotoSlot.empty({required VoidCallback this.onAdd})
+      : photo = null,
+        onRemove = null;
+  const _PhotoSlot.filled({
+    required OrderPhoto this.photo,
+    required VoidCallback this.onRemove,
+  }) : onAdd = null;
+
+  final OrderPhoto? photo;
+  final VoidCallback? onAdd;
+  final VoidCallback? onRemove;
+
+  bool get _filled => photo != null;
 
   @override
   Widget build(BuildContext context) {
     return Semantics(
       button: true,
-      label: filled ? 'Видалити фото' : 'Додати фото',
+      label: _filled ? 'Видалити фото' : 'Додати фото',
       child: InkWell(
-        onTap: onTap,
+        onTap: _filled ? onRemove : onAdd,
         borderRadius: AppRadii.mdAll,
         child: AspectRatio(
           aspectRatio: 1,
-          child: DecoratedBox(
-            decoration: BoxDecoration(
-              color: filled ? AppColors.surfaceVariant : AppColors.surface,
-              borderRadius: AppRadii.mdAll,
-              border: Border.all(color: AppColors.borderStrong, width: 0.5),
-            ),
-            child: Icon(
-              filled ? Icons.image_outlined : Icons.add,
-              color: AppColors.textSecondary,
-            ),
+          child: ClipRRect(
+            borderRadius: AppRadii.mdAll,
+            child: _filled
+                ? Stack(
+                    fit: StackFit.expand,
+                    children: [
+                      Image.file(
+                        File(photo!.localPath),
+                        fit: BoxFit.cover,
+                        errorBuilder: (_, __, ___) => const ColoredBox(
+                          color: AppColors.surfaceVariant,
+                          child: Icon(
+                            Icons.broken_image_outlined,
+                            color: AppColors.textSecondary,
+                          ),
+                        ),
+                      ),
+                      Positioned(
+                        top: 4,
+                        right: 4,
+                        child: Container(
+                          width: 24,
+                          height: 24,
+                          decoration: const BoxDecoration(
+                            color: AppColors.brandBlack,
+                            shape: BoxShape.circle,
+                          ),
+                          child: const Icon(Icons.close,
+                              size: 14, color: AppColors.onBlack),
+                        ),
+                      ),
+                    ],
+                  )
+                : DecoratedBox(
+                    decoration: BoxDecoration(
+                      color: AppColors.surface,
+                      borderRadius: AppRadii.mdAll,
+                      border: Border.all(
+                        color: AppColors.borderStrong,
+                        width: 0.5,
+                      ),
+                    ),
+                    child:
+                        const Icon(Icons.add, color: AppColors.textSecondary),
+                  ),
           ),
         ),
       ),

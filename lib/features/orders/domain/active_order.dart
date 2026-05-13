@@ -1,3 +1,7 @@
+import 'order_photo.dart';
+
+export 'order_photo.dart';
+
 enum OrderStage {
   pendingConfirmation,
   accepted,
@@ -50,6 +54,7 @@ class ActiveOrder {
     required this.scheduledFor,
     required this.totalUah,
     this.timeline = const [],
+    this.photos = const [],
   });
 
   final String id;
@@ -66,6 +71,7 @@ class ActiveOrder {
   final DateTime? scheduledFor;
   final int? totalUah;
   final List<OrderTimelineEntry> timeline;
+  final List<OrderPhoto> photos;
 
   String get vehicleSummary => '$vehicleMake $vehicleModel · $vehiclePlate';
 
@@ -76,6 +82,10 @@ class ActiveOrder {
     if (timeline.length != other.timeline.length) return false;
     for (var i = 0; i < timeline.length; i++) {
       if (timeline[i] != other.timeline[i]) return false;
+    }
+    if (photos.length != other.photos.length) return false;
+    for (var i = 0; i < photos.length; i++) {
+      if (photos[i] != other.photos[i]) return false;
     }
     return id == other.id &&
         title == other.title &&
@@ -104,6 +114,7 @@ class ActiveOrder {
         scheduledFor,
         totalUah,
         Object.hashAll(timeline),
+        Object.hashAll(photos),
       );
 }
 

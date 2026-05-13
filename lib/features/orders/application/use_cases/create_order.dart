@@ -10,12 +10,14 @@ class CreateOrderInput {
     required this.servicePriceUah,
     required this.description,
     required this.vehicle,
+    this.photos = const [],
   });
 
   final String serviceTitle;
   final int servicePriceUah;
   final String description;
   final Vehicle vehicle;
+  final List<OrderPhoto> photos;
 }
 
 /// Creates a new booking. Status is always `pendingConfirmation` —
@@ -54,6 +56,7 @@ class CreateOrderUseCase {
           at: now,
         ),
       ],
+      photos: input.photos,
     );
 
     await _repository.save(order);

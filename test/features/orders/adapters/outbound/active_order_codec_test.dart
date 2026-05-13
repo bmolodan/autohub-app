@@ -105,6 +105,49 @@ void main() {
       expect(o.timeline.single.stage, OrderStage.canceled);
     });
 
+    test('round-trips an order with photos', () {
+      final o = ActiveOrder(
+        id: 'p1',
+        title: 'Заміна масла',
+        status: ActiveOrderStatus.pendingConfirmation,
+        statusLabel: 'Очікує підтвердження',
+        vehicleMake: 'Toyota',
+        vehicleModel: 'Camry',
+        vehiclePlate: 'AA 1234 BC',
+        progress: null,
+        eta: null,
+        scheduledFor: null,
+        totalUah: 1600,
+        photos: [
+          OrderPhoto(
+            localPath: '/tmp/a.jpg',
+            takenAt: DateTime.utc(2026, 5, 13, 10),
+          ),
+          OrderPhoto(
+            localPath: '/tmp/b.jpg',
+            takenAt: DateTime.utc(2026, 5, 13, 10, 1),
+          ),
+        ],
+      );
+      final round = decodeActiveOrders(encodeActiveOrders([o])).single;
+      expect(round.photos, o.photos);
+    });
+
+    test('defaults photos to empty when field is absent in JSON', () {
+      const json = '''
+        [
+          {
+            "id": "x",
+            "title": "y",
+            "status": "pending_confirmation",
+            "status_label": "z",
+            "vehicle": {"make": "a", "model": "b", "plate": "c"}
+          }
+        ]
+      ''';
+      expect(decodeActiveOrders(json).single.photos, isEmpty);
+    });
+
     test('round-trips a canceled order', () {
       final o = ActiveOrder(
         id: 'x1',

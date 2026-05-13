@@ -21,6 +21,11 @@ ActiveOrder _orderFromJson(Map<String, dynamic> m) {
           .map(_timelineFromJson)
           .toList() ??
       const <OrderTimelineEntry>[];
+  final photos = (m['photos'] as List<dynamic>?)
+          ?.cast<Map<String, dynamic>>()
+          .map(_photoFromJson)
+          .toList() ??
+      const <OrderPhoto>[];
 
   return ActiveOrder(
     id: m['id'] as String,
@@ -35,8 +40,19 @@ ActiveOrder _orderFromJson(Map<String, dynamic> m) {
     scheduledFor: _parseDate(m['scheduled_for']),
     totalUah: (m['total_uah'] as num?)?.toInt(),
     timeline: timeline,
+    photos: photos,
   );
 }
+
+OrderPhoto _photoFromJson(Map<String, dynamic> m) => OrderPhoto(
+      localPath: m['local_path'] as String,
+      takenAt: DateTime.parse(m['taken_at'] as String),
+    );
+
+Map<String, dynamic> _photoToJson(OrderPhoto p) => {
+      'local_path': p.localPath,
+      'taken_at': p.takenAt.toIso8601String(),
+    };
 
 Map<String, dynamic> _orderToJson(ActiveOrder o) => {
       'id': o.id,
@@ -53,6 +69,7 @@ Map<String, dynamic> _orderToJson(ActiveOrder o) => {
       'scheduled_for': o.scheduledFor?.toIso8601String(),
       'total_uah': o.totalUah,
       'timeline': o.timeline.map(_timelineToJson).toList(),
+      'photos': o.photos.map(_photoToJson).toList(),
     };
 
 OrderTimelineEntry _timelineFromJson(Map<String, dynamic> m) =>

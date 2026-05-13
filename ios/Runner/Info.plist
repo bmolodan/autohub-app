@@ -4,6 +4,10 @@
 <dict>
 	<key>CADisableMinimumFrameDurationOnPhone</key>
 	<true/>
+	<key>NSCameraUsageDescription</key>
+	<string>Доступ до камери потрібен для фото проблеми авто при записі на сервіс.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Доступ до галереї потрібен для вибору фото проблеми авто при записі на сервіс.</string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
