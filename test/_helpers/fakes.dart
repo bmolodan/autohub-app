@@ -1,3 +1,5 @@
+import 'package:autohub/features/cars/application/ports/outbound/vehicle_repository_port.dart';
+import 'package:autohub/features/cars/domain/vehicle.dart';
 import 'package:autohub/features/orders/application/ports/outbound/active_order_repository_port.dart';
 import 'package:autohub/features/orders/application/ports/outbound/photo_storage_port.dart';
 import 'package:autohub/features/orders/domain/active_order.dart';
@@ -22,6 +24,33 @@ class FakeActiveOrderRepository implements ActiveOrderRepositoryPort {
   @override
   Future<void> save(ActiveOrder order) async {
     _store[order.id] = order;
+  }
+}
+
+class FakeVehicleRepository implements VehicleRepositoryPort {
+  FakeVehicleRepository({List<Vehicle> seed = const []}) : _items = [...seed];
+
+  final List<Vehicle> _items;
+
+  @override
+  Future<List<Vehicle>> findAll() async => List.unmodifiable(_items);
+
+  @override
+  Future<Vehicle?> findById(String id) async {
+    for (final v in _items) {
+      if (v.id == id) return v;
+    }
+    return null;
+  }
+
+  @override
+  Future<void> save(Vehicle vehicle) async {
+    final i = _items.indexWhere((v) => v.id == vehicle.id);
+    if (i >= 0) {
+      _items[i] = vehicle;
+    } else {
+      _items.add(vehicle);
+    }
   }
 }
 

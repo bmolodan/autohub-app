@@ -185,5 +185,8 @@
     "placeholders": { "error": { "type": "String" } }
   },
   "otpExpiredCode": "Code has expired",
-  "otpInvalidCode": "Invalid code"
+  "otpInvalidCode": "Invalid code",
+
+  "problemVehiclePickerTitle": "Choose a car",
+  "problemVehicleChangeHint": "Tap to change"
 }

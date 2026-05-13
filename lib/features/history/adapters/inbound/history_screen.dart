@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_radii.dart';
@@ -45,7 +46,7 @@ class HistoryScreen extends ConsumerWidget {
       ),
       body: SafeArea(
         child: async.when(
-          loading: () => const Center(child: CircularProgressIndicator()),
+          loading: () => const _HistorySkeleton(),
           error: (e, _) => ErrorState(
             onRetry: () => ref.invalidate(serviceHistoryProvider(vehicleId)),
           ),
@@ -178,6 +179,50 @@ class _RecordTile extends StatelessWidget {
             style: AppTypography.labelLarge,
           ),
         ],
+      ),
+    );
+  }
+}
+
+class _HistorySkeleton extends StatelessWidget {
+  const _HistorySkeleton();
+
+  @override
+  Widget build(BuildContext context) {
+    return Skeletonizer(
+      enabled: true,
+      child: ListView.separated(
+        padding: const EdgeInsets.fromLTRB(
+            AppSpacing.lg, AppSpacing.md, AppSpacing.lg, AppSpacing.lg),
+        itemCount: 4,
+        separatorBuilder: (_, __) => const SizedBox(height: AppSpacing.sm),
+        itemBuilder: (_, __) => Container(
+          padding: const EdgeInsets.symmetric(
+              horizontal: AppSpacing.md, vertical: AppSpacing.md),
+          decoration: BoxDecoration(
+            color: AppColors.surface,
+            borderRadius: AppRadii.lgAll,
+            border: Border.all(color: AppColors.border, width: 0.5),
+          ),
+          child: Row(
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text('Loading record title',
+                        style: AppTypography.titleSmall),
+                    const SizedBox(height: AppSpacing.xxs),
+                    Text('Jan 1 · 0 km',
+                        style: AppTypography.bodySmall
+                            .copyWith(color: AppColors.textSecondary)),
+                  ],
+                ),
+              ),
+              Text('0 ₴', style: AppTypography.labelLarge),
+            ],
+          ),
+        ),
       ),
     );
   }

@@ -31,6 +31,9 @@ dependencies:
   # ─── Media ────────────────────────────────────────────────────────
   image_picker: ^1.1.2
 
+  # ─── Loading skeletons ────────────────────────────────────────────
+  skeletonizer: ^2.1.3
+
   # ─── i18n ─────────────────────────────────────────────────────────
   intl: any
   # hive_flutter: ^1.1.0           # if we need indexed/typed boxes later

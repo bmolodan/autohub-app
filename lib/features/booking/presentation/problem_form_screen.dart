@@ -8,10 +8,12 @@ import 'package:go_router/go_router.dart';
 import '../../../core/router/app_router.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_radii.dart';
+import '../../../core/theme/app_sizes.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_typography.dart';
 import '../../../l10n/l10n_extension.dart';
 import '../../cars/composition/cars_providers.dart';
+import '../../cars/domain/vehicle.dart';
 import '../../orders/application/use_cases/create_order.dart';
 import '../../orders/composition/orders_providers.dart';
 import '../../orders/domain/order_photo.dart';
@@ -34,6 +36,7 @@ class _ProblemFormScreenState extends ConsumerState<ProblemFormScreen> {
   final List<OrderPhoto> _photos = [];
   bool _submitting = false;
   bool _pickingPhoto = false;
+  String? _selectedVehicleId;
 
   @override
   void dispose() {
@@ -103,13 +106,67 @@ class _ProblemFormScreenState extends ConsumerState<ProblemFormScreen> {
     }
   }
 
+  Vehicle? _resolveSelected(List<Vehicle> vehicles) {
+    if (vehicles.isEmpty) return null;
+    final id = _selectedVehicleId;
+    if (id != null) {
+      for (final v in vehicles) {
+        if (v.id == id) return v;
+      }
+    }
+    return vehicles.first;
+  }
+
+  Future<void> _openVehicleSheet(List<Vehicle> vehicles) async {
+    final picked = await showModalBottomSheet<String>(
+      context: context,
+      builder: (ctx) {
+        final l = ctx.l10n;
+        return SafeArea(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(AppSpacing.md),
+                child: Text(
+                  l.problemVehiclePickerTitle,
+                  style: AppTypography.titleLarge,
+                ),
+              ),
+              for (final v in vehicles)
+                ListTile(
+                  leading: const Icon(Icons.directions_car_outlined),
+                  title: Text('${v.make} ${v.model}',
+                      style: AppTypography.titleSmall),
+                  subtitle: Text(
+                    '${v.year} · ${v.plate}',
+                    style: AppTypography.bodySmall,
+                  ),
+                  trailing: v.id == _selectedVehicleId ||
+                          (_selectedVehicleId == null &&
+                              v.id == vehicles.first.id)
+                      ? const Icon(Icons.check, color: AppColors.brandBlack)
+                      : null,
+                  onTap: () => Navigator.of(ctx).pop(v.id),
+                ),
+            ],
+          ),
+        );
+      },
+    );
+    if (picked != null && mounted) {
+      setState(() => _selectedVehicleId = picked);
+    }
+  }
+
   Future<void> _submit() async {
     if (_submitting) return;
     final service = _service;
     if (service == null) return;
 
     final vehicles = ref.read(vehiclesControllerProvider).value;
-    if (vehicles == null || vehicles.isEmpty) {
+    final selected = vehicles == null ? null : _resolveSelected(vehicles);
+    if (selected == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(context.l10n.problemNoVehicleSnack)),
       );
@@ -124,7 +181,7 @@ class _ProblemFormScreenState extends ConsumerState<ProblemFormScreen> {
               serviceTitle: serviceTitle(context.l10n, service.id),
               servicePriceUah: service.priceFromUah,
               description: _descController.text.trim(),
-              vehicle: vehicles.first,
+              vehicle: selected,
               photos: List.unmodifiable(_photos),
             ),
           );
@@ -145,9 +202,10 @@ class _ProblemFormScreenState extends ConsumerState<ProblemFormScreen> {
     final l = context.l10n;
     final service = _service;
     final vehicles = ref.watch(vehiclesControllerProvider).value;
-    final vehicleLabel = vehicles == null || vehicles.isEmpty
-        ? '—'
-        : '${vehicles.first.make} ${vehicles.first.model}';
+    final selected = vehicles == null ? null : _resolveSelected(vehicles);
+    final vehicleLabel =
+        selected == null ? '—' : '${selected.make} ${selected.model}';
+    final canPickVehicle = vehicles != null && vehicles.length >= 2;
 
     return Scaffold(
       appBar: AppBar(
@@ -204,7 +262,14 @@ class _ProblemFormScreenState extends ConsumerState<ProblemFormScreen> {
                 label: l.problemSummaryService,
                 value: service != null ? serviceTitle(l, service.id) : '—',
               ),
-              _SummaryRow(label: l.problemSummaryVehicle, value: vehicleLabel),
+              _SummaryRow(
+                label: l.problemSummaryVehicle,
+                value: vehicleLabel,
+                onTap:
+                    canPickVehicle ? () => _openVehicleSheet(vehicles) : null,
+                trailingHint:
+                    canPickVehicle ? l.problemVehicleChangeHint : null,
+              ),
               _SummaryRow(
                 label: l.problemSummaryEstimate,
                 value: l.problemEstimateFrom(service?.priceFromUah ?? 0),
@@ -311,13 +376,21 @@ class _PhotoSlot extends StatelessWidget {
 }
 
 class _SummaryRow extends StatelessWidget {
-  const _SummaryRow({required this.label, required this.value});
+  const _SummaryRow({
+    required this.label,
+    required this.value,
+    this.onTap,
+    this.trailingHint,
+  });
+
   final String label;
   final String value;
+  final VoidCallback? onTap;
+  final String? trailingHint;
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
+    final row = Padding(
       padding: const EdgeInsets.symmetric(vertical: AppSpacing.xxs),
       child: Row(
         children: [
@@ -329,8 +402,22 @@ class _SummaryRow extends StatelessWidget {
             ),
           ),
           Text(value, style: AppTypography.labelMedium),
+          if (onTap != null) ...[
+            const SizedBox(width: AppSpacing.xs),
+            const Icon(Icons.chevron_right,
+                size: AppIconSize.md, color: AppColors.textDisabled),
+          ],
         ],
       ),
+    );
+
+    if (onTap == null) return row;
+    return Semantics(
+      button: true,
+      label: trailingHint == null
+          ? '$label, $value'
+          : '$label, $value, $trailingHint',
+      child: InkWell(onTap: onTap, child: row),
     );
   }
 }

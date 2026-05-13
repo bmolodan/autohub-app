@@ -211,5 +211,7 @@
     "placeholders": { "error": { "type": "String" } }
   },
   "otpExpiredCode": "Час дії коду минув",
-  "otpInvalidCode": "Невірний код"
+  "otpInvalidCode": "Невірний код",
+  "problemVehiclePickerTitle": "Виберіть авто",
+  "problemVehicleChangeHint": "Натисніть, щоб змінити"
 }

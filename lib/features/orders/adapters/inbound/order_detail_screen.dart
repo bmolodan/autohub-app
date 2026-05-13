@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_radii.dart';
@@ -32,7 +33,45 @@ class OrderDetailScreen extends ConsumerWidget {
       ),
       body: SafeArea(
         child: async.when(
-          loading: () => const Center(child: CircularProgressIndicator()),
+          loading: () => Skeletonizer(
+            enabled: true,
+            child: ListView(
+              padding: const EdgeInsets.symmetric(
+                  horizontal: AppSpacing.lg, vertical: AppSpacing.md),
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(AppSpacing.md),
+                  decoration: const BoxDecoration(
+                    color: AppColors.brandBlack,
+                    borderRadius: AppRadii.xlAll,
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text('LOADING STATUS',
+                          style: AppTypography.overline
+                              .copyWith(color: AppColors.brandYellow)),
+                      const SizedBox(height: AppSpacing.xxs),
+                      Text('Loading service title',
+                          style: AppTypography.headlineSmall
+                              .copyWith(color: AppColors.onBlack)),
+                      const SizedBox(height: AppSpacing.xxs),
+                      Text('Loading vehicle info',
+                          style: AppTypography.bodySmall
+                              .copyWith(color: AppColors.textDisabled)),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: AppSpacing.lg),
+                for (var i = 0; i < 3; i++)
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: AppSpacing.md),
+                    child: Text('Stage placeholder',
+                        style: AppTypography.titleSmall),
+                  ),
+              ],
+            ),
+          ),
           error: (e, _) => ErrorState(
             onRetry: () => ref.invalidate(orderByIdProvider(orderId)),
           ),
@@ -80,53 +119,59 @@ class _InProgressBody extends StatelessWidget {
     return ListView(
       padding: const EdgeInsets.symmetric(vertical: AppSpacing.md),
       children: [
-        Container(
-          padding: const EdgeInsets.all(AppSpacing.md),
-          decoration: const BoxDecoration(
-            color: AppColors.brandBlack,
-            borderRadius: AppRadii.xlAll,
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                orderStatusLabel(context.l10n, order.status).toUpperCase(),
-                style: AppTypography.overline
-                    .copyWith(color: AppColors.brandYellow),
+        Hero(
+          tag: 'order-hero-${order.id}',
+          child: Material(
+            type: MaterialType.transparency,
+            child: Container(
+              padding: const EdgeInsets.all(AppSpacing.md),
+              decoration: const BoxDecoration(
+                color: AppColors.brandBlack,
+                borderRadius: AppRadii.xlAll,
               ),
-              const SizedBox(height: AppSpacing.xxs),
-              Text(order.title,
-                  style: AppTypography.headlineSmall
-                      .copyWith(color: AppColors.onBlack)),
-              const SizedBox(height: AppSpacing.xxs),
-              Text(order.vehicleSummary,
-                  style: AppTypography.bodySmall
-                      .copyWith(color: AppColors.textDisabled)),
-              const SizedBox(height: AppSpacing.md),
-              Row(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Expanded(
-                    child: ClipRRect(
-                      borderRadius: AppRadii.xsAll,
-                      child: LinearProgressIndicator(
-                        value: order.progress ?? 0,
-                        minHeight: 6,
-                        backgroundColor:
-                            AppColors.borderStrong.withValues(alpha: 0.4),
-                        valueColor:
-                            const AlwaysStoppedAnimation(AppColors.brandYellow),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: AppSpacing.sm),
                   Text(
-                    '~$etaLabel',
-                    style: AppTypography.labelMedium
+                    orderStatusLabel(context.l10n, order.status).toUpperCase(),
+                    style: AppTypography.overline
                         .copyWith(color: AppColors.brandYellow),
+                  ),
+                  const SizedBox(height: AppSpacing.xxs),
+                  Text(order.title,
+                      style: AppTypography.headlineSmall
+                          .copyWith(color: AppColors.onBlack)),
+                  const SizedBox(height: AppSpacing.xxs),
+                  Text(order.vehicleSummary,
+                      style: AppTypography.bodySmall
+                          .copyWith(color: AppColors.textDisabled)),
+                  const SizedBox(height: AppSpacing.md),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: ClipRRect(
+                          borderRadius: AppRadii.xsAll,
+                          child: LinearProgressIndicator(
+                            value: order.progress ?? 0,
+                            minHeight: 6,
+                            backgroundColor:
+                                AppColors.borderStrong.withValues(alpha: 0.4),
+                            valueColor: const AlwaysStoppedAnimation(
+                                AppColors.brandYellow),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: AppSpacing.sm),
+                      Text(
+                        '~$etaLabel',
+                        style: AppTypography.labelMedium
+                            .copyWith(color: AppColors.brandYellow),
+                      ),
+                    ],
                   ),
                 ],
               ),
-            ],
+            ),
           ),
         ),
         const SizedBox(height: AppSpacing.lg),

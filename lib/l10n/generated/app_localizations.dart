@@ -1081,6 +1081,18 @@ abstract class AppLocalizations {
   /// In uk, this message translates to:
   /// **'Невірний код'**
   String get otpInvalidCode;
+
+  /// No description provided for @problemVehiclePickerTitle.
+  ///
+  /// In uk, this message translates to:
+  /// **'Виберіть авто'**
+  String get problemVehiclePickerTitle;
+
+  /// No description provided for @problemVehicleChangeHint.
+  ///
+  /// In uk, this message translates to:
+  /// **'Натисніть, щоб змінити'**
+  String get problemVehicleChangeHint;
 }
 
 class _AppLocalizationsDelegate

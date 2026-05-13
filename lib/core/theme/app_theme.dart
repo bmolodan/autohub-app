@@ -52,6 +52,12 @@ class AppTheme {
       canvasColor: AppColors.background,
       dividerColor: AppColors.border,
       splashFactory: InkRipple.splashFactory,
+      // iOS-style right-to-left slide on both platforms — matches the brand
+      // feel and the existing back-swipe gesture.
+      pageTransitionsTheme: const PageTransitionsTheme(builders: {
+        TargetPlatform.iOS: CupertinoPageTransitionsBuilder(),
+        TargetPlatform.android: CupertinoPageTransitionsBuilder(),
+      }),
       textTheme: AppTypography.textTheme.apply(
         bodyColor: AppColors.textPrimary,
         displayColor: AppColors.textPrimary,

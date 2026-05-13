@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 
 import '../../../../core/router/app_router.dart';
 import '../../../../core/theme/app_colors.dart';
@@ -25,7 +26,22 @@ class CarsListScreen extends ConsumerWidget {
               style: AppTypography.titleLarge)),
       body: SafeArea(
         child: async.when(
-          loading: () => const Center(child: CircularProgressIndicator()),
+          loading: () => Skeletonizer(
+            enabled: true,
+            child: ListView(
+              padding: const EdgeInsets.all(AppSpacing.lg),
+              children: const [
+                Padding(
+                  padding: EdgeInsets.only(bottom: AppSpacing.sm),
+                  child: _VehicleCard(vehicle: _skeletonVehicle),
+                ),
+                Padding(
+                  padding: EdgeInsets.only(bottom: AppSpacing.sm),
+                  child: _VehicleCard(vehicle: _skeletonVehicle),
+                ),
+              ],
+            ),
+          ),
           error: (e, _) => Center(
             child: Text(context.l10n.carsLoadFailed(e.toString()),
                 style: AppTypography.bodyMedium),
@@ -106,3 +122,14 @@ class _VehicleCard extends StatelessWidget {
     );
   }
 }
+
+const _skeletonVehicle = Vehicle(
+  id: 'skeleton',
+  make: 'Make',
+  model: 'Model',
+  year: 2020,
+  plate: 'AA 0000 BB',
+  vin: null,
+  mileageKm: 50000,
+  nextServiceMileageKm: null,
+);

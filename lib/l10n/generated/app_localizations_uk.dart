@@ -537,4 +537,10 @@ class AppLocalizationsUk extends AppLocalizations {
 
   @override
   String get otpInvalidCode => 'Невірний код';
+
+  @override
+  String get problemVehiclePickerTitle => 'Виберіть авто';
+
+  @override
+  String get problemVehicleChangeHint => 'Натисніть, щоб змінити';
 }

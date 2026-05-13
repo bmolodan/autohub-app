@@ -536,4 +536,10 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get otpInvalidCode => 'Invalid code';
+
+  @override
+  String get problemVehiclePickerTitle => 'Choose a car';
+
+  @override
+  String get problemVehicleChangeHint => 'Tap to change';
 }
