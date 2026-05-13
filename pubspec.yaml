@@ -61,3 +61,4 @@ flutter:
   generate: true
   assets:
     - assets/mocks/
+    - assets/data/

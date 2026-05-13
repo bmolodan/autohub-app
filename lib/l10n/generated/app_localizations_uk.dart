@@ -543,4 +543,16 @@ class AppLocalizationsUk extends AppLocalizations {
 
   @override
   String get problemVehicleChangeHint => 'Натисніть, щоб змінити';
+
+  @override
+  String get addCarMakeUnknown => 'Виберіть марку зі списку';
+
+  @override
+  String get addCarModelUnknown => 'Виберіть модель зі списку';
+
+  @override
+  String get addCarPlateInvalid => 'Формат: AA 1234 BB';
+
+  @override
+  String get addCarPlateHint => 'AA 1234 BB';
 }

@@ -542,4 +542,16 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get problemVehicleChangeHint => 'Tap to change';
+
+  @override
+  String get addCarMakeUnknown => 'Pick a make from the list';
+
+  @override
+  String get addCarModelUnknown => 'Pick a model from the list';
+
+  @override
+  String get addCarPlateInvalid => 'Format: AA 1234 BB';
+
+  @override
+  String get addCarPlateHint => 'AA 1234 BB';
 }

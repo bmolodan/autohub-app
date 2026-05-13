@@ -1,4 +1,6 @@
+import 'package:autohub/features/cars/application/ports/outbound/car_catalog_port.dart';
 import 'package:autohub/features/cars/application/ports/outbound/vehicle_repository_port.dart';
+import 'package:autohub/features/cars/data/car_catalog.dart';
 import 'package:autohub/features/cars/domain/vehicle.dart';
 import 'package:autohub/features/orders/application/ports/outbound/active_order_repository_port.dart';
 import 'package:autohub/features/orders/application/ports/outbound/photo_storage_port.dart';
@@ -52,6 +54,15 @@ class FakeVehicleRepository implements VehicleRepositoryPort {
       _items.add(vehicle);
     }
   }
+}
+
+class FakeCarCatalogPort implements CarCatalogPort {
+  FakeCarCatalogPort(this._catalog);
+
+  final CarCatalog _catalog;
+
+  @override
+  Future<CarCatalog> load() async => _catalog;
 }
 
 class FakePhotoStorage implements PhotoStoragePort {

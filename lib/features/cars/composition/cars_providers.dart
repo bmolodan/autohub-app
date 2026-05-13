@@ -5,12 +5,15 @@ import '../../../core/network/dio_provider.dart';
 import '../../../core/storage/shared_prefs_provider.dart';
 import '../../../core/util/clock.dart';
 import '../../../core/util/id_generator.dart';
+import '../adapters/outbound/asset_car_catalog.dart';
 import '../adapters/outbound/http_vehicle_repository.dart';
 import '../adapters/outbound/shared_prefs_vehicle_repository.dart';
+import '../application/ports/outbound/car_catalog_port.dart';
 import '../application/ports/outbound/vehicle_repository_port.dart';
 import '../application/use_cases/add_vehicle.dart';
 import '../application/use_cases/get_vehicle.dart';
 import '../application/use_cases/list_vehicles.dart';
+import '../data/car_catalog.dart';
 import '../domain/vehicle.dart';
 
 /// Composition root for the Cars feature.
@@ -77,3 +80,12 @@ final vehicleByIdProvider =
     FutureProvider.family.autoDispose<Vehicle?, String>((ref, id) {
   return ref.watch(getVehicleUseCaseProvider).execute(GetVehicleInput(id: id));
 });
+
+/// Bundled make/model catalog used by the Add Car screen autocomplete.
+final carCatalogPortProvider = Provider<CarCatalogPort>(
+  (ref) => const AssetCarCatalog(),
+);
+
+final carCatalogProvider = FutureProvider<CarCatalog>(
+  (ref) => ref.watch(carCatalogPortProvider).load(),
+);

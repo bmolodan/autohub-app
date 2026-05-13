@@ -213,5 +213,9 @@
   "otpExpiredCode": "Час дії коду минув",
   "otpInvalidCode": "Невірний код",
   "problemVehiclePickerTitle": "Виберіть авто",
-  "problemVehicleChangeHint": "Натисніть, щоб змінити"
+  "problemVehicleChangeHint": "Натисніть, щоб змінити",
+  "addCarMakeUnknown": "Виберіть марку зі списку",
+  "addCarModelUnknown": "Виберіть модель зі списку",
+  "addCarPlateInvalid": "Формат: AA 1234 BB",
+  "addCarPlateHint": "AA 1234 BB"
 }

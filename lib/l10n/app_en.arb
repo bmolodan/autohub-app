@@ -188,5 +188,10 @@
   "otpInvalidCode": "Invalid code",
 
   "problemVehiclePickerTitle": "Choose a car",
-  "problemVehicleChangeHint": "Tap to change"
+  "problemVehicleChangeHint": "Tap to change",
+
+  "addCarMakeUnknown": "Pick a make from the list",
+  "addCarModelUnknown": "Pick a model from the list",
+  "addCarPlateInvalid": "Format: AA 1234 BB",
+  "addCarPlateHint": "AA 1234 BB"
 }

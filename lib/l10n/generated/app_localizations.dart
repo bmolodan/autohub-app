@@ -1093,6 +1093,30 @@ abstract class AppLocalizations {
   /// In uk, this message translates to:
   /// **'Натисніть, щоб змінити'**
   String get problemVehicleChangeHint;
+
+  /// No description provided for @addCarMakeUnknown.
+  ///
+  /// In uk, this message translates to:
+  /// **'Виберіть марку зі списку'**
+  String get addCarMakeUnknown;
+
+  /// No description provided for @addCarModelUnknown.
+  ///
+  /// In uk, this message translates to:
+  /// **'Виберіть модель зі списку'**
+  String get addCarModelUnknown;
+
+  /// No description provided for @addCarPlateInvalid.
+  ///
+  /// In uk, this message translates to:
+  /// **'Формат: AA 1234 BB'**
+  String get addCarPlateInvalid;
+
+  /// No description provided for @addCarPlateHint.
+  ///
+  /// In uk, this message translates to:
+  /// **'AA 1234 BB'**
+  String get addCarPlateHint;
 }
 
 class _AppLocalizationsDelegate
