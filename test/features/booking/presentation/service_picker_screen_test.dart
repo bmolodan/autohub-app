@@ -46,5 +46,37 @@ void main() {
         isNotNull,
       );
     });
+
+    testWidgets('shows the "name it yourself" CTA below the list',
+        (tester) async {
+      await pumpScreen(tester, child: const ServicePickerScreen());
+
+      expect(find.text('Не знайшли? Назвіть послугу самі'), findsOneWidget);
+    });
+
+    testWidgets('custom CTA opens a sheet with a name field + submit',
+        (tester) async {
+      await pumpScreen(tester, child: const ServicePickerScreen());
+
+      await tester.tap(find.text('Не знайшли? Назвіть послугу самі'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Власна послуга'), findsOneWidget);
+      expect(find.widgetWithText(FilledButton, 'Продовжити'), findsOneWidget);
+    });
+
+    testWidgets('custom sheet submit with empty text does not navigate',
+        (tester) async {
+      await pumpScreen(tester, child: const ServicePickerScreen());
+
+      await tester.tap(find.text('Не знайшли? Назвіть послугу самі'));
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.widgetWithText(FilledButton, 'Продовжити'));
+      await tester.pumpAndSettle();
+
+      // Sheet stays open (no nav happened) — title still visible.
+      expect(find.text('Власна послуга'), findsOneWidget);
+    });
   });
 }

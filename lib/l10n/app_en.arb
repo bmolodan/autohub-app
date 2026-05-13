@@ -79,8 +79,6 @@
   "orderCanceledHeroLabel": "CANCELED",
   "orderScheduledTime": "Scheduled time",
   "orderScheduledTbd": "to be determined",
-  "orderCallMaster": "Call mechanic",
-  "orderCallMasterTodo": "Call mechanic: TODO",
   "orderCancelLabel": "Cancel order",
   "orderCancelDialogTitle": "Cancel order?",
   "orderCancelDialogBody": "This action cannot be undone.",
@@ -216,5 +214,11 @@
   "registerEditTitle": "Personal details",
   "registerEditSubmit": "Save changes",
   "registerUpdatedSnack": "Details updated",
-  "profileEditSemantics": "Edit"
+  "profileEditSemantics": "Edit",
+
+  "bookingPickerCustomCta": "Can't find it? Name the service yourself",
+  "bookingPickerCustomSheetTitle": "Custom service",
+  "bookingPickerCustomFieldLabel": "Service name",
+  "bookingPickerCustomSubmit": "Continue",
+  "problemEstimateTbd": "To be agreed"
 }

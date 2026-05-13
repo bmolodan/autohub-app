@@ -512,18 +512,6 @@ abstract class AppLocalizations {
   /// **'визначимо невдовзі'**
   String get orderScheduledTbd;
 
-  /// No description provided for @orderCallMaster.
-  ///
-  /// In uk, this message translates to:
-  /// **'Зателефонувати майстру'**
-  String get orderCallMaster;
-
-  /// No description provided for @orderCallMasterTodo.
-  ///
-  /// In uk, this message translates to:
-  /// **'Виклик майстра: TODO'**
-  String get orderCallMasterTodo;
-
   /// No description provided for @orderCancelLabel.
   ///
   /// In uk, this message translates to:
@@ -1243,6 +1231,36 @@ abstract class AppLocalizations {
   /// In uk, this message translates to:
   /// **'Редагувати'**
   String get profileEditSemantics;
+
+  /// No description provided for @bookingPickerCustomCta.
+  ///
+  /// In uk, this message translates to:
+  /// **'Не знайшли? Назвіть послугу самі'**
+  String get bookingPickerCustomCta;
+
+  /// No description provided for @bookingPickerCustomSheetTitle.
+  ///
+  /// In uk, this message translates to:
+  /// **'Власна послуга'**
+  String get bookingPickerCustomSheetTitle;
+
+  /// No description provided for @bookingPickerCustomFieldLabel.
+  ///
+  /// In uk, this message translates to:
+  /// **'Назва послуги'**
+  String get bookingPickerCustomFieldLabel;
+
+  /// No description provided for @bookingPickerCustomSubmit.
+  ///
+  /// In uk, this message translates to:
+  /// **'Продовжити'**
+  String get bookingPickerCustomSubmit;
+
+  /// No description provided for @problemEstimateTbd.
+  ///
+  /// In uk, this message translates to:
+  /// **'За домовленістю'**
+  String get problemEstimateTbd;
 }
 
 class _AppLocalizationsDelegate

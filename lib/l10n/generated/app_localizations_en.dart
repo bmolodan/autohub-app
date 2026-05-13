@@ -236,12 +236,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get orderScheduledTbd => 'to be determined';
 
   @override
-  String get orderCallMaster => 'Call mechanic';
-
-  @override
-  String get orderCallMasterTodo => 'Call mechanic: TODO';
-
-  @override
   String get orderCancelLabel => 'Cancel order';
 
   @override
@@ -618,4 +612,20 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get profileEditSemantics => 'Edit';
+
+  @override
+  String get bookingPickerCustomCta =>
+      'Can\'t find it? Name the service yourself';
+
+  @override
+  String get bookingPickerCustomSheetTitle => 'Custom service';
+
+  @override
+  String get bookingPickerCustomFieldLabel => 'Service name';
+
+  @override
+  String get bookingPickerCustomSubmit => 'Continue';
+
+  @override
+  String get problemEstimateTbd => 'To be agreed';
 }

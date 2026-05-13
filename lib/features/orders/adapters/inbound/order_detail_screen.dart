@@ -187,14 +187,6 @@ class _InProgressBody extends StatelessWidget {
             value: context.l10n.orderEstimateValue(order.totalUah!),
           ),
         const SizedBox(height: AppSpacing.lg),
-        OutlinedButton.icon(
-          onPressed: () => ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(context.l10n.orderCallMasterTodo)),
-          ),
-          icon: const Icon(Icons.call_outlined),
-          label: Text(context.l10n.orderCallMaster),
-        ),
-        const SizedBox(height: AppSpacing.lg),
       ],
     );
   }

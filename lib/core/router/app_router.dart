@@ -165,7 +165,8 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: AppRoutes.bookingProblem,
         builder: (_, state) => ProblemFormScreen(
-          serviceId: state.uri.queryParameters['serviceId'] ?? '',
+          serviceId: state.uri.queryParameters['serviceId'],
+          customTitle: state.uri.queryParameters['customTitle'],
         ),
       ),
 

@@ -23,9 +23,14 @@ import 'service_l10n.dart';
 const _maxPhotos = 3;
 
 /// Step 3/3 of booking: describe the problem + attach photos.
+///
+/// Either [serviceId] resolves to an entry in `serviceCatalog`, or
+/// [customTitle] carries a user-supplied service name (no catalog entry).
+/// Exactly one of the two is expected.
 class ProblemFormScreen extends ConsumerStatefulWidget {
-  const ProblemFormScreen({super.key, required this.serviceId});
-  final String serviceId;
+  const ProblemFormScreen({super.key, this.serviceId, this.customTitle});
+  final String? serviceId;
+  final String? customTitle;
 
   @override
   ConsumerState<ProblemFormScreen> createState() => _ProblemFormScreenState();
@@ -44,8 +49,11 @@ class _ProblemFormScreenState extends ConsumerState<ProblemFormScreen> {
     super.dispose();
   }
 
-  ServiceCatalogItem? get _service =>
-      serviceCatalog.where((s) => s.id == widget.serviceId).firstOrNull;
+  ServiceCatalogItem? get _service => widget.serviceId == null
+      ? null
+      : serviceCatalog.where((s) => s.id == widget.serviceId).firstOrNull;
+
+  bool get _isCustom => widget.customTitle != null;
 
   Future<void> _addPhoto() async {
     if (_pickingPhoto || _photos.length >= _maxPhotos) return;
@@ -162,7 +170,7 @@ class _ProblemFormScreenState extends ConsumerState<ProblemFormScreen> {
   Future<void> _submit() async {
     if (_submitting) return;
     final service = _service;
-    if (service == null) return;
+    if (service == null && !_isCustom) return;
 
     final vehicles = ref.read(vehiclesControllerProvider).value;
     final selected = vehicles == null ? null : _resolveSelected(vehicles);
@@ -176,10 +184,14 @@ class _ProblemFormScreenState extends ConsumerState<ProblemFormScreen> {
 
     setState(() => _submitting = true);
     try {
+      final title = service != null
+          ? serviceTitle(context.l10n, service.id)
+          : widget.customTitle!;
+      final price = service?.priceFromUah ?? 0;
       final created = await ref.read(ordersControllerProvider.notifier).create(
             CreateOrderInput(
-              serviceTitle: serviceTitle(context.l10n, service.id),
-              servicePriceUah: service.priceFromUah,
+              serviceTitle: title,
+              servicePriceUah: price,
               description: _descController.text.trim(),
               vehicle: selected,
               photos: List.unmodifiable(_photos),
@@ -263,7 +275,9 @@ class _ProblemFormScreenState extends ConsumerState<ProblemFormScreen> {
               const SizedBox(height: AppSpacing.lg),
               _SummaryRow(
                 label: l.problemSummaryService,
-                value: service != null ? serviceTitle(l, service.id) : '—',
+                value: service != null
+                    ? serviceTitle(l, service.id)
+                    : (widget.customTitle ?? '—'),
               ),
               _SummaryRow(
                 label: l.problemSummaryVehicle,
@@ -275,7 +289,9 @@ class _ProblemFormScreenState extends ConsumerState<ProblemFormScreen> {
               ),
               _SummaryRow(
                 label: l.problemSummaryEstimate,
-                value: l.problemEstimateFrom(service?.priceFromUah ?? 0),
+                value: service != null
+                    ? l.problemEstimateFrom(service.priceFromUah)
+                    : l.problemEstimateTbd,
               ),
               const Spacer(),
               ElevatedButton(

@@ -237,12 +237,6 @@ class AppLocalizationsUk extends AppLocalizations {
   String get orderScheduledTbd => 'визначимо невдовзі';
 
   @override
-  String get orderCallMaster => 'Зателефонувати майстру';
-
-  @override
-  String get orderCallMasterTodo => 'Виклик майстра: TODO';
-
-  @override
   String get orderCancelLabel => 'Скасувати запис';
 
   @override
@@ -620,4 +614,19 @@ class AppLocalizationsUk extends AppLocalizations {
 
   @override
   String get profileEditSemantics => 'Редагувати';
+
+  @override
+  String get bookingPickerCustomCta => 'Не знайшли? Назвіть послугу самі';
+
+  @override
+  String get bookingPickerCustomSheetTitle => 'Власна послуга';
+
+  @override
+  String get bookingPickerCustomFieldLabel => 'Назва послуги';
+
+  @override
+  String get bookingPickerCustomSubmit => 'Продовжити';
+
+  @override
+  String get problemEstimateTbd => 'За домовленістю';
 }

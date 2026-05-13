@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -22,6 +24,56 @@ class ServicePickerScreen extends StatefulWidget {
 class _ServicePickerScreenState extends State<ServicePickerScreen> {
   String? _selectedId;
   String _query = '';
+
+  Future<void> _openCustomSheet() async {
+    final ctrl = TextEditingController();
+    final picked = await showModalBottomSheet<String>(
+      context: context,
+      isScrollControlled: true,
+      builder: (ctx) {
+        final l = ctx.l10n;
+        final viewInsets = MediaQuery.of(ctx).viewInsets.bottom;
+        return SafeArea(
+          child: Padding(
+            padding: EdgeInsets.only(bottom: viewInsets),
+            child: Padding(
+              padding: const EdgeInsets.all(AppSpacing.lg),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Text(l.bookingPickerCustomSheetTitle,
+                      style: AppTypography.headlineSmall),
+                  const SizedBox(height: AppSpacing.md),
+                  TextField(
+                    controller: ctrl,
+                    autofocus: true,
+                    textCapitalization: TextCapitalization.sentences,
+                    decoration: InputDecoration(
+                      labelText: l.bookingPickerCustomFieldLabel,
+                    ),
+                  ),
+                  const SizedBox(height: AppSpacing.md),
+                  FilledButton(
+                    onPressed: () {
+                      final text = ctrl.text.trim();
+                      if (text.isEmpty) return;
+                      Navigator.of(ctx).pop(text);
+                    },
+                    child: Text(l.bookingPickerCustomSubmit),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    );
+    if (!mounted || picked == null) return;
+    unawaited(context.push(
+      '${AppRoutes.bookingProblem}?customTitle=${Uri.encodeQueryComponent(picked)}',
+    ));
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -71,7 +123,11 @@ class _ServicePickerScreenState extends State<ServicePickerScreen> {
                   ),
                 ),
               ),
-              const SizedBox(height: AppSpacing.md),
+              TextButton(
+                onPressed: _openCustomSheet,
+                child: Text(context.l10n.bookingPickerCustomCta),
+              ),
+              const SizedBox(height: AppSpacing.sm),
               FilledButton(
                 onPressed: _selectedId == null
                     ? null

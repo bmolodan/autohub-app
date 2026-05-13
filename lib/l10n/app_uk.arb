@@ -96,8 +96,6 @@
   "orderCanceledHeroLabel": "СКАСОВАНО",
   "orderScheduledTime": "Запланований час",
   "orderScheduledTbd": "визначимо невдовзі",
-  "orderCallMaster": "Зателефонувати майстру",
-  "orderCallMasterTodo": "Виклик майстра: TODO",
   "orderCancelLabel": "Скасувати запис",
   "orderCancelDialogTitle": "Скасувати запис?",
   "orderCancelDialogBody": "Дію не можна буде відмінити.",
@@ -238,5 +236,10 @@
   "registerEditTitle": "Особисті дані",
   "registerEditSubmit": "Зберегти зміни",
   "registerUpdatedSnack": "Дані оновлено",
-  "profileEditSemantics": "Редагувати"
+  "profileEditSemantics": "Редагувати",
+  "bookingPickerCustomCta": "Не знайшли? Назвіть послугу самі",
+  "bookingPickerCustomSheetTitle": "Власна послуга",
+  "bookingPickerCustomFieldLabel": "Назва послуги",
+  "bookingPickerCustomSubmit": "Продовжити",
+  "problemEstimateTbd": "За домовленістю"
 }
