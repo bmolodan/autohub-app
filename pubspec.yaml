@@ -14,7 +14,7 @@ dependencies:
     sdk: flutter
 
   # ─── Core ──────────────────────────────────────────────────────────
-  google_fonts: ^6.2.1            # Inter web font (theme typography)
+  google_fonts: ^8.1.0            # Inter web font (theme typography)
 
   # ─── State / DI ────────────────────────────────────────────────────
   flutter_riverpod: ^2.5.1
