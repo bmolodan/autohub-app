@@ -92,13 +92,19 @@ class _ProblemFormScreenState extends ConsumerState<ProblemFormScreen> {
     if (source == null || !mounted) return;
 
     final port = ref.read(photoStorageProvider);
+    final remaining = _maxPhotos - _photos.length;
     try {
-      final picked = switch (source) {
-        _PhotoSource.camera => await port.pickFromCamera(),
-        _PhotoSource.gallery => await port.pickFromGallery(),
-      };
-      if (picked == null || !mounted) return;
-      setState(() => _photos.add(picked));
+      switch (source) {
+        case _PhotoSource.camera:
+          final picked = await port.pickFromCamera();
+          if (picked == null || !mounted) return;
+          setState(() => _photos.add(picked));
+        case _PhotoSource.gallery:
+          final picked =
+              await port.pickMultipleFromGallery(limit: remaining);
+          if (picked.isEmpty || !mounted) return;
+          setState(() => _photos.addAll(picked));
+      }
     } on Object catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(

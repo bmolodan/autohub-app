@@ -152,9 +152,26 @@ class _CanceledArchive extends StatelessWidget {
   const _CanceledArchive({required this.orders});
   final List<ActiveOrder> orders;
 
+  static const _maxVisible = 5;
+
   @override
   Widget build(BuildContext context) {
     final l = context.l10n;
+    // Newest-first; cap to _maxVisible so a long-tenured account doesn't
+    // bloat Home into an infinite scroll of grey cards.
+    final sorted = [...orders]..sort((a, b) {
+        final aAt = a.timeline.isNotEmpty
+            ? a.timeline.last.at
+            : (a.scheduledFor ?? a.eta);
+        final bAt = b.timeline.isNotEmpty
+            ? b.timeline.last.at
+            : (b.scheduledFor ?? b.eta);
+        if (aAt == null && bAt == null) return 0;
+        if (aAt == null) return 1;
+        if (bAt == null) return -1;
+        return bAt.compareTo(aAt);
+      });
+    final visible = sorted.take(_maxVisible).toList(growable: false);
     return Material(
       type: MaterialType.transparency,
       child: Theme(
@@ -164,6 +181,10 @@ class _CanceledArchive extends StatelessWidget {
         child: ExpansionTile(
           tilePadding: EdgeInsets.zero,
           childrenPadding: const EdgeInsets.only(top: AppSpacing.sm),
+          // Default is center-align — without stretch, the canceled cards
+          // inside size to content and visually misalign with the active
+          // cards above.
+          expandedCrossAxisAlignment: CrossAxisAlignment.stretch,
           title: Text(l.homeArchiveTitle, style: AppTypography.titleSmall),
           subtitle: Text(
             l.homeArchiveCount(orders.length),
@@ -171,9 +192,9 @@ class _CanceledArchive extends StatelessWidget {
                 .copyWith(color: AppColors.textSecondary),
           ),
           children: [
-            for (int i = 0; i < orders.length; i++) ...[
+            for (int i = 0; i < visible.length; i++) ...[
               if (i > 0) const SizedBox(height: AppSpacing.sm),
-              _OrderCard(order: orders[i]),
+              _OrderCard(order: visible[i]),
             ],
           ],
         ),

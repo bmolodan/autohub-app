@@ -124,10 +124,13 @@ class FakeSessionStorage implements SessionStoragePort {
 }
 
 class FakePhotoStorage implements PhotoStoragePort {
-  FakePhotoStorage({this.next});
+  FakePhotoStorage({this.next, this.multi = const []});
 
   /// What [pickFromCamera] / [pickFromGallery] should return on the next call.
   OrderPhoto? next;
+
+  /// What [pickMultipleFromGallery] should return on the next call.
+  List<OrderPhoto> multi;
   int removeCalls = 0;
 
   @override
@@ -135,6 +138,12 @@ class FakePhotoStorage implements PhotoStoragePort {
 
   @override
   Future<OrderPhoto?> pickFromGallery() async => next;
+
+  @override
+  Future<List<OrderPhoto>> pickMultipleFromGallery({required int limit}) async {
+    if (limit <= 0) return const [];
+    return multi.length > limit ? multi.take(limit).toList() : multi;
+  }
 
   @override
   Future<void> remove(OrderPhoto photo) async {

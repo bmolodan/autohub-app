@@ -10,6 +10,11 @@ abstract interface class PhotoStoragePort {
   /// Returns null if the user cancels the picker.
   Future<OrderPhoto?> pickFromGallery();
 
+  /// Multi-select from gallery, capped at [limit]. The OS picker enforces
+  /// the limit when supported; otherwise the adapter trims the result.
+  /// Returns an empty list when the user cancels.
+  Future<List<OrderPhoto>> pickMultipleFromGallery({required int limit});
+
   /// Detach the photo. For local image_picker temp files this is a
   /// no-op — the OS reclaims temp files. For HTTP-backed photos this
   /// would issue a DELETE. Kept on the port so a server adapter
