@@ -333,7 +333,8 @@ class _PendingConfirmationCard extends StatelessWidget {
                     Text(order.title, style: AppTypography.titleMedium),
                     const SizedBox(height: AppSpacing.xxs),
                     Text(orderStatusLabel(context.l10n, order.status),
-                        style: AppTypography.bodySmall),
+                        style: AppTypography.bodySmall
+                            .copyWith(color: context.colors.textSecondary)),
                   ],
                 ),
               ),

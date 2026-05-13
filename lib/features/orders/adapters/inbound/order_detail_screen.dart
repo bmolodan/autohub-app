@@ -498,12 +498,16 @@ class _LoadingSkeleton extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('LOADING STATUS', style: AppTypography.overline),
+                Text('LOADING STATUS',
+                    style: AppTypography.overline
+                        .copyWith(color: context.colors.textSecondary)),
                 const SizedBox(height: AppSpacing.xxs),
                 Text('Loading service title',
                     style: AppTypography.headlineSmall),
                 const SizedBox(height: AppSpacing.xxs),
-                Text('Loading vehicle info', style: AppTypography.bodySmall),
+                Text('Loading vehicle info',
+                    style: AppTypography.bodySmall
+                        .copyWith(color: context.colors.textSecondary)),
               ],
             ),
           ),
@@ -512,7 +516,9 @@ class _LoadingSkeleton extends StatelessWidget {
           // in-progress body (Estimate). Same shape on both.
           const StatCard(label: 'Loading label', value: 'Loading value'),
           const SizedBox(height: AppSpacing.lg),
-          Text('JOURNAL', style: AppTypography.overline),
+          Text('JOURNAL',
+              style: AppTypography.overline
+                  .copyWith(color: context.colors.textSecondary)),
           const SizedBox(height: AppSpacing.sm),
           for (var i = 0; i < 3; i++)
             Padding(

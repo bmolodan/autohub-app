@@ -58,7 +58,8 @@ class _ServicePickerScreenState extends State<ServicePickerScreen> {
           onPressed: () => context.pop(),
         ),
         title: Text(context.l10n.bookingStep1Title,
-            style: AppTypography.bodySmall),
+            style: AppTypography.bodySmall
+                .copyWith(color: context.colors.textSecondary)),
       ),
       body: SafeArea(
         child: Padding(

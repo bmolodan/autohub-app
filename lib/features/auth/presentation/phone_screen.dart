@@ -77,7 +77,8 @@ class _PhoneScreenState extends ConsumerState<PhoneScreen> {
                     Text(context.l10n.appName,
                         style: AppTypography.titleMedium),
                     Text(context.l10n.phoneBrandTagline,
-                        style: AppTypography.overline),
+                        style: AppTypography.overline
+                            .copyWith(color: context.colors.textSecondary)),
                   ],
                 ),
               ),
@@ -177,7 +178,8 @@ class _PhoneScreenState extends ConsumerState<PhoneScreen> {
                       Expanded(
                         child: Text(
                           context.l10n.phoneConsent,
-                          style: AppTypography.bodySmall,
+                          style: AppTypography.bodySmall
+                              .copyWith(color: context.colors.textSecondary),
                         ),
                       ),
                     ],

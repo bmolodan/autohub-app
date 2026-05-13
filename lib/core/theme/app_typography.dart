@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import 'app_colors.dart';
-
 /// Typography scale matching the AutoHub brand.
 ///
 /// Font: Inter (geometric sans-serif). Closest free match to nesemosautohub.com.
@@ -18,17 +16,18 @@ import 'app_colors.dart';
 class AppTypography {
   AppTypography._();
 
+  /// Palette-agnostic base — colors are left null so `textTheme.apply(...)`
+  /// in `AppTheme` and the active `BrandColors` palette decide the colour
+  /// at render time. Sites that need an explicit hue do it via `copyWith`.
   static TextStyle _base({
     required double size,
     FontWeight weight = FontWeight.w400,
-    Color color = AppColors.textPrimary,
     double height = 1.4,
     double letterSpacing = 0,
   }) =>
       GoogleFonts.inter(
         fontSize: size,
         fontWeight: weight,
-        color: color,
         height: height,
         letterSpacing: letterSpacing,
       );
@@ -58,8 +57,12 @@ class AppTypography {
   // ─── Body ──────────────────────────────────────────────────────────
   static TextStyle get bodyLarge => _base(size: 14, height: 1.5);
   static TextStyle get bodyMedium => _base(size: 12, height: 1.5);
-  static TextStyle get bodySmall =>
-      _base(size: 11, height: 1.5, color: AppColors.textSecondary);
+  // Note: bodySmall, labelSmall, overline, caption used to bake in
+  // `textSecondary` / `textTertiary` as their "muted" default — moved
+  // to the theme builder (light/dark-aware) so this file stays palette-
+  // agnostic. Call sites that want the muted tone do `.copyWith(color:
+  // context.colors.textSecondary)` explicitly.
+  static TextStyle get bodySmall => _base(size: 11, height: 1.5);
 
   // ─── Labels (buttons, chips, ALL CAPS micro labels) ────────────────
   static TextStyle get labelLarge =>
@@ -71,7 +74,6 @@ class AppTypography {
         weight: FontWeight.w500,
         height: 1.2,
         letterSpacing: 1.5,
-        color: AppColors.textSecondary,
       );
 
   /// Tiny ALL CAPS label used as section header ("У РОБОТІ", "ІСТОРІЯ").
@@ -81,12 +83,10 @@ class AppTypography {
         weight: FontWeight.w500,
         height: 1.2,
         letterSpacing: 1.8,
-        color: AppColors.textSecondary,
       );
 
   /// Captions in mute tone — for metadata under titles.
-  static TextStyle get caption =>
-      _base(size: 10, height: 1.4, color: AppColors.textTertiary);
+  static TextStyle get caption => _base(size: 10, height: 1.4);
 
   // ─── Aggregate TextTheme for ThemeData ─────────────────────────────
   static TextTheme get textTheme => TextTheme(

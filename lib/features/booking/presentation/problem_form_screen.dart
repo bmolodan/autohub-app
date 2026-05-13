@@ -159,7 +159,8 @@ class _ProblemFormScreenState extends ConsumerState<ProblemFormScreen> {
                       style: AppTypography.titleSmall),
                   subtitle: Text(
                     '${v.year} · ${v.plate}',
-                    style: AppTypography.bodySmall,
+                    style: AppTypography.bodySmall
+                        .copyWith(color: ctx.colors.textSecondary),
                   ),
                   trailing: v.id == _selectedVehicleId ||
                           (_selectedVehicleId == null &&
@@ -241,7 +242,9 @@ class _ProblemFormScreenState extends ConsumerState<ProblemFormScreen> {
           icon: const Icon(Icons.arrow_back),
           onPressed: () => context.pop(),
         ),
-        title: Text(l.bookingStep3Title, style: AppTypography.bodySmall),
+        title: Text(l.bookingStep3Title,
+            style: AppTypography.bodySmall
+                .copyWith(color: context.colors.textSecondary)),
       ),
       body: SafeArea(
         child: Padding(

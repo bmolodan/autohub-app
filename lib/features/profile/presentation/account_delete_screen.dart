@@ -79,7 +79,8 @@ class AccountDeleteScreen extends ConsumerWidget {
                     Expanded(
                       child: Text(
                         l.accountDeleteLegalNote,
-                        style: AppTypography.bodySmall,
+                        style: AppTypography.bodySmall
+                            .copyWith(color: context.colors.textSecondary),
                       ),
                     ),
                   ],

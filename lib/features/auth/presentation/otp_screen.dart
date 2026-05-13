@@ -182,7 +182,8 @@ class _OtpScreenState extends ConsumerState<OtpScreen> {
                         context.l10n.otpResendIn(
                           _secondsLeft.toString().padLeft(2, '0'),
                         ),
-                        style: AppTypography.bodySmall)
+                        style: AppTypography.bodySmall
+                            .copyWith(color: context.colors.textSecondary))
                     : TextButton(
                         onPressed: _startCountdown,
                         child: Text(context.l10n.otpResendNow),
