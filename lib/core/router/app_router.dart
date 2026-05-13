@@ -164,10 +164,15 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       ),
       GoRoute(
         path: AppRoutes.bookingProblem,
-        builder: (_, state) => ProblemFormScreen(
-          serviceId: state.uri.queryParameters['serviceId'],
-          customTitle: state.uri.queryParameters['customTitle'],
-        ),
+        builder: (_, state) {
+          // customTitle wins if both are accidentally present in the URL.
+          final custom = state.uri.queryParameters['customTitle'];
+          final serviceId = state.uri.queryParameters['serviceId'];
+          if (custom != null && custom.isNotEmpty) {
+            return ProblemFormScreen(customTitle: custom);
+          }
+          return ProblemFormScreen(serviceId: serviceId);
+        },
       ),
 
       // Cars detail / add (outside the shell)

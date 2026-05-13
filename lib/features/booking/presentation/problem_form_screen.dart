@@ -26,9 +26,13 @@ const _maxPhotos = 3;
 ///
 /// Either [serviceId] resolves to an entry in `serviceCatalog`, or
 /// [customTitle] carries a user-supplied service name (no catalog entry).
-/// Exactly one of the two is expected.
+/// Exactly one of the two is expected — enforced by a constructor assert.
 class ProblemFormScreen extends ConsumerStatefulWidget {
-  const ProblemFormScreen({super.key, this.serviceId, this.customTitle});
+  const ProblemFormScreen({super.key, this.serviceId, this.customTitle})
+      : assert(
+          (serviceId == null) != (customTitle == null),
+          'Pass exactly one of serviceId or customTitle',
+        );
   final String? serviceId;
   final String? customTitle;
 
@@ -184,9 +188,11 @@ class _ProblemFormScreenState extends ConsumerState<ProblemFormScreen> {
 
     setState(() => _submitting = true);
     try {
+      // Either `service` or `customTitle` is non-null — enforced by the
+      // constructor assert and the early-return guard above.
       final title = service != null
           ? serviceTitle(context.l10n, service.id)
-          : widget.customTitle!;
+          : widget.customTitle ?? '';
       final price = service?.priceFromUah ?? 0;
       final created = await ref.read(ordersControllerProvider.notifier).create(
             CreateOrderInput(

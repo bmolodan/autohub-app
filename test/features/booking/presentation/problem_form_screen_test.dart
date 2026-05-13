@@ -154,5 +154,41 @@ void main() {
       expect(find.text('Honda Civic'), findsOneWidget);
       expect(find.text('Toyota Camry'), findsNothing);
     });
+
+    testWidgets('custom-title mode shows the custom title and TBD estimate',
+        (tester) async {
+      await pumpScreen(
+        tester,
+        child: const ProblemFormScreen(customTitle: 'Зварювання'),
+        overrides: [
+          activeOrderRepositoryProvider
+              .overrideWithValue(FakeActiveOrderRepository()),
+          photoStorageProvider.overrideWithValue(FakePhotoStorage()),
+        ],
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.text('Зварювання'), findsOneWidget);
+      expect(find.text('За домовленістю'), findsOneWidget);
+    });
+
+    testWidgets('constructor rejects passing both serviceId and customTitle',
+        (tester) async {
+      expect(
+        () => ProblemFormScreen(
+          serviceId: 'oil_change',
+          customTitle: 'X',
+        ),
+        throwsA(isA<AssertionError>()),
+      );
+    });
+
+    testWidgets('constructor rejects passing neither serviceId nor customTitle',
+        (tester) async {
+      expect(
+        () => ProblemFormScreen(),
+        throwsA(isA<AssertionError>()),
+      );
+    });
   });
 }

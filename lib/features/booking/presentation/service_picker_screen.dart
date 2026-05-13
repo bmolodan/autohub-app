@@ -26,50 +26,16 @@ class _ServicePickerScreenState extends State<ServicePickerScreen> {
   String _query = '';
 
   Future<void> _openCustomSheet() async {
-    final ctrl = TextEditingController();
     final picked = await showModalBottomSheet<String>(
       context: context,
       isScrollControlled: true,
-      builder: (ctx) {
-        final l = ctx.l10n;
-        final viewInsets = MediaQuery.of(ctx).viewInsets.bottom;
-        return SafeArea(
-          child: Padding(
-            padding: EdgeInsets.only(bottom: viewInsets),
-            child: Padding(
-              padding: const EdgeInsets.all(AppSpacing.lg),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Text(l.bookingPickerCustomSheetTitle,
-                      style: AppTypography.headlineSmall),
-                  const SizedBox(height: AppSpacing.md),
-                  TextField(
-                    controller: ctrl,
-                    autofocus: true,
-                    textCapitalization: TextCapitalization.sentences,
-                    decoration: InputDecoration(
-                      labelText: l.bookingPickerCustomFieldLabel,
-                    ),
-                  ),
-                  const SizedBox(height: AppSpacing.md),
-                  FilledButton(
-                    onPressed: () {
-                      final text = ctrl.text.trim();
-                      if (text.isEmpty) return;
-                      Navigator.of(ctx).pop(text);
-                    },
-                    child: Text(l.bookingPickerCustomSubmit),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        );
-      },
+      builder: (_) => const _CustomServiceSheet(),
     );
     if (!mounted || picked == null) return;
+    // Clear catalog selection so the picker's _Selected-state can't push a
+    // stale "Далі" navigation alongside the custom-title push we are about
+    // to make.
+    setState(() => _selectedId = null);
     unawaited(context.push(
       '${AppRoutes.bookingProblem}?customTitle=${Uri.encodeQueryComponent(picked)}',
     ));
@@ -203,6 +169,71 @@ class _ServiceTile extends StatelessWidget {
               if (selected)
                 const Icon(Icons.check_circle,
                     color: AppColors.brandBlack, size: AppIconSize.lg),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+const int _kMaxCustomTitleLength = 80;
+
+/// Modal-sheet body for the "name your own service" path. Lives as a
+/// StatefulWidget so the controller is disposed when the sheet pops —
+/// the previous inline approach leaked a `TextEditingController` on
+/// every open.
+class _CustomServiceSheet extends StatefulWidget {
+  const _CustomServiceSheet();
+
+  @override
+  State<_CustomServiceSheet> createState() => _CustomServiceSheetState();
+}
+
+class _CustomServiceSheetState extends State<_CustomServiceSheet> {
+  final _ctrl = TextEditingController();
+
+  @override
+  void dispose() {
+    _ctrl.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l = context.l10n;
+    final keyboardInset = MediaQuery.viewInsetsOf(context).bottom;
+    return SafeArea(
+      child: Padding(
+        padding: EdgeInsets.only(bottom: keyboardInset),
+        child: Padding(
+          padding: const EdgeInsets.all(AppSpacing.lg),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Text(l.bookingPickerCustomSheetTitle,
+                  style: AppTypography.headlineSmall),
+              const SizedBox(height: AppSpacing.md),
+              TextField(
+                controller: _ctrl,
+                autofocus: true,
+                textCapitalization: TextCapitalization.sentences,
+                maxLength: _kMaxCustomTitleLength,
+                decoration: InputDecoration(
+                  labelText: l.bookingPickerCustomFieldLabel,
+                  counterText: '',
+                ),
+              ),
+              const SizedBox(height: AppSpacing.md),
+              FilledButton(
+                onPressed: () {
+                  final text = _ctrl.text.trim();
+                  if (text.isEmpty) return;
+                  Navigator.of(context).pop(text);
+                },
+                child: Text(l.bookingPickerCustomSubmit),
+              ),
             ],
           ),
         ),
