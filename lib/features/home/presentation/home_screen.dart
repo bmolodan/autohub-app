@@ -64,14 +64,17 @@ class HomeScreen extends ConsumerWidget {
             const SizedBox(height: AppSpacing.lg),
             Expanded(
               child: async.when(
-                loading: () => Skeletonizer(
-                  enabled: true,
-                  child: ListView.separated(
-                    padding: EdgeInsets.zero,
-                    itemCount: 2,
-                    separatorBuilder: (_, __) =>
-                        const SizedBox(height: AppSpacing.sm),
-                    itemBuilder: (_, __) => _OrderCard(order: _skeletonOrder),
+                loading: () => HeroMode(
+                  enabled: false,
+                  child: Skeletonizer(
+                    enabled: true,
+                    child: ListView.separated(
+                      padding: EdgeInsets.zero,
+                      itemCount: 2,
+                      separatorBuilder: (_, __) =>
+                          const SizedBox(height: AppSpacing.sm),
+                      itemBuilder: (_, __) => _OrderCard(order: _skeletonOrder),
+                    ),
                   ),
                 ),
                 error: (e, _) => ErrorState(
