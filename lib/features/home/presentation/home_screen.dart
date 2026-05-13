@@ -10,8 +10,10 @@ import '../../../core/theme/app_typography.dart';
 import '../../../core/util/date_format.dart';
 import '../../../core/widgets/empty_state.dart';
 import '../../../core/widgets/error_state.dart';
+import '../../../l10n/l10n_extension.dart';
 import '../../orders/composition/orders_providers.dart';
 import '../../orders/domain/active_order.dart';
+import '../../orders/presentation/order_l10n.dart';
 
 class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
@@ -29,33 +31,35 @@ class HomeScreen extends ConsumerWidget {
             Row(
               children: [
                 Expanded(
-                  child: Text('NESEMOS', style: AppTypography.titleMedium),
+                  child: Text(context.l10n.appName,
+                      style: AppTypography.titleMedium),
                 ),
                 IconButton(
                   onPressed: () {},
-                  tooltip: 'Сповіщення',
-                  icon: const Icon(
+                  tooltip: context.l10n.homeNotificationsHint,
+                  icon: Icon(
                     Icons.notifications_none_outlined,
-                    semanticLabel: 'Сповіщення',
+                    semanticLabel: context.l10n.homeNotificationsHint,
                   ),
                 ),
                 IconButton(
                   onPressed: () => context.push(AppRoutes.showcase),
-                  tooltip: 'Design tokens (dev)',
-                  icon: const Icon(
+                  tooltip: context.l10n.homeDesignTokensHint,
+                  icon: Icon(
                     Icons.palette_outlined,
-                    semanticLabel: 'Дизайн-токени (dev)',
+                    semanticLabel: context.l10n.homeDesignTokensSemantics,
                   ),
                 ),
               ],
             ),
             const SizedBox(height: AppSpacing.sm),
             Text(
-              'Привіт,',
+              context.l10n.homeGreetingPrefix,
               style: AppTypography.bodyMedium
                   .copyWith(color: AppColors.textSecondary),
             ),
-            Text('Богдане', style: AppTypography.headlineMedium),
+            Text(context.l10n.homeUserName,
+                style: AppTypography.headlineMedium),
             const SizedBox(height: AppSpacing.lg),
             Expanded(
               child: async.when(
@@ -66,10 +70,9 @@ class HomeScreen extends ConsumerWidget {
                 data: (orders) => orders.isEmpty
                     ? EmptyState(
                         icon: Icons.car_repair_outlined,
-                        title: 'Поки тиша',
-                        subtitle:
-                            'Активних замовлень немає. Запишіться на сервіс — ми про все подбаємо.',
-                        ctaLabel: '+ Записатись на СТО',
+                        title: context.l10n.homeEmptyTitle,
+                        subtitle: context.l10n.homeEmptySubtitle,
+                        ctaLabel: context.l10n.homeEmptyCta,
                         onCta: () => context.push(AppRoutes.bookingService),
                       )
                     : ListView.separated(
@@ -84,7 +87,7 @@ class HomeScreen extends ConsumerWidget {
             const SizedBox(height: AppSpacing.sm),
             ElevatedButton(
               onPressed: () => context.push(AppRoutes.bookingService),
-              child: const Text('+ Записатись'),
+              child: Text(context.l10n.homeBookingCta),
             ),
           ],
         ),
@@ -99,6 +102,7 @@ class _OrderCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final statusLabel = orderStatusLabel(context.l10n, order.status);
     final child = switch (order.status) {
       ActiveOrderStatus.inProgress => _InProgressCard(order: order),
       ActiveOrderStatus.pendingConfirmation =>
@@ -107,7 +111,7 @@ class _OrderCard extends StatelessWidget {
     };
     return Semantics(
       button: true,
-      label: '${order.statusLabel}. ${order.title}. ${order.vehicleSummary}',
+      label: '$statusLabel. ${order.title}. ${order.vehicleSummary}',
       child: Material(
         color: Colors.transparent,
         borderRadius: AppRadii.xlAll,
@@ -139,7 +143,7 @@ class _InProgressCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            order.statusLabel.toUpperCase(),
+            orderStatusLabel(context.l10n, order.status).toUpperCase(),
             style: AppTypography.overline.copyWith(
               color: AppColors.brandYellow,
             ),
@@ -207,7 +211,8 @@ class _PendingConfirmationCard extends StatelessWidget {
               children: [
                 Text(order.title, style: AppTypography.titleMedium),
                 const SizedBox(height: AppSpacing.xxs),
-                Text(order.statusLabel, style: AppTypography.bodySmall),
+                Text(orderStatusLabel(context.l10n, order.status),
+                    style: AppTypography.bodySmall),
               ],
             ),
           ),
@@ -241,7 +246,7 @@ class _CanceledCard extends StatelessWidget {
           ),
           const SizedBox(height: AppSpacing.xxs),
           Text(
-            order.statusLabel,
+            orderStatusLabel(context.l10n, order.status),
             style: AppTypography.bodySmall.copyWith(color: AppColors.error),
           ),
         ],

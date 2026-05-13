@@ -14,23 +14,18 @@ enum OrderStage {
 class OrderTimelineEntry {
   const OrderTimelineEntry({
     required this.stage,
-    required this.label,
     required this.at,
   });
 
   final OrderStage stage;
-  final String label;
   final DateTime at;
 
   @override
   bool operator ==(Object other) =>
-      other is OrderTimelineEntry &&
-      other.stage == stage &&
-      other.label == label &&
-      other.at == at;
+      other is OrderTimelineEntry && other.stage == stage && other.at == at;
 
   @override
-  int get hashCode => Object.hash(stage, label, at);
+  int get hashCode => Object.hash(stage, at);
 }
 
 /// Active work-order shown on the Home screen.
@@ -45,7 +40,6 @@ class ActiveOrder {
     required this.id,
     required this.title,
     required this.status,
-    required this.statusLabel,
     required this.vehicleMake,
     required this.vehicleModel,
     required this.vehiclePlate,
@@ -60,7 +54,6 @@ class ActiveOrder {
   final String id;
   final String title;
   final ActiveOrderStatus status;
-  final String statusLabel;
   final String vehicleMake;
   final String vehicleModel;
   final String vehiclePlate;
@@ -90,7 +83,6 @@ class ActiveOrder {
     return id == other.id &&
         title == other.title &&
         status == other.status &&
-        statusLabel == other.statusLabel &&
         vehicleMake == other.vehicleMake &&
         vehicleModel == other.vehicleModel &&
         vehiclePlate == other.vehiclePlate &&
@@ -105,7 +97,6 @@ class ActiveOrder {
         id,
         title,
         status,
-        statusLabel,
         vehicleMake,
         vehicleModel,
         vehiclePlate,

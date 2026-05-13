@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../l10n/l10n_extension.dart';
 import '../router/app_router.dart';
 
 /// Tabbed shell: bottom nav over a child route.
@@ -10,12 +11,11 @@ class AppShell extends StatelessWidget {
   final Widget child;
 
   static const _tabs = <_TabSpec>[
-    _TabSpec(AppRoutes.home, Icons.home_outlined, Icons.home, 'Головна'),
-    _TabSpec(AppRoutes.history, Icons.access_time, Icons.access_time_filled,
-        'Історія'),
-    _TabSpec(AppRoutes.cars, Icons.directions_car_outlined,
-        Icons.directions_car, 'Авто'),
-    _TabSpec(AppRoutes.profile, Icons.person_outline, Icons.person, 'Профіль'),
+    _TabSpec(AppRoutes.home, Icons.home_outlined, Icons.home),
+    _TabSpec(AppRoutes.history, Icons.access_time, Icons.access_time_filled),
+    _TabSpec(
+        AppRoutes.cars, Icons.directions_car_outlined, Icons.directions_car),
+    _TabSpec(AppRoutes.profile, Icons.person_outline, Icons.person),
   ];
 
   int _indexFor(String location) {
@@ -27,6 +27,8 @@ class AppShell extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = context.l10n;
+    final labels = [l.navHome, l.navHistory, l.navCars, l.navProfile];
     final location = GoRouterState.of(context).uri.toString();
     final currentIndex = _indexFor(location);
 
@@ -36,12 +38,12 @@ class AppShell extends StatelessWidget {
         currentIndex: currentIndex,
         onTap: (i) => context.go(_tabs[i].path),
         items: [
-          for (final t in _tabs)
+          for (var i = 0; i < _tabs.length; i++)
             BottomNavigationBarItem(
-              icon: Icon(t.icon, semanticLabel: t.semanticLabel),
-              activeIcon: Icon(t.activeIcon, semanticLabel: t.semanticLabel),
+              icon: Icon(_tabs[i].icon, semanticLabel: labels[i]),
+              activeIcon: Icon(_tabs[i].activeIcon, semanticLabel: labels[i]),
               label: '',
-              tooltip: t.semanticLabel,
+              tooltip: labels[i],
             ),
         ],
       ),
@@ -50,9 +52,8 @@ class AppShell extends StatelessWidget {
 }
 
 class _TabSpec {
-  const _TabSpec(this.path, this.icon, this.activeIcon, this.semanticLabel);
+  const _TabSpec(this.path, this.icon, this.activeIcon);
   final String path;
   final IconData icon;
   final IconData activeIcon;
-  final String semanticLabel;
 }

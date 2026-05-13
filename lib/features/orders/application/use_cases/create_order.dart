@@ -41,7 +41,6 @@ class CreateOrderUseCase {
       id: _idGen.next('o'),
       title: title,
       status: ActiveOrderStatus.pendingConfirmation,
-      statusLabel: 'Очікує підтвердження',
       vehicleMake: input.vehicle.make,
       vehicleModel: input.vehicle.model,
       vehiclePlate: input.vehicle.plate,
@@ -52,7 +51,6 @@ class CreateOrderUseCase {
       timeline: [
         OrderTimelineEntry(
           stage: OrderStage.pendingConfirmation,
-          label: 'Очікує підтвердження',
           at: now,
         ),
       ],

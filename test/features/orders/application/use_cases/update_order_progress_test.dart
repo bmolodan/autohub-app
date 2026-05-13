@@ -26,7 +26,6 @@ ActiveOrder _inProgress({double progress = 0.3}) => ActiveOrder(
       id: 'o1',
       title: 'Заміна колодок',
       status: ActiveOrderStatus.inProgress,
-      statusLabel: 'У ремонті',
       vehicleMake: 'Toyota',
       vehicleModel: 'Camry',
       vehiclePlate: 'AA 1234 BC',
@@ -50,8 +49,7 @@ void main() {
       expect((await repo.findById('o1'))!.progress, 0.75);
     });
 
-    test('appends timeline entry when newStage + newStageLabel provided',
-        () async {
+    test('appends timeline entry when newStage provided', () async {
       final repo = _FakeRepo();
       await repo.save(_inProgress());
 
@@ -60,13 +58,11 @@ void main() {
           id: 'o1',
           progress: 1.0,
           newStage: OrderStage.done,
-          newStageLabel: 'Готово',
         ),
       );
 
       expect(updated.timeline, hasLength(1));
       expect(updated.timeline.single.stage, OrderStage.done);
-      expect(updated.timeline.single.label, 'Готово');
       expect(updated.timeline.single.at, _fixedNow);
     });
 
@@ -97,7 +93,6 @@ void main() {
         id: 'o1',
         title: 'X',
         status: ActiveOrderStatus.canceled,
-        statusLabel: 'Скасовано',
         vehicleMake: 'M',
         vehicleModel: 'X',
         vehiclePlate: 'P',

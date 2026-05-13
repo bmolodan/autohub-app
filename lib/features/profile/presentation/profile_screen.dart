@@ -7,6 +7,7 @@ import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_radii.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_typography.dart';
+import '../../../l10n/l10n_extension.dart';
 import '../../auth/composition/auth_providers.dart';
 import '../../cars/composition/cars_providers.dart';
 import '../../cars/domain/vehicle.dart';
@@ -21,8 +22,10 @@ class ProfileScreen extends ConsumerWidget {
     final session = ref.watch(authControllerProvider).asData?.value;
     final phone = session?.phone ?? '+380 67 123 45 67';
 
+    final l = context.l10n;
     return Scaffold(
-      appBar: AppBar(title: Text('Профіль', style: AppTypography.titleLarge)),
+      appBar:
+          AppBar(title: Text(l.profileTitle, style: AppTypography.titleLarge)),
       body: SafeArea(
         child: ListView(
           padding: const EdgeInsets.symmetric(
@@ -33,7 +36,7 @@ class ProfileScreen extends ConsumerWidget {
             _UserHeader(name: 'Богдан М.', phone: phone),
             const SizedBox(height: AppSpacing.lg),
             Text(
-              'МОЇ АВТО',
+              l.profileMyCars,
               style: AppTypography.overline
                   .copyWith(color: AppColors.textSecondary),
             ),
@@ -48,7 +51,7 @@ class ProfileScreen extends ConsumerWidget {
                   OutlinedButton.icon(
                     onPressed: () => context.push(AppRoutes.carAdd),
                     icon: const Icon(Icons.add),
-                    label: const Text('Додати авто'),
+                    label: Text(l.carsAddCta),
                   ),
                 ],
               ),
@@ -56,22 +59,22 @@ class ProfileScreen extends ConsumerWidget {
             const SizedBox(height: AppSpacing.lg),
             _SettingsRow(
               icon: Icons.notifications_outlined,
-              label: 'Сповіщення',
+              label: l.profileNotifications,
               onTap: () => context.push(AppRoutes.profileNotifications),
             ),
             _SettingsRow(
               icon: Icons.language_outlined,
-              label: 'Мова',
-              trailing: 'UA',
+              label: l.profileLanguage,
+              trailing: l.profileLanguageBadge,
               onTap: () => ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Перемикач мови: TODO')),
+                SnackBar(content: Text(l.profileLanguageTodo)),
               ),
             ),
             _SettingsRow(
               icon: Icons.support_agent_outlined,
-              label: 'Підтримка',
+              label: l.profileSupport,
               onTap: () => ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Контакти підтримки: TODO')),
+                SnackBar(content: Text(l.profileSupportTodo)),
               ),
             ),
             const SizedBox(height: AppSpacing.lg),
@@ -80,13 +83,13 @@ class ProfileScreen extends ConsumerWidget {
                 await ref.read(authControllerProvider.notifier).signOut();
                 if (context.mounted) context.go(AppRoutes.onboarding);
               },
-              child: const Text('Вийти'),
+              child: Text(l.profileSignOut),
             ),
             const SizedBox(height: AppSpacing.sm),
             TextButton(
               onPressed: () => context.push(AppRoutes.profileAccountDelete),
               style: TextButton.styleFrom(foregroundColor: AppColors.error),
-              child: const Text('Видалити акаунт'),
+              child: Text(l.profileDeleteAccount),
             ),
             const SizedBox(height: AppSpacing.lg),
           ],
@@ -136,7 +139,7 @@ class _UserHeader extends StatelessWidget {
           ),
           Semantics(
             image: true,
-            label: 'Аватар $name',
+            label: context.l10n.profileAvatarSemantics(name),
             child: Container(
               width: 56,
               height: 56,
@@ -205,7 +208,7 @@ class _VehicleSummary extends StatelessWidget {
                 borderRadius: AppRadii.pillAll,
               ),
               child: Text(
-                'ТО за $remaining км',
+                context.l10n.profileTOLeftPill(remaining),
                 style: AppTypography.labelSmall
                     .copyWith(color: AppColors.onYellow),
               ),

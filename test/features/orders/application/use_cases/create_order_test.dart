@@ -64,7 +64,6 @@ void main() {
 
       expect(created.id, isNotEmpty);
       expect(created.status, ActiveOrderStatus.pendingConfirmation);
-      expect(created.statusLabel, 'Очікує підтвердження');
       expect(created.title, 'Заміна масла');
       expect(created.totalUah, 1600);
       expect(created.vehicleMake, 'Toyota');

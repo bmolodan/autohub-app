@@ -9,6 +9,7 @@ import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_radii.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_typography.dart';
+import '../../../l10n/l10n_extension.dart';
 import '../composition/auth_providers.dart';
 
 /// Phone number entry — step 1 of auth.
@@ -71,16 +72,19 @@ class _PhoneScreenState extends ConsumerState<PhoneScreen> {
                   children: [
                     const _BrandPin(),
                     const SizedBox(height: AppSpacing.sm),
-                    Text('NESEMOS', style: AppTypography.titleMedium),
-                    Text('VETERAN AUTO HUB', style: AppTypography.overline),
+                    Text(context.l10n.appName,
+                        style: AppTypography.titleMedium),
+                    Text(context.l10n.phoneBrandTagline,
+                        style: AppTypography.overline),
                   ],
                 ),
               ),
               const SizedBox(height: AppSpacing.xxl),
-              Text('Вітаємо в\nавтохабі', style: AppTypography.headlineLarge),
+              Text(context.l10n.phoneGreeting,
+                  style: AppTypography.headlineLarge),
               const SizedBox(height: AppSpacing.xs),
               Text(
-                'Введіть номер телефону — надішлемо SMS з кодом',
+                context.l10n.phoneInstruction,
                 style: AppTypography.bodyMedium
                     .copyWith(color: AppColors.textSecondary),
               ),
@@ -105,13 +109,14 @@ class _PhoneScreenState extends ConsumerState<PhoneScreen> {
                         keyboardType: TextInputType.phone,
                         inputFormatters: [_UaPhoneFormatter()],
                         style: AppTypography.titleMedium,
-                        decoration: const InputDecoration(
-                          hintText: '67 123 45 67',
+                        decoration: InputDecoration(
+                          hintText: context.l10n.phoneHint,
                           filled: false,
                           border: InputBorder.none,
                           enabledBorder: InputBorder.none,
                           focusedBorder: InputBorder.none,
-                          contentPadding: EdgeInsets.symmetric(vertical: 16),
+                          contentPadding:
+                              const EdgeInsets.symmetric(vertical: 16),
                         ),
                         onChanged: (_) => setState(() {}),
                       ),
@@ -127,7 +132,7 @@ class _PhoneScreenState extends ConsumerState<PhoneScreen> {
                     setState(() {});
                   },
                   child: Text(
-                    'DEV · тапни щоб заповнити тестовий номер · код 0000',
+                    context.l10n.phoneDevHint,
                     style: AppTypography.labelSmall.copyWith(
                       color: AppColors.textTertiary,
                     ),
@@ -137,7 +142,7 @@ class _PhoneScreenState extends ConsumerState<PhoneScreen> {
               const SizedBox(height: AppSpacing.md),
               Semantics(
                 checked: _consent,
-                label: 'Згода на обробку персональних даних',
+                label: context.l10n.phoneConsent,
                 child: GestureDetector(
                   onTap: () => setState(() => _consent = !_consent),
                   child: Row(
@@ -168,8 +173,7 @@ class _PhoneScreenState extends ConsumerState<PhoneScreen> {
                       const SizedBox(width: AppSpacing.sm),
                       Expanded(
                         child: Text(
-                          'Згоден на обробку персональних даних та умови '
-                          'використання',
+                          context.l10n.phoneConsent,
                           style: AppTypography.bodySmall,
                         ),
                       ),
@@ -186,7 +190,7 @@ class _PhoneScreenState extends ConsumerState<PhoneScreen> {
                         height: 20,
                         child: CircularProgressIndicator(strokeWidth: 2),
                       )
-                    : const Text('Надіслати код'),
+                    : Text(context.l10n.phoneSubmit),
               ),
             ],
           ),

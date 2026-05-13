@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_typography.dart';
+import '../../../../l10n/l10n_extension.dart';
 import '../../application/use_cases/add_vehicle.dart';
 import '../../composition/cars_providers.dart';
 
@@ -59,13 +60,25 @@ class _AddCarScreenState extends ConsumerState<AddCarScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l = context.l10n;
+    String? required(String? v) =>
+        (v == null || v.trim().isEmpty) ? l.commonRequiredField : null;
+    String? validYear(String? v) {
+      if (v == null || v.trim().isEmpty) return l.commonRequiredField;
+      final y = int.tryParse(v);
+      if (y == null) return l.commonNumbersOnly;
+      final max = DateTime.now().year + 1;
+      if (y < 1900 || y > max) return l.addCarYearRange(max);
+      return null;
+    }
+
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () => context.pop(),
         ),
-        title: Text('Додати авто', style: AppTypography.titleLarge),
+        title: Text(l.carsAddCta, style: AppTypography.titleLarge),
       ),
       body: SafeArea(
         child: Padding(
@@ -75,18 +88,17 @@ class _AddCarScreenState extends ConsumerState<AddCarScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                Text('Розкажіть про вашу машину',
-                    style: AppTypography.headlineMedium),
+                Text(l.addCarHeading, style: AppTypography.headlineMedium),
                 const SizedBox(height: AppSpacing.xs),
                 Text(
-                  'Можна заповнити VIN — решта заповниться автоматично',
+                  l.addCarSubtitle,
                   style: AppTypography.bodySmall
                       .copyWith(color: AppColors.textSecondary),
                 ),
                 const SizedBox(height: AppSpacing.md),
                 TextFormField(
                   controller: _vin,
-                  decoration: const InputDecoration(labelText: 'VIN (опційно)'),
+                  decoration: InputDecoration(labelText: l.addCarFieldVin),
                 ),
                 const SizedBox(height: AppSpacing.sm),
                 Row(
@@ -94,16 +106,18 @@ class _AddCarScreenState extends ConsumerState<AddCarScreen> {
                     Expanded(
                       child: TextFormField(
                         controller: _make,
-                        validator: _required,
-                        decoration: const InputDecoration(labelText: 'Марка'),
+                        validator: required,
+                        decoration:
+                            InputDecoration(labelText: l.addCarFieldMake),
                       ),
                     ),
                     const SizedBox(width: AppSpacing.sm),
                     Expanded(
                       child: TextFormField(
                         controller: _model,
-                        validator: _required,
-                        decoration: const InputDecoration(labelText: 'Модель'),
+                        validator: required,
+                        decoration:
+                            InputDecoration(labelText: l.addCarFieldModel),
                       ),
                     ),
                   ],
@@ -115,16 +129,18 @@ class _AddCarScreenState extends ConsumerState<AddCarScreen> {
                       child: TextFormField(
                         controller: _year,
                         keyboardType: TextInputType.number,
-                        validator: _validYear,
-                        decoration: const InputDecoration(labelText: 'Рік'),
+                        validator: validYear,
+                        decoration:
+                            InputDecoration(labelText: l.addCarFieldYear),
                       ),
                     ),
                     const SizedBox(width: AppSpacing.sm),
                     Expanded(
                       child: TextFormField(
                         controller: _plate,
-                        validator: _required,
-                        decoration: const InputDecoration(labelText: 'Номер'),
+                        validator: required,
+                        decoration:
+                            InputDecoration(labelText: l.addCarFieldPlate),
                       ),
                     ),
                   ],
@@ -138,7 +154,7 @@ class _AddCarScreenState extends ConsumerState<AddCarScreen> {
                           height: 20,
                           child: CircularProgressIndicator(strokeWidth: 2),
                         )
-                      : const Text('Зберегти авто'),
+                      : Text(l.addCarSave),
                 ),
                 const SizedBox(height: AppSpacing.lg),
               ],
@@ -147,17 +163,5 @@ class _AddCarScreenState extends ConsumerState<AddCarScreen> {
         ),
       ),
     );
-  }
-
-  static String? _required(String? v) =>
-      (v == null || v.trim().isEmpty) ? 'Обовʼязкове поле' : null;
-
-  static String? _validYear(String? v) {
-    if (v == null || v.trim().isEmpty) return 'Обовʼязкове поле';
-    final y = int.tryParse(v);
-    if (y == null) return 'Тільки число';
-    final max = DateTime.now().year + 1;
-    if (y < 1900 || y > max) return '1900–$max';
-    return null;
   }
 }

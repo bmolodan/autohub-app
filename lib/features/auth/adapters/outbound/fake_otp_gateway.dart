@@ -28,7 +28,7 @@ class FakeOtpGateway implements OtpGatewayPort {
   }) async {
     final phone = _phoneByChallenge[challengeId];
     if (phone == null) {
-      throw const InvalidOtpException('Час дії коду минув');
+      throw const InvalidOtpException(InvalidOtpReason.expired);
     }
     if (code != '0000') {
       throw const InvalidOtpException();

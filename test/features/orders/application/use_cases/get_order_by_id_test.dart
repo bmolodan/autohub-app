@@ -23,7 +23,6 @@ ActiveOrder _o(String id) => ActiveOrder(
       id: id,
       title: 't',
       status: ActiveOrderStatus.pendingConfirmation,
-      statusLabel: 's',
       vehicleMake: 'M',
       vehicleModel: 'X',
       vehiclePlate: 'P',

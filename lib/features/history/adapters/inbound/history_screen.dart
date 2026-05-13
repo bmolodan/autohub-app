@@ -7,25 +7,27 @@ import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_typography.dart';
 import '../../../../core/widgets/empty_state.dart';
 import '../../../../core/widgets/error_state.dart';
+import '../../../../l10n/generated/app_localizations.dart';
+import '../../../../l10n/l10n_extension.dart';
 import '../../application/use_cases/get_service_history.dart';
 import '../../composition/history_providers.dart';
 import '../../domain/service_record.dart';
 
-const _months = [
-  '',
-  'СІЧЕНЬ',
-  'ЛЮТИЙ',
-  'БЕРЕЗЕНЬ',
-  'КВІТЕНЬ',
-  'ТРАВЕНЬ',
-  'ЧЕРВЕНЬ',
-  'ЛИПЕНЬ',
-  'СЕРПЕНЬ',
-  'ВЕРЕСЕНЬ',
-  'ЖОВТЕНЬ',
-  'ЛИСТОПАД',
-  'ГРУДЕНЬ',
-];
+String _monthName(AppLocalizations l, int month) => switch (month) {
+      1 => l.monthJanuary,
+      2 => l.monthFebruary,
+      3 => l.monthMarch,
+      4 => l.monthApril,
+      5 => l.monthMay,
+      6 => l.monthJune,
+      7 => l.monthJuly,
+      8 => l.monthAugust,
+      9 => l.monthSeptember,
+      10 => l.monthOctober,
+      11 => l.monthNovember,
+      12 => l.monthDecember,
+      _ => throw ArgumentError.value(month, 'month', 'must be 1..12'),
+    };
 
 /// Mockup 08 — service history grouped by month.
 class HistoryScreen extends ConsumerWidget {
@@ -39,7 +41,7 @@ class HistoryScreen extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Історія', style: AppTypography.titleLarge),
+        title: Text(context.l10n.historyTitle, style: AppTypography.titleLarge),
       ),
       body: SafeArea(
         child: async.when(
@@ -48,11 +50,10 @@ class HistoryScreen extends ConsumerWidget {
             onRetry: () => ref.invalidate(serviceHistoryProvider(vehicleId)),
           ),
           data: (output) => output.months.isEmpty
-              ? const EmptyState(
+              ? EmptyState(
                   icon: Icons.history,
-                  title: 'Історія порожня',
-                  subtitle:
-                      'Тут зʼявляться завершені роботи після першого візиту.',
+                  title: context.l10n.historyEmptyTitle,
+                  subtitle: context.l10n.historyEmptySubtitle,
                 )
               : _HistoryView(output: output),
         ),
@@ -78,7 +79,7 @@ class _HistoryView extends StatelessWidget {
         const _VehicleChip(label: 'Toyota Camry'),
         const SizedBox(height: AppSpacing.md),
         Text(
-          'Витрачено за весь час',
+          context.l10n.historyTotalLabel,
           style:
               AppTypography.bodySmall.copyWith(color: AppColors.textSecondary),
         ),
@@ -128,7 +129,7 @@ class _MonthHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final label = month >= 1 && month < _months.length ? _months[month] : '';
+    final label = _monthName(context.l10n, month);
     return Padding(
       padding: const EdgeInsets.only(bottom: AppSpacing.xxs),
       child: Text(
@@ -165,7 +166,7 @@ class _RecordTile extends StatelessWidget {
                 Text(record.title, style: AppTypography.titleSmall),
                 const SizedBox(height: AppSpacing.xxs),
                 Text(
-                  '${record.completedAt.day} ${_months[record.completedAt.month].toLowerCase()}',
+                  '${record.completedAt.day} ${_monthName(context.l10n, record.completedAt.month).toLowerCase()}',
                   style: AppTypography.bodySmall
                       .copyWith(color: AppColors.textSecondary),
                 ),

@@ -92,14 +92,12 @@ class OrdersController extends AsyncNotifier<List<ActiveOrder>> {
     String id,
     double progress, {
     OrderStage? newStage,
-    String? newStageLabel,
   }) async {
     final updated = await ref.read(updateOrderProgressUseCaseProvider).execute(
           UpdateOrderProgressInput(
             id: id,
             progress: progress,
             newStage: newStage,
-            newStageLabel: newStageLabel,
           ),
         );
     state = AsyncData(_replaceOrAppend(updated));

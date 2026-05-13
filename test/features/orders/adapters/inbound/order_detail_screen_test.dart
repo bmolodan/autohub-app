@@ -11,7 +11,6 @@ ActiveOrder _inProgress() => ActiveOrder(
       id: 'o-ip',
       title: 'Заміна гальмівних колодок',
       status: ActiveOrderStatus.inProgress,
-      statusLabel: 'У ремонті',
       vehicleMake: 'Toyota',
       vehicleModel: 'Camry',
       vehiclePlate: 'AA 1234 BC',
@@ -22,12 +21,10 @@ ActiveOrder _inProgress() => ActiveOrder(
       timeline: [
         OrderTimelineEntry(
           stage: OrderStage.accepted,
-          label: 'Прийнято',
           at: DateTime.utc(2026, 5, 13, 7),
         ),
         OrderTimelineEntry(
           stage: OrderStage.inProgress,
-          label: 'У ремонті',
           at: DateTime.utc(2026, 5, 13, 9),
         ),
       ],
@@ -37,7 +34,6 @@ ActiveOrder _pending() => ActiveOrder(
       id: 'o-pn',
       title: 'Діагностика двигуна',
       status: ActiveOrderStatus.pendingConfirmation,
-      statusLabel: 'Очікує підтвердження',
       vehicleMake: 'Toyota',
       vehicleModel: 'Camry',
       vehiclePlate: 'AA 1234 BC',
@@ -51,7 +47,6 @@ ActiveOrder _canceled() => ActiveOrder(
       id: 'o-cn',
       title: 'Шиномонтаж',
       status: ActiveOrderStatus.canceled,
-      statusLabel: 'Скасовано',
       vehicleMake: 'Toyota',
       vehicleModel: 'Camry',
       vehiclePlate: 'AA 1234 BC',
@@ -62,7 +57,6 @@ ActiveOrder _canceled() => ActiveOrder(
       timeline: [
         OrderTimelineEntry(
           stage: OrderStage.canceled,
-          label: 'Скасовано',
           at: DateTime.utc(2026, 5, 13, 12),
         ),
       ],

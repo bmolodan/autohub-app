@@ -6,6 +6,7 @@ import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_radii.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_typography.dart';
+import '../../../l10n/l10n_extension.dart';
 
 /// Three-slide intro shown only on first launch.
 ///
@@ -27,7 +28,7 @@ class OnboardingScreen extends StatelessWidget {
                 alignment: Alignment.topRight,
                 child: TextButton(
                   onPressed: () => context.go(AppRoutes.phone),
-                  child: const Text('Пропустити'),
+                  child: Text(context.l10n.onboardingSkip),
                 ),
               ),
               const SizedBox(height: AppSpacing.xl),
@@ -51,13 +52,12 @@ class OnboardingScreen extends StatelessWidget {
               const SizedBox(height: AppSpacing.xl),
 
               Text(
-                'Записуйтесь\nза хвилину',
+                context.l10n.onboardingTitle,
                 style: AppTypography.headlineLarge,
               ),
               const SizedBox(height: AppSpacing.sm),
               Text(
-                'Оберіть послугу, дату і час. Без дзвінків і черг — все в '
-                'застосунку.',
+                context.l10n.onboardingSubtitle,
                 style: AppTypography.bodyLarge.copyWith(
                   color: AppColors.textSecondary,
                 ),
@@ -81,7 +81,7 @@ class OnboardingScreen extends StatelessWidget {
 
               FilledButton(
                 onPressed: () => context.go(AppRoutes.phone),
-                child: const Text('Далі'),
+                child: Text(context.l10n.commonNext),
               ),
             ],
           ),

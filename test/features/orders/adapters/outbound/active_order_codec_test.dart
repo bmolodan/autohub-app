@@ -8,15 +8,14 @@ const _inProgressJson = '''
     "id": "4521",
     "title": "Заміна гальмівних колодок",
     "status": "in_progress",
-    "status_label": "У ремонті",
     "vehicle": {"make": "Toyota", "model": "Camry", "plate": "AA 1234 BC"},
     "progress": 0.6,
     "eta": "2026-05-10T14:00:00+03:00",
     "total_uah": 2850,
     "timeline": [
-      {"stage": "accepted", "label": "Прийнято", "at": "2026-05-10T10:24:00+03:00"},
-      {"stage": "diagnostics", "label": "Діагностика", "at": "2026-05-10T11:05:00+03:00"},
-      {"stage": "in_progress", "label": "У ремонті", "at": "2026-05-10T12:30:00+03:00"}
+      {"stage": "accepted", "at": "2026-05-10T10:24:00+03:00"},
+      {"stage": "diagnostics", "at": "2026-05-10T11:05:00+03:00"},
+      {"stage": "in_progress", "at": "2026-05-10T12:30:00+03:00"}
     ]
   }
 ]
@@ -28,7 +27,6 @@ const _pendingJson = '''
     "id": "4522",
     "title": "Діагностика двигуна",
     "status": "pending_confirmation",
-    "status_label": "Очікує підтвердження",
     "vehicle": {"make": "Toyota", "model": "Camry", "plate": "AA 1234 BC"},
     "scheduled_for": "2026-05-10T16:00:00+03:00"
   }
@@ -39,7 +37,6 @@ ActiveOrder _sampleOrder() => ActiveOrder(
       id: '99',
       title: 'Заміна масла',
       status: ActiveOrderStatus.pendingConfirmation,
-      statusLabel: 'Очікує підтвердження',
       vehicleMake: 'Toyota',
       vehicleModel: 'Camry',
       vehiclePlate: 'AA 1234 BC',
@@ -50,7 +47,6 @@ ActiveOrder _sampleOrder() => ActiveOrder(
       timeline: [
         OrderTimelineEntry(
           stage: OrderStage.pendingConfirmation,
-          label: 'Очікує підтвердження',
           at: DateTime.utc(2026, 5, 13, 9, 0),
         ),
       ],
@@ -68,7 +64,7 @@ void main() {
       expect(o.totalUah, 2850);
       expect(o.timeline, hasLength(3));
       expect(o.timeline[0].stage, OrderStage.accepted);
-      expect(o.timeline[1].label, 'Діагностика');
+      expect(o.timeline[1].stage, OrderStage.diagnostics);
       expect(o.timeline[2].at, DateTime.parse('2026-05-10T12:30:00+03:00'));
     });
 
@@ -92,10 +88,9 @@ void main() {
             "id": "x1",
             "title": "Заміна масла",
             "status": "canceled",
-            "status_label": "Скасовано",
             "vehicle": {"make": "Toyota", "model": "Camry", "plate": "AA 1234 BC"},
             "timeline": [
-              {"stage": "canceled", "label": "Скасовано", "at": "2026-05-13T12:00:00Z"}
+              {"stage": "canceled", "at": "2026-05-13T12:00:00Z"}
             ]
           }
         ]
@@ -110,7 +105,6 @@ void main() {
         id: 'p1',
         title: 'Заміна масла',
         status: ActiveOrderStatus.pendingConfirmation,
-        statusLabel: 'Очікує підтвердження',
         vehicleMake: 'Toyota',
         vehicleModel: 'Camry',
         vehiclePlate: 'AA 1234 BC',
@@ -140,7 +134,6 @@ void main() {
             "id": "x",
             "title": "y",
             "status": "pending_confirmation",
-            "status_label": "z",
             "vehicle": {"make": "a", "model": "b", "plate": "c"}
           }
         ]
@@ -153,7 +146,6 @@ void main() {
         id: 'x1',
         title: 'Заміна масла',
         status: ActiveOrderStatus.canceled,
-        statusLabel: 'Скасовано',
         vehicleMake: 'Toyota',
         vehicleModel: 'Camry',
         vehiclePlate: 'AA 1234 BC',
@@ -164,7 +156,6 @@ void main() {
         timeline: [
           OrderTimelineEntry(
             stage: OrderStage.canceled,
-            label: 'Скасовано',
             at: DateTime.utc(2026, 5, 13, 12),
           ),
         ],
@@ -177,7 +168,7 @@ void main() {
 
     test('throws on unknown status', () {
       const bad = '''
-        [{"id":"x","title":"y","status":"bogus","status_label":"z",
+        [{"id":"x","title":"y","status":"bogus",
           "vehicle":{"make":"a","model":"b","plate":"c"}}]
       ''';
       expect(() => decodeActiveOrders(bad), throwsA(isA<FormatException>()));
@@ -195,7 +186,6 @@ void main() {
       expect(r.id, original.id);
       expect(r.title, original.title);
       expect(r.status, original.status);
-      expect(r.statusLabel, original.statusLabel);
       expect(r.scheduledFor, original.scheduledFor);
       expect(r.timeline, original.timeline);
     });
@@ -205,7 +195,6 @@ void main() {
         id: '1',
         title: 'X',
         status: ActiveOrderStatus.inProgress,
-        statusLabel: 'У ремонті',
         vehicleMake: 'A',
         vehicleModel: 'B',
         vehiclePlate: 'C',

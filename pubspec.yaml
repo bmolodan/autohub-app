@@ -30,6 +30,9 @@ dependencies:
 
   # ─── Media ────────────────────────────────────────────────────────
   image_picker: ^1.1.2
+
+  # ─── i18n ─────────────────────────────────────────────────────────
+  intl: any
   # hive_flutter: ^1.1.0           # if we need indexed/typed boxes later
   # flutter_secure_storage: ^9.2.2 # if we need OS keychain for tokens
 

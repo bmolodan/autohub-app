@@ -10,8 +10,10 @@ import '../../../../core/util/date_format.dart';
 import '../../../../core/widgets/empty_state.dart';
 import '../../../../core/widgets/error_state.dart';
 import '../../../../core/widgets/stat_card.dart';
+import '../../../../l10n/l10n_extension.dart';
 import '../../composition/orders_providers.dart';
 import '../../domain/active_order.dart';
+import '../../presentation/order_l10n.dart';
 
 class OrderDetailScreen extends ConsumerWidget {
   const OrderDetailScreen({super.key, required this.orderId});
@@ -36,10 +38,10 @@ class OrderDetailScreen extends ConsumerWidget {
           ),
           data: (order) {
             if (order == null) {
-              return const EmptyState(
+              return EmptyState(
                 icon: Icons.search_off,
-                title: 'Замовлення не знайдено',
-                subtitle: 'Можливо, його було видалено.',
+                title: context.l10n.orderNotFoundTitle,
+                subtitle: context.l10n.orderNotFoundSubtitle,
               );
             }
             return _Detail(order: order);
@@ -88,7 +90,7 @@ class _InProgressBody extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                order.statusLabel.toUpperCase(),
+                orderStatusLabel(context.l10n, order.status).toUpperCase(),
                 style: AppTypography.overline
                     .copyWith(color: AppColors.brandYellow),
               ),
@@ -128,7 +130,7 @@ class _InProgressBody extends StatelessWidget {
           ),
         ),
         const SizedBox(height: AppSpacing.lg),
-        Text('ХІД РОБОТИ',
+        Text(context.l10n.orderTimelineHeading,
             style: AppTypography.overline
                 .copyWith(color: AppColors.textSecondary)),
         const SizedBox(height: AppSpacing.sm),
@@ -136,16 +138,16 @@ class _InProgressBody extends StatelessWidget {
         const SizedBox(height: AppSpacing.lg),
         if (order.totalUah != null)
           StatCard(
-            label: 'Орієнтовно',
-            value: '${order.totalUah} ₴',
+            label: context.l10n.orderEstimate,
+            value: context.l10n.orderEstimateValue(order.totalUah!),
           ),
         const SizedBox(height: AppSpacing.lg),
         OutlinedButton.icon(
           onPressed: () => ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Виклик майстра: TODO')),
+            SnackBar(content: Text(context.l10n.orderCallMasterTodo)),
           ),
           icon: const Icon(Icons.call_outlined),
-          label: const Text('Зателефонувати майстру'),
+          label: Text(context.l10n.orderCallMaster),
         ),
         const SizedBox(height: AppSpacing.lg),
       ],
@@ -163,20 +165,21 @@ class _PendingBody extends ConsumerStatefulWidget {
 
 class _PendingBodyState extends ConsumerState<_PendingBody> {
   Future<void> _confirmCancel() async {
+    final l = context.l10n;
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Скасувати запис?'),
-        content: const Text('Дію не можна буде відмінити.'),
+        title: Text(l.orderCancelDialogTitle),
+        content: Text(l.orderCancelDialogBody),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(false),
-            child: const Text('Ні'),
+            child: Text(l.commonNo),
           ),
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(true),
             style: TextButton.styleFrom(foregroundColor: AppColors.error),
-            child: const Text('Так, скасувати'),
+            child: Text(l.orderCancelDialogConfirm),
           ),
         ],
       ),
@@ -188,7 +191,7 @@ class _PendingBodyState extends ConsumerState<_PendingBody> {
     } on Object catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Не вдалося скасувати: $e')),
+        SnackBar(content: Text(context.l10n.orderCancelError(e.toString()))),
       );
     }
   }
@@ -196,9 +199,10 @@ class _PendingBodyState extends ConsumerState<_PendingBody> {
   @override
   Widget build(BuildContext context) {
     final order = widget.order;
+    final l = context.l10n;
     final scheduledLabel = order.scheduledFor != null
         ? formatDdMmHm(order.scheduledFor!)
-        : 'визначимо невдовзі';
+        : l.orderScheduledTbd;
 
     return ListView(
       padding: const EdgeInsets.symmetric(vertical: AppSpacing.md),
@@ -213,7 +217,7 @@ class _PendingBodyState extends ConsumerState<_PendingBody> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'ОЧІКУЄ ПІДТВЕРДЖЕННЯ',
+                l.orderPendingHeroLabel,
                 style: AppTypography.overline
                     .copyWith(color: AppColors.brandBlack),
               ),
@@ -229,14 +233,17 @@ class _PendingBodyState extends ConsumerState<_PendingBody> {
           ),
         ),
         const SizedBox(height: AppSpacing.lg),
-        StatCard(label: 'Запланований час', value: scheduledLabel),
+        StatCard(label: l.orderScheduledTime, value: scheduledLabel),
         if (order.totalUah != null) ...[
           const SizedBox(height: AppSpacing.sm),
-          StatCard(label: 'Орієнтовно', value: 'від ${order.totalUah} ₴'),
+          StatCard(
+            label: l.orderEstimate,
+            value: l.orderEstimateValueFrom(order.totalUah!),
+          ),
         ],
         const SizedBox(height: AppSpacing.lg),
         if (order.timeline.isNotEmpty) ...[
-          Text('ЖУРНАЛ',
+          Text(l.orderJournalHeading,
               style: AppTypography.overline
                   .copyWith(color: AppColors.textSecondary)),
           const SizedBox(height: AppSpacing.sm),
@@ -246,7 +253,7 @@ class _PendingBodyState extends ConsumerState<_PendingBody> {
         OutlinedButton(
           onPressed: _confirmCancel,
           style: OutlinedButton.styleFrom(foregroundColor: AppColors.error),
-          child: const Text('Скасувати запис'),
+          child: Text(l.orderCancelLabel),
         ),
         const SizedBox(height: AppSpacing.lg),
       ],
@@ -274,7 +281,7 @@ class _CanceledBody extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'СКАСОВАНО',
+                context.l10n.orderCanceledHeroLabel,
                 style: AppTypography.overline.copyWith(color: AppColors.error),
               ),
               const SizedBox(height: AppSpacing.xxs),
@@ -288,7 +295,7 @@ class _CanceledBody extends StatelessWidget {
         ),
         const SizedBox(height: AppSpacing.lg),
         if (order.timeline.isNotEmpty) ...[
-          Text('ЖУРНАЛ',
+          Text(context.l10n.orderJournalHeading,
               style: AppTypography.overline
                   .copyWith(color: AppColors.textSecondary)),
           const SizedBox(height: AppSpacing.sm),
@@ -314,7 +321,7 @@ class _Timeline extends StatelessWidget {
           border: Border.all(color: AppColors.border, width: 0.5),
         ),
         child: Text(
-          'Поки що жодних подій',
+          context.l10n.orderTimelineEmpty,
           style:
               AppTypography.bodySmall.copyWith(color: AppColors.textSecondary),
         ),
@@ -372,7 +379,8 @@ class _TimelineRow extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(entry.label, style: AppTypography.titleSmall),
+                Text(orderStageLabel(context.l10n, entry.stage),
+                    style: AppTypography.titleSmall),
                 const SizedBox(height: AppSpacing.xxs),
                 Text(
                   stamp,

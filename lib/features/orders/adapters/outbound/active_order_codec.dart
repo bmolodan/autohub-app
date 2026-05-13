@@ -36,7 +36,6 @@ ActiveOrder _orderFromJson(Map<String, dynamic> m) {
     id: m['id'] as String,
     title: m['title'] as String,
     status: _statusFromString(m['status'] as String),
-    statusLabel: m['status_label'] as String,
     vehicleMake: vehicle['make'] as String,
     vehicleModel: vehicle['model'] as String,
     vehiclePlate: vehicle['plate'] as String,
@@ -63,7 +62,6 @@ Map<String, dynamic> _orderToJson(ActiveOrder o) => {
       'id': o.id,
       'title': o.title,
       'status': _statusToString(o.status),
-      'status_label': o.statusLabel,
       'vehicle': {
         'make': o.vehicleMake,
         'model': o.vehicleModel,
@@ -80,13 +78,11 @@ Map<String, dynamic> _orderToJson(ActiveOrder o) => {
 OrderTimelineEntry _timelineFromJson(Map<String, dynamic> m) =>
     OrderTimelineEntry(
       stage: _stageFromString(m['stage'] as String),
-      label: m['label'] as String,
       at: DateTime.parse(m['at'] as String),
     );
 
 Map<String, dynamic> _timelineToJson(OrderTimelineEntry e) => {
       'stage': _stageToString(e.stage),
-      'label': e.label,
       'at': e.at.toIso8601String(),
     };
 

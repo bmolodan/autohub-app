@@ -7,12 +7,14 @@ class OtpChallenge {
   final String phone;
 }
 
+enum InvalidOtpReason { wrongCode, expired }
+
 /// Thrown when [OtpGatewayPort.verify] is called with a code the server rejects.
 class InvalidOtpException implements Exception {
-  const InvalidOtpException([this.message = 'Невірний код']);
-  final String message;
+  const InvalidOtpException([this.reason = InvalidOtpReason.wrongCode]);
+  final InvalidOtpReason reason;
   @override
-  String toString() => message;
+  String toString() => 'InvalidOtpException($reason)';
 }
 
 /// Outbound port — speaks to whatever issues + validates OTP codes

@@ -6,7 +6,9 @@ import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_radii.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_typography.dart';
+import '../../../l10n/l10n_extension.dart';
 import '../data/service_catalog.dart';
+import 'service_l10n.dart';
 
 /// Step 1/3 of booking: pick a service from the catalog.
 class ServicePickerScreen extends StatefulWidget {
@@ -25,7 +27,9 @@ class _ServicePickerScreenState extends State<ServicePickerScreen> {
     final filtered = _query.isEmpty
         ? serviceCatalog
         : serviceCatalog
-            .where((s) => s.title.toLowerCase().contains(_query.toLowerCase()))
+            .where((s) => serviceTitle(context.l10n, s.id)
+                .toLowerCase()
+                .contains(_query.toLowerCase()))
             .toList();
 
     return Scaffold(
@@ -34,7 +38,8 @@ class _ServicePickerScreenState extends State<ServicePickerScreen> {
           icon: const Icon(Icons.arrow_back),
           onPressed: () => context.pop(),
         ),
-        title: Text('Запис · крок 1 з 3', style: AppTypography.bodySmall),
+        title: Text(context.l10n.bookingStep1Title,
+            style: AppTypography.bodySmall),
       ),
       body: SafeArea(
         child: Padding(
@@ -42,13 +47,14 @@ class _ServicePickerScreenState extends State<ServicePickerScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Text('Що потрібно?', style: AppTypography.headlineMedium),
+              Text(context.l10n.bookingPickerHeading,
+                  style: AppTypography.headlineMedium),
               const SizedBox(height: AppSpacing.md),
               TextField(
                 onChanged: (v) => setState(() => _query = v),
-                decoration: const InputDecoration(
-                  hintText: 'Пошук послуги',
-                  prefixIcon: Icon(Icons.search, size: 20),
+                decoration: InputDecoration(
+                  hintText: context.l10n.bookingPickerSearchHint,
+                  prefixIcon: const Icon(Icons.search, size: 20),
                 ),
               ),
               const SizedBox(height: AppSpacing.md),
@@ -71,7 +77,7 @@ class _ServicePickerScreenState extends State<ServicePickerScreen> {
                     : () => context.push(
                           '${AppRoutes.bookingProblem}?serviceId=$_selectedId',
                         ),
-                child: const Text('Далі'),
+                child: Text(context.l10n.commonNext),
               ),
               const SizedBox(height: AppSpacing.lg),
             ],
@@ -121,10 +127,14 @@ class _ServiceTile extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(item.title, style: AppTypography.titleSmall),
+                    Text(serviceTitle(context.l10n, item.id),
+                        style: AppTypography.titleSmall),
                     const SizedBox(height: AppSpacing.xxs),
                     Text(
-                      '~${item.durationMinutes} хв  ·  від ${item.priceFromUah} ₴',
+                      context.l10n.bookingServiceDurationAndPrice(
+                        item.durationMinutes,
+                        item.priceFromUah,
+                      ),
                       style: AppTypography.bodySmall.copyWith(
                         color: AppColors.textSecondary,
                       ),

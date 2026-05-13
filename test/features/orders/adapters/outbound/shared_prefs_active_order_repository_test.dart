@@ -9,13 +9,12 @@ const _seed = '''
     "id": "seed-1",
     "title": "Заміна колодок",
     "status": "in_progress",
-    "status_label": "У ремонті",
     "vehicle": {"make": "Toyota", "model": "Camry", "plate": "AA 1234 BC"},
     "progress": 0.6,
     "eta": "2026-05-10T14:00:00+03:00",
     "total_uah": 2850,
     "timeline": [
-      {"stage": "accepted", "label": "Прийнято", "at": "2026-05-10T10:24:00+03:00"}
+      {"stage": "accepted", "at": "2026-05-10T10:24:00+03:00"}
     ]
   }
 ]
@@ -25,7 +24,6 @@ ActiveOrder _o(String id) => ActiveOrder(
       id: id,
       title: 'X',
       status: ActiveOrderStatus.pendingConfirmation,
-      statusLabel: 'Pending',
       vehicleMake: 'M',
       vehicleModel: 'X',
       vehiclePlate: 'P',
@@ -89,7 +87,6 @@ void main() {
         id: 'a',
         title: 'Updated',
         status: ActiveOrderStatus.pendingConfirmation,
-        statusLabel: 'Pending',
         vehicleMake: 'M',
         vehicleModel: 'X',
         vehiclePlate: 'P',

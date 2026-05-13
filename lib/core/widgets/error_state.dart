@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../l10n/l10n_extension.dart';
 import '../theme/app_colors.dart';
 import '../theme/app_radii.dart';
 import '../theme/app_spacing.dart';
@@ -9,19 +10,20 @@ import '../theme/app_typography.dart';
 class ErrorState extends StatelessWidget {
   const ErrorState({
     super.key,
-    this.title = 'Немає звʼязку',
-    this.subtitle = 'Перевірте інтернет-зʼєднання — і ми спробуємо ще раз.',
+    this.title,
+    this.subtitle,
     this.onRetry,
     this.onOffline,
   });
 
-  final String title;
-  final String subtitle;
+  final String? title;
+  final String? subtitle;
   final VoidCallback? onRetry;
   final VoidCallback? onOffline;
 
   @override
   Widget build(BuildContext context) {
+    final l = context.l10n;
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
       child: Column(
@@ -41,11 +43,11 @@ class ErrorState extends StatelessWidget {
             ),
           ),
           const SizedBox(height: AppSpacing.lg),
-          Text(title,
+          Text(title ?? l.stateOfflineTitle,
               style: AppTypography.headlineSmall, textAlign: TextAlign.center),
           const SizedBox(height: AppSpacing.sm),
           Text(
-            subtitle,
+            subtitle ?? l.stateOfflineSubtitle,
             style: AppTypography.bodyMedium
                 .copyWith(color: AppColors.textSecondary),
             textAlign: TextAlign.center,
@@ -54,13 +56,13 @@ class ErrorState extends StatelessWidget {
           FilledButton.icon(
             onPressed: onRetry,
             icon: const Icon(Icons.refresh),
-            label: const Text('Спробувати знову'),
+            label: Text(l.stateRetry),
           ),
           if (onOffline != null) ...[
             const SizedBox(height: AppSpacing.sm),
             TextButton(
               onPressed: onOffline,
-              child: const Text('Працювати офлайн'),
+              child: Text(l.stateWorkOffline),
             ),
           ],
         ],

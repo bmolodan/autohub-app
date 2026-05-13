@@ -26,7 +26,6 @@ class CancelOrderUseCase {
       id: existing.id,
       title: existing.title,
       status: ActiveOrderStatus.canceled,
-      statusLabel: 'Скасовано',
       vehicleMake: existing.vehicleMake,
       vehicleModel: existing.vehicleModel,
       vehiclePlate: existing.vehiclePlate,
@@ -38,7 +37,6 @@ class CancelOrderUseCase {
         ...existing.timeline,
         OrderTimelineEntry(
           stage: OrderStage.canceled,
-          label: 'Скасовано',
           at: now,
         ),
       ],

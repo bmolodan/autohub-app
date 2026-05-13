@@ -15,22 +15,20 @@ String buildActiveOrdersSeedJson(Clock clock) {
     "id": "4521",
     "title": "Заміна гальмівних колодок",
     "status": "in_progress",
-    "status_label": "У ремонті",
     "vehicle": {"make": "Toyota", "model": "Camry", "plate": "AA 1234 BC"},
     "progress": 0.6,
     "eta": "${iso(const Duration(hours: 3))}",
     "total_uah": 2850,
     "timeline": [
-      {"stage": "accepted", "label": "Прийнято", "at": "${iso(const Duration(hours: -4))}"},
-      {"stage": "diagnostics", "label": "Діагностика", "at": "${iso(const Duration(hours: -3))}"},
-      {"stage": "in_progress", "label": "У ремонті", "at": "${iso(const Duration(hours: -2))}"}
+      {"stage": "accepted", "at": "${iso(const Duration(hours: -4))}"},
+      {"stage": "diagnostics", "at": "${iso(const Duration(hours: -3))}"},
+      {"stage": "in_progress", "at": "${iso(const Duration(hours: -2))}"}
     ]
   },
   {
     "id": "4522",
     "title": "Діагностика двигуна",
     "status": "pending_confirmation",
-    "status_label": "Очікує підтвердження",
     "vehicle": {"make": "Toyota", "model": "Camry", "plate": "AA 1234 BC"},
     "scheduled_for": "${iso(const Duration(days: 1))}"
   }

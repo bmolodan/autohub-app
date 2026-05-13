@@ -10,11 +10,13 @@ import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_radii.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_typography.dart';
+import '../../../l10n/l10n_extension.dart';
 import '../../cars/composition/cars_providers.dart';
 import '../../orders/application/use_cases/create_order.dart';
 import '../../orders/composition/orders_providers.dart';
 import '../../orders/domain/order_photo.dart';
 import '../data/service_catalog.dart';
+import 'service_l10n.dart';
 
 const _maxPhotos = 3;
 
@@ -45,6 +47,7 @@ class _ProblemFormScreenState extends ConsumerState<ProblemFormScreen> {
   Future<void> _addPhoto() async {
     if (_pickingPhoto || _photos.length >= _maxPhotos) return;
     _pickingPhoto = true;
+    final l = context.l10n;
     final source = await showModalBottomSheet<_PhotoSource>(
       context: context,
       builder: (ctx) => SafeArea(
@@ -53,17 +56,17 @@ class _ProblemFormScreenState extends ConsumerState<ProblemFormScreen> {
           children: [
             ListTile(
               leading: const Icon(Icons.photo_camera_outlined),
-              title: const Text('Камера'),
+              title: Text(l.photoSourceCamera),
               onTap: () => Navigator.of(ctx).pop(_PhotoSource.camera),
             ),
             ListTile(
               leading: const Icon(Icons.photo_library_outlined),
-              title: const Text('Галерея'),
+              title: Text(l.photoSourceGallery),
               onTap: () => Navigator.of(ctx).pop(_PhotoSource.gallery),
             ),
             ListTile(
               leading: const Icon(Icons.close),
-              title: const Text('Скасувати'),
+              title: Text(l.commonCancel),
               onTap: () => Navigator.of(ctx).pop(),
             ),
           ],
@@ -83,7 +86,7 @@ class _ProblemFormScreenState extends ConsumerState<ProblemFormScreen> {
     } on Object catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Не вдалося додати фото: $e')),
+        SnackBar(content: Text(context.l10n.photoAddError(e.toString()))),
       );
     } finally {
       _pickingPhoto = false;
@@ -108,7 +111,7 @@ class _ProblemFormScreenState extends ConsumerState<ProblemFormScreen> {
     final vehicles = ref.read(vehiclesControllerProvider).value;
     if (vehicles == null || vehicles.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Спочатку додайте авто')),
+        SnackBar(content: Text(context.l10n.problemNoVehicleSnack)),
       );
       unawaited(context.push(AppRoutes.carAdd));
       return;
@@ -118,7 +121,7 @@ class _ProblemFormScreenState extends ConsumerState<ProblemFormScreen> {
     try {
       final created = await ref.read(ordersControllerProvider.notifier).create(
             CreateOrderInput(
-              serviceTitle: service.title,
+              serviceTitle: serviceTitle(context.l10n, service.id),
               servicePriceUah: service.priceFromUah,
               description: _descController.text.trim(),
               vehicle: vehicles.first,
@@ -139,6 +142,7 @@ class _ProblemFormScreenState extends ConsumerState<ProblemFormScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l = context.l10n;
     final service = _service;
     final vehicles = ref.watch(vehiclesControllerProvider).value;
     final vehicleLabel = vehicles == null || vehicles.isEmpty
@@ -151,7 +155,7 @@ class _ProblemFormScreenState extends ConsumerState<ProblemFormScreen> {
           icon: const Icon(Icons.arrow_back),
           onPressed: () => context.pop(),
         ),
-        title: Text('Запис · крок 3 з 3', style: AppTypography.bodySmall),
+        title: Text(l.bookingStep3Title, style: AppTypography.bodySmall),
       ),
       body: SafeArea(
         child: Padding(
@@ -159,10 +163,10 @@ class _ProblemFormScreenState extends ConsumerState<ProblemFormScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Text('Що сталось?', style: AppTypography.headlineMedium),
+              Text(l.problemHeading, style: AppTypography.headlineMedium),
               const SizedBox(height: AppSpacing.xs),
               Text(
-                'Опишіть проблему',
+                l.problemSubtitle,
                 style: AppTypography.bodySmall
                     .copyWith(color: AppColors.textSecondary),
               ),
@@ -170,14 +174,11 @@ class _ProblemFormScreenState extends ConsumerState<ProblemFormScreen> {
               TextField(
                 controller: _descController,
                 maxLines: 4,
-                decoration: const InputDecoration(
-                  hintText:
-                      'Стук у передній підвісці на нерівностях. Зʼявляється після прогрівання…',
-                ),
+                decoration: InputDecoration(hintText: l.problemHint),
               ),
               const SizedBox(height: AppSpacing.lg),
               Text(
-                'Фото (${_photos.length} / $_maxPhotos)',
+                l.problemPhotosCount(_photos.length, _maxPhotos),
                 style: AppTypography.labelMedium
                     .copyWith(color: AppColors.textSecondary),
               ),
@@ -199,11 +200,14 @@ class _ProblemFormScreenState extends ConsumerState<ProblemFormScreen> {
                 ],
               ),
               const SizedBox(height: AppSpacing.lg),
-              _SummaryRow(label: 'Послуга', value: service?.title ?? '—'),
-              _SummaryRow(label: 'Авто', value: vehicleLabel),
               _SummaryRow(
-                label: 'Орієнтовно',
-                value: 'від ${service?.priceFromUah ?? 0} ₴',
+                label: l.problemSummaryService,
+                value: service != null ? serviceTitle(l, service.id) : '—',
+              ),
+              _SummaryRow(label: l.problemSummaryVehicle, value: vehicleLabel),
+              _SummaryRow(
+                label: l.problemSummaryEstimate,
+                value: l.problemEstimateFrom(service?.priceFromUah ?? 0),
               ),
               const Spacer(),
               ElevatedButton(
@@ -214,7 +218,7 @@ class _ProblemFormScreenState extends ConsumerState<ProblemFormScreen> {
                         height: 20,
                         child: CircularProgressIndicator(strokeWidth: 2),
                       )
-                    : const Text('Підтвердити запис'),
+                    : Text(l.problemSubmit),
               ),
               const SizedBox(height: AppSpacing.lg),
             ],
@@ -246,7 +250,9 @@ class _PhotoSlot extends StatelessWidget {
   Widget build(BuildContext context) {
     return Semantics(
       button: true,
-      label: _filled ? 'Видалити фото' : 'Додати фото',
+      label: _filled
+          ? context.l10n.photoRemoveSemantics
+          : context.l10n.photoAddSemantics,
       child: InkWell(
         onTap: _filled ? onRemove : onAdd,
         borderRadius: AppRadii.mdAll,

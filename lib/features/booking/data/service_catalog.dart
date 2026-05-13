@@ -4,14 +4,12 @@ import 'package:flutter/material.dart';
 class ServiceCatalogItem {
   const ServiceCatalogItem({
     required this.id,
-    required this.title,
     required this.durationMinutes,
     required this.priceFromUah,
     required this.icon,
   });
 
   final String id;
-  final String title;
   final int durationMinutes;
   final int priceFromUah;
   final IconData icon;
@@ -20,35 +18,30 @@ class ServiceCatalogItem {
 const serviceCatalog = <ServiceCatalogItem>[
   ServiceCatalogItem(
     id: 'oil_change',
-    title: 'Заміна масла',
     durationMinutes: 30,
     priceFromUah: 1600,
     icon: Icons.local_gas_station_outlined,
   ),
   ServiceCatalogItem(
     id: 'tires',
-    title: 'Шиномонтаж',
     durationMinutes: 45,
     priceFromUah: 1200,
     icon: Icons.tire_repair_outlined,
   ),
   ServiceCatalogItem(
     id: 'diagnostics',
-    title: 'Діагностика двигуна',
     durationMinutes: 60,
     priceFromUah: 1800,
     icon: Icons.settings_outlined,
   ),
   ServiceCatalogItem(
     id: 'brakes',
-    title: 'Гальмівна система',
     durationMinutes: 90,
     priceFromUah: 1850,
     icon: Icons.disc_full_outlined,
   ),
   ServiceCatalogItem(
     id: 'ac',
-    title: 'Кондиціонер',
     durationMinutes: 60,
     priceFromUah: 1600,
     icon: Icons.ac_unit_outlined,

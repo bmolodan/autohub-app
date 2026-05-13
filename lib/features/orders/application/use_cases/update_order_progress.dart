@@ -7,13 +7,11 @@ class UpdateOrderProgressInput {
     required this.id,
     required this.progress,
     this.newStage,
-    this.newStageLabel,
   });
 
   final String id;
   final double progress;
   final OrderStage? newStage;
-  final String? newStageLabel;
 }
 
 class UpdateOrderProgressUseCase {
@@ -34,14 +32,10 @@ class UpdateOrderProgressUseCase {
       throw StateError('Cannot update progress of canceled order ${input.id}');
     }
 
-    final shouldAppendEntry =
-        input.newStage != null && input.newStageLabel != null;
-
     final updated = ActiveOrder(
       id: existing.id,
       title: existing.title,
       status: existing.status,
-      statusLabel: existing.statusLabel,
       vehicleMake: existing.vehicleMake,
       vehicleModel: existing.vehicleModel,
       vehiclePlate: existing.vehiclePlate,
@@ -49,14 +43,10 @@ class UpdateOrderProgressUseCase {
       eta: existing.eta,
       scheduledFor: existing.scheduledFor,
       totalUah: existing.totalUah,
-      timeline: shouldAppendEntry
+      timeline: input.newStage != null
           ? [
               ...existing.timeline,
-              OrderTimelineEntry(
-                stage: input.newStage!,
-                label: input.newStageLabel!,
-                at: _clock.now(),
-              ),
+              OrderTimelineEntry(stage: input.newStage!, at: _clock.now()),
             ]
           : existing.timeline,
     );

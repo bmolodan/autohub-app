@@ -7,6 +7,7 @@ import '../../../../core/theme/app_radii.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_typography.dart';
 import '../../../../core/widgets/stat_card.dart';
+import '../../../../l10n/l10n_extension.dart';
 import '../../composition/cars_providers.dart';
 import '../../domain/vehicle.dart';
 
@@ -34,8 +35,8 @@ class CarDetailScreen extends ConsumerWidget {
           data: (v) {
             if (v == null) {
               return Center(
-                child:
-                    Text('Авто не знайдено', style: AppTypography.bodyMedium),
+                child: Text(context.l10n.carDetailNotFound,
+                    style: AppTypography.bodyMedium),
               );
             }
             return _Detail(vehicle: v);
@@ -89,15 +90,15 @@ class _Detail extends StatelessWidget {
               Expanded(
                 child: StatCard(
                   axis: Axis.vertical,
-                  label: 'Пробіг',
-                  value: '${vehicle.mileageKm} км',
+                  label: context.l10n.carDetailMileage,
+                  value: context.l10n.carDetailMileageValue(vehicle.mileageKm),
                 ),
               ),
               const SizedBox(width: AppSpacing.sm),
               Expanded(
                 child: StatCard(
                   axis: Axis.vertical,
-                  label: 'VIN',
+                  label: context.l10n.carDetailVin,
                   value: vehicle.vin ?? '—',
                 ),
               ),
@@ -106,10 +107,10 @@ class _Detail extends StatelessWidget {
           const Spacer(),
           ElevatedButton.icon(
             onPressed: () => ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Запис: TODO')),
+              SnackBar(content: Text(context.l10n.carDetailBookTodo)),
             ),
             icon: const Icon(Icons.add),
-            label: const Text('Записатись на ремонт'),
+            label: Text(context.l10n.carDetailBook),
           ),
         ],
       ),
@@ -139,12 +140,14 @@ class _NextServiceBanner extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('Наступне ТО',
+                Text(context.l10n.carDetailNextService,
                     style: AppTypography.labelMedium
                         .copyWith(color: AppColors.brandBlack)),
                 const SizedBox(height: AppSpacing.xxs),
                 Text(
-                  remaining > 0 ? 'через $remaining км' : 'настав термін',
+                  remaining > 0
+                      ? context.l10n.carDetailDueIn(remaining)
+                      : context.l10n.carDetailOverdue,
                   style: AppTypography.titleMedium
                       .copyWith(color: AppColors.brandBlack),
                 ),

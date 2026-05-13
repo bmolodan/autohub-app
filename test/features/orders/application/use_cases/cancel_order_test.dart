@@ -26,7 +26,6 @@ ActiveOrder _pending({String id = 'o1'}) => ActiveOrder(
       id: id,
       title: 'Заміна масла',
       status: ActiveOrderStatus.pendingConfirmation,
-      statusLabel: 'Очікує підтвердження',
       vehicleMake: 'Toyota',
       vehicleModel: 'Camry',
       vehiclePlate: 'AA 1234 BC',
@@ -38,8 +37,7 @@ ActiveOrder _pending({String id = 'o1'}) => ActiveOrder(
 
 void main() {
   group('CancelOrderUseCase', () {
-    test('sets status to canceled + appends Скасовано timeline entry',
-        () async {
+    test('sets status to canceled + appends canceled timeline entry', () async {
       final repo = _FakeRepo();
       await repo.save(_pending());
 
@@ -47,7 +45,6 @@ void main() {
           await _useCase(repo).execute(const CancelOrderInput(id: 'o1'));
 
       expect(updated.status, ActiveOrderStatus.canceled);
-      expect(updated.statusLabel, 'Скасовано');
       expect(updated.timeline, hasLength(1));
       expect(updated.timeline.single.stage, OrderStage.canceled);
       expect(updated.timeline.single.at, _fixedNow);

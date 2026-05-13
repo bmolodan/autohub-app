@@ -5,6 +5,7 @@ import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_radii.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_typography.dart';
+import '../../../l10n/l10n_extension.dart';
 
 /// Mockup 15 — notification preferences (UI-only stub).
 class NotificationsScreen extends StatefulWidget {
@@ -23,13 +24,14 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l = context.l10n;
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () => context.pop(),
         ),
-        title: Text('Сповіщення', style: AppTypography.titleLarge),
+        title: Text(l.profileNotifications, style: AppTypography.titleLarge),
       ),
       body: SafeArea(
         child: ListView(
@@ -38,36 +40,36 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
             vertical: AppSpacing.md,
           ),
           children: [
-            Text('Що надсилати?', style: AppTypography.headlineSmall),
+            Text(l.notificationsHeading, style: AppTypography.headlineSmall),
             const SizedBox(height: AppSpacing.md),
             _ToggleTile(
-              title: 'Зміна статусу',
-              subtitle: 'Прийнято · діагностика · готово',
+              title: l.notifyStatusTitle,
+              subtitle: l.notifyStatusSubtitle,
               value: _statusUpdate,
               onChanged: (v) => setState(() => _statusUpdate = v),
             ),
             _ToggleTile(
-              title: 'Нагадування про ТО',
-              subtitle: 'За 30 днів до планового візиту',
+              title: l.notifyTOTitle,
+              subtitle: l.notifyTOSubtitle,
               value: _serviceReminder,
               onChanged: (v) => setState(() => _serviceReminder = v),
             ),
             _ToggleTile(
-              title: 'Повідомлення майстра',
-              subtitle: 'Уточнення під час робіт',
+              title: l.notifyMasterTitle,
+              subtitle: l.notifyMasterSubtitle,
               value: _masterMessage,
               onChanged: (v) => setState(() => _masterMessage = v),
             ),
             _ToggleTile(
-              title: 'Акції та новини',
-              subtitle: 'Сезонні пропозиції',
+              title: l.notifyPromosTitle,
+              subtitle: l.notifyPromosSubtitle,
               value: _promotions,
               onChanged: (v) => setState(() => _promotions = v),
             ),
             const SizedBox(height: AppSpacing.lg),
             _ToggleTile(
-              title: 'Тихі години',
-              subtitle: '22:00 — 8:00',
+              title: l.notifyQuietTitle,
+              subtitle: l.notifyQuietSubtitle,
               value: _quietHours,
               onChanged: (v) => setState(() => _quietHours = v),
             ),

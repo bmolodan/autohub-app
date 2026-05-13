@@ -10,6 +10,7 @@ import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_radii.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_typography.dart';
+import '../../../l10n/l10n_extension.dart';
 import '../application/ports/outbound/otp_gateway_port.dart';
 import '../composition/auth_providers.dart';
 
@@ -81,8 +82,12 @@ class _OtpScreenState extends ConsumerState<OtpScreen> {
       context.go(AppRoutes.home);
     } on InvalidOtpException catch (e) {
       if (!mounted) return;
+      final l = context.l10n;
       setState(() {
-        _error = e.message;
+        _error = switch (e.reason) {
+          InvalidOtpReason.expired => l.otpExpiredCode,
+          InvalidOtpReason.wrongCode => l.otpInvalidCode,
+        };
         _ctrl.clear();
       });
     } on Object catch (e) {
@@ -109,7 +114,7 @@ class _OtpScreenState extends ConsumerState<OtpScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Text('Введіть код\nз SMS', style: AppTypography.headlineLarge),
+              Text(context.l10n.otpTitle, style: AppTypography.headlineLarge),
               const SizedBox(height: AppSpacing.xs),
               Text(_maskedPhone(),
                   style: AppTypography.bodyMedium
@@ -172,11 +177,13 @@ class _OtpScreenState extends ConsumerState<OtpScreen> {
               Center(
                 child: _secondsLeft > 0
                     ? Text(
-                        'Надіслати ще раз через 0:${_secondsLeft.toString().padLeft(2, '0')}',
+                        context.l10n.otpResendIn(
+                          _secondsLeft.toString().padLeft(2, '0'),
+                        ),
                         style: AppTypography.bodySmall)
                     : TextButton(
                         onPressed: _startCountdown,
-                        child: const Text('Надіслати ще раз'),
+                        child: Text(context.l10n.otpResendNow),
                       ),
               ),
               const Spacer(),
@@ -189,7 +196,7 @@ class _OtpScreenState extends ConsumerState<OtpScreen> {
                         height: 20,
                         child: CircularProgressIndicator(strokeWidth: 2),
                       )
-                    : const Text('Підтвердити'),
+                    : Text(context.l10n.otpSubmit),
               ),
             ],
           ),

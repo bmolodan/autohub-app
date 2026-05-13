@@ -7,6 +7,7 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_radii.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_typography.dart';
+import '../../../../l10n/l10n_extension.dart';
 import '../../composition/cars_providers.dart';
 import '../../domain/vehicle.dart';
 
@@ -18,12 +19,14 @@ class CarsListScreen extends ConsumerWidget {
     final async = ref.watch(vehiclesControllerProvider);
 
     return Scaffold(
-      appBar: AppBar(title: Text('Мої авто', style: AppTypography.titleLarge)),
+      appBar: AppBar(
+          title: Text(context.l10n.carsListTitle,
+              style: AppTypography.titleLarge)),
       body: SafeArea(
         child: async.when(
           loading: () => const Center(child: CircularProgressIndicator()),
           error: (e, _) => Center(
-            child: Text('Не вдалося завантажити: $e',
+            child: Text(context.l10n.carsLoadFailed(e.toString()),
                 style: AppTypography.bodyMedium),
           ),
           data: (vehicles) => ListView(
@@ -38,7 +41,7 @@ class CarsListScreen extends ConsumerWidget {
               OutlinedButton.icon(
                 onPressed: () => context.push(AppRoutes.carAdd),
                 icon: const Icon(Icons.add),
-                label: const Text('Додати авто'),
+                label: Text(context.l10n.carsAddCta),
               ),
             ],
           ),

@@ -8,7 +8,6 @@ const _pendingJson = {
   'id': '4522',
   'title': 'Діагностика двигуна',
   'status': 'pending_confirmation',
-  'status_label': 'Очікує підтвердження',
   'vehicle': {'make': 'Toyota', 'model': 'Camry', 'plate': 'AA 1234 BC'},
   'scheduled_for': '2026-05-14T16:00:00Z',
 };
@@ -61,7 +60,6 @@ void main() {
         id: '4522',
         title: 'Діагностика двигуна',
         status: ActiveOrderStatus.pendingConfirmation,
-        statusLabel: 'Очікує підтвердження',
         vehicleMake: 'Toyota',
         vehicleModel: 'Camry',
         vehiclePlate: 'AA 1234 BC',
