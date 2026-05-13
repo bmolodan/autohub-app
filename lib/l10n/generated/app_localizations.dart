@@ -770,18 +770,6 @@ abstract class AppLocalizations {
   /// **'Профіль'**
   String get profileTitle;
 
-  /// No description provided for @profileMyCars.
-  ///
-  /// In uk, this message translates to:
-  /// **'МОЇ АВТО'**
-  String get profileMyCars;
-
-  /// No description provided for @profileTOLeftPill.
-  ///
-  /// In uk, this message translates to:
-  /// **'ТО за {km} км'**
-  String profileTOLeftPill(int km);
-
   /// No description provided for @profileNotifications.
   ///
   /// In uk, this message translates to:

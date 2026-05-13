@@ -382,14 +382,6 @@ class AppLocalizationsUk extends AppLocalizations {
   String get profileTitle => 'Профіль';
 
   @override
-  String get profileMyCars => 'МОЇ АВТО';
-
-  @override
-  String profileTOLeftPill(int km) {
-    return 'ТО за $km км';
-  }
-
-  @override
   String get profileNotifications => 'Сповіщення';
 
   @override

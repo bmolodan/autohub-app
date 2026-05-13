@@ -10,8 +10,6 @@ import '../../../core/theme/app_typography.dart';
 import '../../../core/theme/brand_colors.dart';
 import '../../../l10n/l10n_extension.dart';
 import '../../auth/composition/auth_providers.dart';
-import '../../cars/composition/cars_providers.dart';
-import '../../cars/domain/vehicle.dart';
 import '../composition/profile_providers.dart';
 
 /// Mockup 09 — user profile.
@@ -20,7 +18,6 @@ class ProfileScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final async = ref.watch(vehiclesControllerProvider);
     final session = ref.watch(authControllerProvider).asData?.value;
     final profile = ref.watch(clientProfileControllerProvider).asData?.value;
     // Session is guaranteed non-null inside the shell (router redirects
@@ -48,29 +45,6 @@ class ProfileScreen extends ConsumerWidget {
           ),
           children: [
             _UserHeader(name: name, phone: phone, email: profile?.email),
-            const SizedBox(height: AppSpacing.lg),
-            Text(
-              l.profileMyCars,
-              style: AppTypography.overline
-                  .copyWith(color: context.colors.textSecondary),
-            ),
-            const SizedBox(height: AppSpacing.sm),
-            async.when(
-              loading: () => const Center(child: CircularProgressIndicator()),
-              error: (_, __) =>
-                  Text(l.errorGeneric, style: AppTypography.bodyMedium),
-              data: (cars) => Column(
-                children: [
-                  for (final car in cars) _VehicleSummary(vehicle: car),
-                  const SizedBox(height: AppSpacing.xxs),
-                  OutlinedButton.icon(
-                    onPressed: () => context.push(AppRoutes.carAdd),
-                    icon: const Icon(Icons.add),
-                    label: Text(l.carsAddCta),
-                  ),
-                ],
-              ),
-            ),
             const SizedBox(height: AppSpacing.lg),
             _SettingsRow(
               icon: Icons.notifications_outlined,
@@ -188,62 +162,6 @@ class _UserHeader extends StatelessWidget {
               ),
             ),
           ),
-        ],
-      ),
-    );
-  }
-}
-
-class _VehicleSummary extends StatelessWidget {
-  const _VehicleSummary({required this.vehicle});
-  final Vehicle vehicle;
-
-  @override
-  Widget build(BuildContext context) {
-    final nextKm = vehicle.nextServiceMileageKm;
-    final remaining = nextKm != null ? (nextKm - vehicle.mileageKm) : null;
-
-    return Container(
-      margin: const EdgeInsets.only(bottom: AppSpacing.sm),
-      padding: const EdgeInsets.all(AppSpacing.md),
-      decoration: BoxDecoration(
-        color: context.colors.surface,
-        borderRadius: AppRadii.lgAll,
-        border: Border.all(color: context.colors.border, width: 0.5),
-      ),
-      child: Row(
-        children: [
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text('${vehicle.make} ${vehicle.model}',
-                    style: AppTypography.titleSmall),
-                const SizedBox(height: AppSpacing.xxs),
-                Text(
-                  '${vehicle.year} · ${vehicle.plate}',
-                  style: AppTypography.bodySmall
-                      .copyWith(color: context.colors.textSecondary),
-                ),
-              ],
-            ),
-          ),
-          if (remaining != null && remaining > 0)
-            Container(
-              padding: const EdgeInsets.symmetric(
-                horizontal: AppSpacing.sm,
-                vertical: AppSpacing.xxs,
-              ),
-              decoration: BoxDecoration(
-                color: context.colors.brandYellow,
-                borderRadius: AppRadii.pillAll,
-              ),
-              child: Text(
-                context.l10n.profileTOLeftPill(remaining),
-                style: AppTypography.labelSmall
-                    .copyWith(color: context.colors.onYellow),
-              ),
-            ),
         ],
       ),
     );

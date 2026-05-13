@@ -379,14 +379,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get profileTitle => 'Profile';
 
   @override
-  String get profileMyCars => 'MY CARS';
-
-  @override
-  String profileTOLeftPill(int km) {
-    return 'Service in $km km';
-  }
-
-  @override
   String get profileNotifications => 'Notifications';
 
   @override

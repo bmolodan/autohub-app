@@ -145,11 +145,6 @@
   "monthNovember": "ЛИСТОПАД",
   "monthDecember": "ГРУДЕНЬ",
   "profileTitle": "Профіль",
-  "profileMyCars": "МОЇ АВТО",
-  "profileTOLeftPill": "ТО за {km} км",
-  "@profileTOLeftPill": {
-    "placeholders": { "km": { "type": "int" } }
-  },
   "profileNotifications": "Сповіщення",
   "profileLanguage": "Мова",
   "profileLanguageBadge": "UA",
