@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>AutoHub — Design System Preview</title>
+<style>
+  :root {
+    /* Brand */
+    --c-yellow: #F0CC50;
+    --c-yellow-dark: #E0B940;
+    --c-yellow-soft: rgba(240, 204, 80, 0.20);
+    --c-black: #1A1A1A;
+    /* Surfaces */
+    --c-bg: #FAF9F6;
+    --c-surface: #FFFFFF;
+    --c-surface-variant: #F5F3EE;
+    /* Text */
+    --c-text: #1A1A1A;
+    --c-text-secondary: #666666;
+    --c-text-tertiary: #888888;
+    --c-text-disabled: #BBBBBB;
+    /* Border */
+    --c-border: #E5E2DD;
+    --c-border-strong: #C8C5BD;
+    /* Semantic */
+    --c-error: #C04545;
+    --c-error-soft: rgba(192, 69, 69, 0.10);
+    --c-success: #1D9E75;
+    --c-warning: #E0A040;
+    /* On-color */
+    --c-on-yellow: #1A1A1A;
+    --c-on-black: #FFFFFF;
+    /* Spacing scale */
+    --sp-xxs: 4px;
+    --sp-xs: 6px;
+    --sp-sm: 8px;
+    --sp-md: 12px;
+    --sp-lg: 16px;
+    --sp-xl: 20px;
+    --sp-xxl: 24px;
+    --sp-xxxl: 32px;
+    /* Component padding */
+    --sp-btn-h: 20px;
+    --sp-btn-v: 14px;
+    --sp-input-h: 14px;
+    --sp-input-v: 14px;
+    --sp-chip-h: 14px;
+    --sp-chip-v: 8px;
+    /* Radii */
+    --r-xs: 8px;
+    --r-sm: 12px;
+    --r-md: 16px;
+    --r-lg: 18px;
+    --r-xl: 22px;
+    --r-xxl: 32px;
+    --r-pill: 999px;
+    /* Sizes */
+    --sz-icon-sm: 18px;
+    --sz-icon-md: 20px;
+    --sz-icon-lg: 22px;
+    --sz-icon-xl: 24px;
+    --sz-icon-hero: 36px;
+    --sz-avatar: 56px;
+    --sz-bubble: 72px;
+    --sz-otp: 56px;
+    --sz-cta-min: 50px;
+    --layout-max: 480px;
+  }
+
+  /* Base */
+  html, body {
+    margin: 0;
+    background: var(--c-bg);
+    color: var(--c-text);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'SF Pro Text', sans-serif;
+    font-weight: 400;
+    line-height: 1.4;
+    -webkit-font-smoothing: antialiased;
+  }
+  * { box-sizing: border-box; }
+
+  .container {
+    max-width: 1120px;
+    margin: 0 auto;
+    padding: var(--sp-xxxl) var(--sp-xxl);
+  }
+
+  /* Typography preview */
+  .display-large    { font-size: 32px; font-weight: 500; line-height: 1.1; }
+  .display-medium   { font-size: 28px; font-weight: 500; line-height: 1.1; }
+  .headline-large   { font-size: 24px; font-weight: 500; line-height: 1.2; }
+  .headline-medium  { font-size: 22px; font-weight: 500; line-height: 1.2; }
+  .headline-small   { font-size: 20px; font-weight: 500; line-height: 1.25; }
+  .title-large      { font-size: 16px; font-weight: 500; line-height: 1.3; }
+  .title-medium     { font-size: 14px; font-weight: 500; line-height: 1.3; }
+  .title-small      { font-size: 12px; font-weight: 500; line-height: 1.3; }
+  .body-large       { font-size: 14px; font-weight: 400; line-height: 1.5; }
+  .body-medium      { font-size: 12px; font-weight: 400; line-height: 1.5; }
+  .body-small       { font-size: 11px; font-weight: 400; line-height: 1.5; color: var(--c-text-secondary); }
+  .label-large      { font-size: 14px; font-weight: 500; line-height: 1.2; }
+  .label-medium     { font-size: 12px; font-weight: 500; line-height: 1.2; }
+  .label-small      { font-size: 10px; font-weight: 500; line-height: 1.2; letter-spacing: 1.5px; color: var(--c-text-secondary); }
+  .overline         { font-size: 10px; font-weight: 500; line-height: 1.2; letter-spacing: 1.8px; text-transform: uppercase; color: var(--c-text-secondary); }
+  .caption          { font-size: 10px; font-weight: 400; line-height: 1.4; color: var(--c-text-tertiary); }
+
+  /* Layout helpers */
+  h1.section {
+    font-size: 24px;
+    font-weight: 500;
+    margin: var(--sp-xxxl) 0 var(--sp-lg) 0;
+    padding-bottom: var(--sp-sm);
+    border-bottom: 0.5px solid var(--c-border);
+  }
+  h2.subsection {
+    font-size: 14px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--c-text-secondary);
+    margin: var(--sp-xl) 0 var(--sp-md) 0;
+  }
+
+  /* Color swatches */
+  .swatch-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: var(--sp-md);
+  }
+  .swatch {
+    border: 0.5px solid var(--c-border);
+    border-radius: var(--r-md);
+    overflow: hidden;
+    background: var(--c-surface);
+  }
+  .swatch-chip {
+    height: 64px;
+    border-bottom: 0.5px solid var(--c-border);
+  }
+  .swatch-meta {
+    padding: var(--sp-md);
+  }
+  .swatch-name {
+    font-size: 12px;
+    font-weight: 500;
+  }
+  .swatch-hex {
+    font-size: 11px;
+    color: var(--c-text-secondary);
+    font-family: 'SF Mono', Menlo, monospace;
+    margin-top: var(--sp-xxs);
+  }
+
+  /* Type sample */
+  .type-row {
+    display: grid;
+    grid-template-columns: 160px 1fr 120px;
+    gap: var(--sp-md);
+    align-items: baseline;
+    padding: var(--sp-sm) 0;
+    border-bottom: 0.5px solid var(--c-border);
+  }
+  .type-row:last-child { border-bottom: 0; }
+  .type-name {
+    font-size: 11px;
+    color: var(--c-text-secondary);
+    font-family: 'SF Mono', Menlo, monospace;
+  }
+  .type-meta {
+    font-size: 10px;
+    color: var(--c-text-tertiary);
+    font-family: 'SF Mono', Menlo, monospace;
+    text-align: right;
+  }
+
+  /* Spacing scale */
+  .scale-row {
+    display: flex;
+    align-items: center;
+    gap: var(--sp-md);
+    margin-bottom: var(--sp-sm);
+  }
+  .scale-bar {
+    background: var(--c-yellow);
+    height: 16px;
+    border-radius: var(--r-xs);
+  }
+  .scale-label {
+    font-size: 11px;
+    color: var(--c-text-secondary);
+    font-family: 'SF Mono', Menlo, monospace;
+    width: 72px;
+  }
+  .scale-value {
+    font-size: 11px;
+    color: var(--c-text-tertiary);
+    font-family: 'SF Mono', Menlo, monospace;
+  }
+
+  /* Radius preview */
+  .radius-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: var(--sp-md);
+  }
+  .radius-tile {
+    aspect-ratio: 1;
+    background: var(--c-yellow-soft);
+    border: 0.5px solid var(--c-border);
+    display: flex;
+    align-items: flex-end;
+    padding: var(--sp-sm);
+    font-size: 11px;
+    color: var(--c-text-secondary);
+    font-family: 'SF Mono', Menlo, monospace;
+  }
+
+  /* Components */
+  .btn {
+    border-radius: var(--r-pill);
+    padding: var(--sp-btn-v) var(--sp-btn-h);
+    min-height: var(--sz-cta-min);
+    border: 0;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    font-family: inherit;
+  }
+  .btn-elevated  { background: var(--c-yellow); color: var(--c-on-yellow); }
+  .btn-filled    { background: var(--c-black); color: var(--c-on-black); }
+  .btn-outlined  { background: transparent; color: var(--c-text); border: 0.5px solid var(--c-border-strong); }
+  .btn-text      { background: transparent; color: var(--c-text); padding: var(--sp-sm) var(--sp-md); min-height: 0; }
+  .btn-row { display: flex; gap: var(--sp-md); flex-wrap: wrap; align-items: center; }
+
+  .input {
+    background: var(--c-surface);
+    border-radius: var(--r-md);
+    border: 0;
+    padding: var(--sp-input-v) var(--sp-input-h);
+    font-size: 12px;
+    font-family: inherit;
+    width: 100%;
+    outline: none;
+  }
+  .input::placeholder { color: var(--c-text-tertiary); }
+  .input:focus { box-shadow: inset 0 0 0 1.5px var(--c-yellow); }
+
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    background: var(--c-surface);
+    border-radius: var(--r-pill);
+    padding: var(--sp-chip-v) var(--sp-chip-h);
+    font-size: 12px;
+    font-weight: 500;
+    border: 0.5px solid var(--c-border);
+  }
+  .chip.selected { background: var(--c-yellow); border-color: var(--c-yellow); }
+
+  /* Sample cards */
+  .card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: var(--sp-md);
+  }
+  .card {
+    background: var(--c-surface);
+    border-radius: var(--r-lg);
+    border: 0.5px solid var(--c-border);
+    padding: var(--sp-md);
+  }
+  .hero-card {
+    background: var(--c-black);
+    color: var(--c-on-black);
+    border-radius: var(--r-xl);
+    padding: var(--sp-md);
+  }
+  .hero-card .overline { color: var(--c-yellow); }
+  .hero-card .title { font-size: 20px; font-weight: 500; margin: var(--sp-xxs) 0; }
+  .hero-card .subtitle { font-size: 11px; color: var(--c-text-disabled); margin-bottom: var(--sp-sm); }
+  .progress-row { display: flex; align-items: center; gap: var(--sp-sm); }
+  .progress { flex: 1; height: 4px; border-radius: var(--r-xs); background: rgba(200, 197, 189, 0.4); overflow: hidden; }
+  .progress > i { display: block; height: 100%; background: var(--c-yellow); }
+  .eta { color: var(--c-yellow); font-size: 12px; font-weight: 500; }
+  .canceled-card { background: var(--c-surface-variant); }
+  .canceled-card .status { color: var(--c-error); font-size: 11px; }
+  .pending-card .status { color: var(--c-text-secondary); font-size: 11px; margin-top: var(--sp-xxs); }
+
+  /* Iconography placeholders */
+  .icon-row { display: flex; align-items: flex-end; gap: var(--sp-lg); padding: var(--sp-md); border: 0.5px solid var(--c-border); border-radius: var(--r-md); background: var(--c-surface); }
+  .icon-circle { display: flex; align-items: center; justify-content: center; background: var(--c-yellow-soft); border-radius: var(--r-pill); color: var(--c-black); font-weight: 500; }
+  .icon-circle.bubble { background: var(--c-error-soft); color: var(--c-error); }
+
+  /* Phone frame */
+  .phone {
+    width: 320px;
+    background: var(--c-bg);
+    border: 0.5px solid var(--c-border-strong);
+    border-radius: var(--r-xxl);
+    overflow: hidden;
+    box-shadow: 0 0 0 6px var(--c-surface-variant);
+  }
+  .phone-header { padding: var(--sp-md) var(--sp-lg); }
+  .phone-body { padding: var(--sp-md) var(--sp-lg); display: flex; flex-direction: column; gap: var(--sp-md); }
+
+  /* Token table */
+  .token-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+  }
+  .token-table th, .token-table td {
+    text-align: left;
+    padding: var(--sp-sm) var(--sp-md);
+    border-bottom: 0.5px solid var(--c-border);
+  }
+  .token-table th {
+    font-weight: 500;
+    color: var(--c-text-secondary);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .token-table code { font-family: 'SF Mono', Menlo, monospace; font-size: 11px; color: var(--c-text-secondary); }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <header>
+    <p class="overline">AutoHub Design System</p>
+    <h1 class="display-large">Tokens, components & patterns</h1>
+    <p class="body-large" style="color:var(--c-text-secondary);max-width:640px">
+      Source of truth: <code>lib/core/theme/*</code>. This page mirrors the Dart definitions so
+      designers and stakeholders can review the system without running Flutter.
+    </p>
+  </header>
+
+  <!-- Colors -->
+  <h1 class="section">1. Color</h1>
+
+  <h2 class="subsection">Brand</h2>
+  <div class="swatch-grid">
+    <div class="swatch">
+      <div class="swatch-chip" style="background:var(--c-yellow)"></div>
+      <div class="swatch-meta"><div class="swatch-name">brand.yellow</div><div class="swatch-hex">#F0CC50</div></div>
+    </div>
+    <div class="swatch">
+      <div class="swatch-chip" style="background:var(--c-yellow-dark)"></div>
+      <div class="swatch-meta"><div class="swatch-name">brand.yellowDark</div><div class="swatch-hex">#E0B940</div></div>
+    </div>
+    <div class="swatch">
+      <div class="swatch-chip" style="background:var(--c-yellow-soft)"></div>
+      <div class="swatch-meta"><div class="swatch-name">brand.yellowSoft</div><div class="swatch-hex">#F0CC50 @ 20%</div></div>
+    </div>
+    <div class="swatch">
+      <div class="swatch-chip" style="background:var(--c-black)"></div>
+      <div class="swatch-meta"><div class="swatch-name">brand.black</div><div class="swatch-hex">#1A1A1A</div></div>
+    </div>
+  </div>
+
+  <h2 class="subsection">Surface</h2>
+  <div class="swatch-grid">
+    <div class="swatch">
+      <div class="swatch-chip" style="background:var(--c-bg)"></div>
+      <div class="swatch-meta"><div class="swatch-name">background</div><div class="swatch-hex">#FAF9F6</div></div>
+    </div>
+    <div class="swatch">
+      <div class="swatch-chip" style="background:var(--c-surface);border-bottom:0.5px solid var(--c-border)"></div>
+      <div class="swatch-meta"><div class="swatch-name">surface</div><div class="swatch-hex">#FFFFFF</div></div>
+    </div>
+    <div class="swatch">
+      <div class="swatch-chip" style="background:var(--c-surface-variant)"></div>
+      <div class="swatch-meta"><div class="swatch-name">surfaceVariant</div><div class="swatch-hex">#F5F3EE</div></div>
+    </div>
+  </div>
+
+  <h2 class="subsection">Text</h2>
+  <div class="swatch-grid">
+    <div class="swatch"><div class="swatch-chip" style="background:var(--c-text)"></div><div class="swatch-meta"><div class="swatch-name">text.primary</div><div class="swatch-hex">#1A1A1A</div></div></div>
+    <div class="swatch"><div class="swatch-chip" style="background:var(--c-text-secondary)"></div><div class="swatch-meta"><div class="swatch-name">text.secondary</div><div class="swatch-hex">#666666</div></div></div>
+    <div class="swatch"><div class="swatch-chip" style="background:var(--c-text-tertiary)"></div><div class="swatch-meta"><div class="swatch-name">text.tertiary</div><div class="swatch-hex">#888888</div></div></div>
+    <div class="swatch"><div class="swatch-chip" style="background:var(--c-text-disabled)"></div><div class="swatch-meta"><div class="swatch-name">text.disabled</div><div class="swatch-hex">#BBBBBB</div></div></div>
+  </div>
+
+  <h2 class="subsection">Border &amp; Semantic</h2>
+  <div class="swatch-grid">
+    <div class="swatch"><div class="swatch-chip" style="background:var(--c-border)"></div><div class="swatch-meta"><div class="swatch-name">border.default</div><div class="swatch-hex">#E5E2DD</div></div></div>
+    <div class="swatch"><div class="swatch-chip" style="background:var(--c-border-strong)"></div><div class="swatch-meta"><div class="swatch-name">border.strong</div><div class="swatch-hex">#C8C5BD</div></div></div>
+    <div class="swatch"><div class="swatch-chip" style="background:var(--c-error)"></div><div class="swatch-meta"><div class="swatch-name">semantic.error</div><div class="swatch-hex">#C04545</div></div></div>
+    <div class="swatch"><div class="swatch-chip" style="background:var(--c-error-soft)"></div><div class="swatch-meta"><div class="swatch-name">semantic.errorSoft</div><div class="swatch-hex">#C04545 @ 10%</div></div></div>
+    <div class="swatch"><div class="swatch-chip" style="background:var(--c-success)"></div><div class="swatch-meta"><div class="swatch-name">semantic.success</div><div class="swatch-hex">#1D9E75</div></div></div>
+    <div class="swatch"><div class="swatch-chip" style="background:var(--c-warning)"></div><div class="swatch-meta"><div class="swatch-name">semantic.warning</div><div class="swatch-hex">#E0A040</div></div></div>
+  </div>
+
+  <!-- Typography -->
+  <h1 class="section">2. Typography — Inter 400 / 500</h1>
+  <div>
+    <div class="type-row"><div class="type-name">displayLarge</div><div class="display-large">Скільки коштує сервіс?</div><div class="type-meta">32 / 500 / 1.1</div></div>
+    <div class="type-row"><div class="type-name">displayMedium</div><div class="display-medium">2 850 грн</div><div class="type-meta">28 / 500 / 1.1</div></div>
+    <div class="type-row"><div class="type-name">headlineLarge</div><div class="headline-large">Коли вам зручно?</div><div class="type-meta">24 / 500 / 1.2</div></div>
+    <div class="type-row"><div class="type-name">headlineMedium</div><div class="headline-medium">Розкажіть про авто</div><div class="type-meta">22 / 500 / 1.2</div></div>
+    <div class="type-row"><div class="type-name">headlineSmall</div><div class="headline-small">Поки тиша</div><div class="type-meta">20 / 500 / 1.25</div></div>
+    <div class="type-row"><div class="type-name">titleLarge</div><div class="title-large">AUTOHUB</div><div class="type-meta">16 / 500 / 1.3</div></div>
+    <div class="type-row"><div class="type-name">titleMedium</div><div class="title-medium">Заміна гальмівних колодок</div><div class="type-meta">14 / 500 / 1.3</div></div>
+    <div class="type-row"><div class="type-name">titleSmall</div><div class="title-small">Сповіщення</div><div class="type-meta">12 / 500 / 1.3</div></div>
+    <div class="type-row"><div class="type-name">bodyLarge</div><div class="body-large">Перевірте інтернет-зʼєднання — і ми спробуємо ще раз.</div><div class="type-meta">14 / 400 / 1.5</div></div>
+    <div class="type-row"><div class="type-name">bodyMedium</div><div class="body-medium">Сезонні пропозиції, акції та новини.</div><div class="type-meta">12 / 400 / 1.5</div></div>
+    <div class="type-row"><div class="type-name">bodySmall</div><div class="body-small">Toyota Camry · AA 1234 BC</div><div class="type-meta">11 / 400 / 1.5</div></div>
+    <div class="type-row"><div class="type-name">labelLarge</div><div class="label-large">Записатись</div><div class="type-meta">14 / 500 / 1.2</div></div>
+    <div class="type-row"><div class="type-name">labelMedium</div><div class="label-medium">~ 12:38</div><div class="type-meta">12 / 500 / 1.2</div></div>
+    <div class="type-row"><div class="type-name">labelSmall</div><div class="label-small">ЧЕРЕЗ 30 ДНІВ</div><div class="type-meta">10 / 500 / 1.2 / 1.5</div></div>
+    <div class="type-row"><div class="type-name">overline</div><div class="overline">У РЕМОНТІ</div><div class="type-meta">10 / 500 / 1.2 / 1.8</div></div>
+    <div class="type-row"><div class="type-name">caption</div><div class="caption">22 січня · 14:30</div><div class="type-meta">10 / 400 / 1.4</div></div>
+  </div>
+
+  <!-- Spacing -->
+  <h1 class="section">3. Spacing</h1>
+  <h2 class="subsection">Base scale</h2>
+  <div>
+    <div class="scale-row"><div class="scale-label">xxs</div><div class="scale-bar" style="width:4px"></div><div class="scale-value">4 px</div></div>
+    <div class="scale-row"><div class="scale-label">xs</div><div class="scale-bar" style="width:6px"></div><div class="scale-value">6 px</div></div>
+    <div class="scale-row"><div class="scale-label">sm</div><div class="scale-bar" style="width:8px"></div><div class="scale-value">8 px</div></div>
+    <div class="scale-row"><div class="scale-label">md</div><div class="scale-bar" style="width:12px"></div><div class="scale-value">12 px</div></div>
+    <div class="scale-row"><div class="scale-label">lg</div><div class="scale-bar" style="width:16px"></div><div class="scale-value">16 px</div></div>
+    <div class="scale-row"><div class="scale-label">xl</div><div class="scale-bar" style="width:20px"></div><div class="scale-value">20 px</div></div>
+    <div class="scale-row"><div class="scale-label">xxl</div><div class="scale-bar" style="width:24px"></div><div class="scale-value">24 px</div></div>
+    <div class="scale-row"><div class="scale-label">xxxl</div><div class="scale-bar" style="width:32px"></div><div class="scale-value">32 px</div></div>
+  </div>
+
+  <h2 class="subsection">Component padding</h2>
+  <table class="token-table">
+    <tr><th>Token</th><th>Value</th><th>Where</th></tr>
+    <tr><td><code>btnH</code> / <code>btnV</code></td><td>20 × 14 px</td><td>Pill buttons (Elevated, Filled, Outlined)</td></tr>
+    <tr><td><code>inputH</code> / <code>inputV</code></td><td>14 × 14 px</td><td>Text fields</td></tr>
+    <tr><td><code>chipH</code> / <code>chipV</code></td><td>14 × 8 px</td><td>Chips</td></tr>
+    <tr><td><code>contentMaxWidth</code></td><td>480 px</td><td>AppShell tablet clamp</td></tr>
+  </table>
+
+  <!-- Radii -->
+  <h1 class="section">4. Radii</h1>
+  <div class="radius-grid">
+    <div class="radius-tile" style="border-radius:var(--r-xs)">xs · 8</div>
+    <div class="radius-tile" style="border-radius:var(--r-sm)">sm · 12</div>
+    <div class="radius-tile" style="border-radius:var(--r-md)">md · 16</div>
+    <div class="radius-tile" style="border-radius:var(--r-lg)">lg · 18</div>
+    <div class="radius-tile" style="border-radius:var(--r-xl)">xl · 22</div>
+    <div class="radius-tile" style="border-radius:var(--r-xxl)">xxl · 32</div>
+    <div class="radius-tile" style="border-radius:var(--r-pill)">pill · 999</div>
+  </div>
+
+  <!-- Sizes -->
+  <h1 class="section">5. Icon &amp; container sizes</h1>
+  <div class="icon-row">
+    <div class="icon-circle" style="width:var(--sz-icon-sm);height:var(--sz-icon-sm);font-size:9px">18</div>
+    <div class="icon-circle" style="width:var(--sz-icon-md);height:var(--sz-icon-md);font-size:9px">20</div>
+    <div class="icon-circle" style="width:var(--sz-icon-lg);height:var(--sz-icon-lg);font-size:9px">22</div>
+    <div class="icon-circle" style="width:var(--sz-icon-xl);height:var(--sz-icon-xl);font-size:9px">24</div>
+    <div class="icon-circle" style="width:var(--sz-icon-hero);height:var(--sz-icon-hero);font-size:11px">36</div>
+    <div class="icon-circle bubble" style="width:var(--sz-bubble);height:var(--sz-bubble);font-size:11px;border-radius:var(--r-lg)">72 ▲</div>
+    <div class="icon-circle" style="width:var(--sz-avatar);height:var(--sz-avatar);font-size:14px;background:var(--c-black);color:var(--c-yellow);border-radius:var(--r-pill)">БМ</div>
+  </div>
+
+  <!-- Components -->
+  <h1 class="section">6. Buttons</h1>
+  <div class="btn-row">
+    <button class="btn btn-elevated">+ Записатись</button>
+    <button class="btn btn-filled">Підтвердити запис</button>
+    <button class="btn btn-outlined">Скасувати</button>
+    <button class="btn btn-text">Надіслати знову</button>
+  </div>
+
+  <h1 class="section">7. Inputs &amp; chips</h1>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:var(--sp-md);max-width:640px">
+    <input class="input" placeholder="VIN (опційно)" />
+    <input class="input" placeholder="Марка" />
+    <input class="input" placeholder="Модель" />
+    <input class="input" placeholder="Рік" />
+  </div>
+  <div class="btn-row" style="margin-top:var(--sp-lg)">
+    <span class="chip selected">Заміна масла</span>
+    <span class="chip">Шиномонтаж</span>
+    <span class="chip">Діагностика двигуна</span>
+    <span class="chip">Гальмівна система</span>
+  </div>
+
+  <!-- Cards -->
+  <h1 class="section">8. Cards</h1>
+  <div class="card-grid">
+    <div class="hero-card">
+      <div class="overline">У РЕМОНТІ</div>
+      <div class="title">Заміна гальмівних колодок</div>
+      <div class="subtitle">Toyota Camry · AA 1234 BC</div>
+      <div class="progress-row">
+        <div class="progress"><i style="width:60%"></i></div>
+        <div class="eta">~12:38</div>
+      </div>
+    </div>
+    <div class="card pending-card">
+      <div class="title-medium">Діагностика двигуна</div>
+      <div class="status">Очікує підтвердження</div>
+    </div>
+    <div class="card canceled-card">
+      <div class="title-medium" style="color:var(--c-text-secondary)">Діагностика двигуна</div>
+      <div class="status">Скасовано</div>
+    </div>
+  </div>
+
+  <!-- Phone preview -->
+  <h1 class="section">9. Compose — Home screen</h1>
+  <div class="phone">
+    <div class="phone-header" style="display:flex;align-items:center;justify-content:space-between">
+      <div class="title-large">AUTOHUB</div>
+      <div style="display:flex;gap:var(--sp-sm);color:var(--c-text)">🔔 🎨</div>
+    </div>
+    <div class="phone-body">
+      <div>
+        <div class="body-medium" style="color:var(--c-text-secondary)">Привіт,</div>
+        <div class="headline-medium">Богдане</div>
+      </div>
+      <div class="hero-card">
+        <div class="overline">У РЕМОНТІ</div>
+        <div class="title">Заміна гальмівних колодок</div>
+        <div class="subtitle">Toyota Camry · AA 1234 BC</div>
+        <div class="progress-row">
+          <div class="progress"><i style="width:60%"></i></div>
+          <div class="eta">~12:38</div>
+        </div>
+      </div>
+      <div class="card canceled-card">
+        <div class="title-medium" style="color:var(--c-text-secondary)">Діагностика двигуна</div>
+        <div class="status">Скасовано</div>
+      </div>
+      <button class="btn btn-elevated" style="margin-top:var(--sp-sm)">+ Записатись</button>
+    </div>
+  </div>
+
+  <footer style="margin-top:var(--sp-xxxl);padding-top:var(--sp-lg);border-top:0.5px solid var(--c-border);color:var(--c-text-tertiary);font-size:11px">
+    Generated from <code>lib/core/theme/*</code>. Mirrors <code>docs/design-tokens.json</code>. Live preview of Flutter widgets is at <code>/dev/showcase</code> in the running app.
+  </footer>
+</div>
+</body>
+</html>

@@ -1,0 +1,133 @@
+{
+  "$schema": "https://design-tokens.github.io/community-group/format/",
+  "$description": "NESEMOS AutoHub design tokens. Mirror of lib/core/theme/* — keep in sync with the Dart definitions.",
+  "$version": "1.0.0",
+
+  "color": {
+    "brand": {
+      "yellow":        { "$value": "#F0CC50", "$description": "Mustard primary — CTAs, accents." },
+      "yellowDark":    { "$value": "#E0B940", "$description": "Hover/pressed yellow." },
+      "yellowSoft":    { "$value": "rgba(240, 204, 80, 0.20)", "$description": "Info banner background." },
+      "black":         { "$value": "#1A1A1A", "$description": "Near-black — text, dark CTAs, in-progress hero." }
+    },
+    "surface": {
+      "background":    { "$value": "#FAF9F6", "$description": "App background — warm cream." },
+      "surface":       { "$value": "#FFFFFF", "$description": "Cards, inputs — pure white." },
+      "surfaceVariant":{ "$value": "#F5F3EE", "$description": "Inactive chips, soft fills, canceled card." }
+    },
+    "text": {
+      "primary":       { "$value": "#1A1A1A", "$description": "Body and heading text." },
+      "secondary":     { "$value": "#666666", "$description": "Captions, metadata." },
+      "tertiary":      { "$value": "#888888", "$description": "Placeholder, muted labels." },
+      "disabled":      { "$value": "#BBBBBB", "$description": "Disabled labels, chevrons." }
+    },
+    "border": {
+      "default":       { "$value": "#E5E2DD", "$description": "Hairline border / divider." },
+      "strong":        { "$value": "#C8C5BD", "$description": "Focused inputs, dashed placeholders." }
+    },
+    "semantic": {
+      "error":         { "$value": "#C04545", "$description": "Destructive actions, canceled status." },
+      "errorSoft":     { "$value": "rgba(192, 69, 69, 0.10)", "$description": "Soft error background (warning bubble)." },
+      "success":       { "$value": "#1D9E75", "$description": "Reserved." },
+      "warning":       { "$value": "#E0A040", "$description": "Reserved." }
+    },
+    "onColor": {
+      "onYellow":      { "$value": "#1A1A1A", "$description": "Foreground on brand yellow." },
+      "onBlack":       { "$value": "#FFFFFF", "$description": "Foreground on brand black." },
+      "onBlackAccent": { "$value": "#F0CC50", "$description": "Yellow text on dark cards (status overlines)." }
+    }
+  },
+
+  "font": {
+    "family":          { "$value": "Inter", "$description": "Geometric sans-serif via google_fonts." },
+    "weight": {
+      "regular":       { "$value": 400 },
+      "medium":        { "$value": 500 }
+    }
+  },
+
+  "typography": {
+    "displayLarge":    { "$value": { "fontSize": 32, "fontWeight": 500, "lineHeight": 1.1 } },
+    "displayMedium":   { "$value": { "fontSize": 28, "fontWeight": 500, "lineHeight": 1.1 } },
+    "headlineLarge":   { "$value": { "fontSize": 24, "fontWeight": 500, "lineHeight": 1.2 } },
+    "headlineMedium":  { "$value": { "fontSize": 22, "fontWeight": 500, "lineHeight": 1.2 } },
+    "headlineSmall":   { "$value": { "fontSize": 20, "fontWeight": 500, "lineHeight": 1.25 } },
+    "titleLarge":      { "$value": { "fontSize": 16, "fontWeight": 500, "lineHeight": 1.3 } },
+    "titleMedium":     { "$value": { "fontSize": 14, "fontWeight": 500, "lineHeight": 1.3 } },
+    "titleSmall":      { "$value": { "fontSize": 12, "fontWeight": 500, "lineHeight": 1.3 } },
+    "bodyLarge":       { "$value": { "fontSize": 14, "fontWeight": 400, "lineHeight": 1.5 } },
+    "bodyMedium":      { "$value": { "fontSize": 12, "fontWeight": 400, "lineHeight": 1.5 } },
+    "bodySmall":       { "$value": { "fontSize": 11, "fontWeight": 400, "lineHeight": 1.5 } },
+    "labelLarge":      { "$value": { "fontSize": 14, "fontWeight": 500, "lineHeight": 1.2 } },
+    "labelMedium":     { "$value": { "fontSize": 12, "fontWeight": 500, "lineHeight": 1.2 } },
+    "labelSmall":      { "$value": { "fontSize": 10, "fontWeight": 500, "lineHeight": 1.2, "letterSpacing": 1.5 } },
+    "overline":        { "$value": { "fontSize": 10, "fontWeight": 500, "lineHeight": 1.2, "letterSpacing": 1.8, "textTransform": "uppercase" } },
+    "caption":         { "$value": { "fontSize": 10, "fontWeight": 400, "lineHeight": 1.4 } }
+  },
+
+  "spacing": {
+    "scale": {
+      "xxs":    { "$value": "4px" },
+      "xs":     { "$value": "6px" },
+      "sm":     { "$value": "8px" },
+      "md":     { "$value": "12px" },
+      "lg":     { "$value": "16px" },
+      "xl":     { "$value": "20px" },
+      "xxl":    { "$value": "24px" },
+      "xxxl":   { "$value": "32px" }
+    },
+    "component": {
+      "btnH":   { "$value": "20px", "$description": "Horizontal padding for pill buttons." },
+      "btnV":   { "$value": "14px", "$description": "Vertical padding for pill buttons." },
+      "inputH": { "$value": "14px" },
+      "inputV": { "$value": "14px" },
+      "chipH":  { "$value": "14px" },
+      "chipV":  { "$value": "8px" }
+    },
+    "layout": {
+      "contentMaxWidth": { "$value": "480px", "$description": "Max content width on tablet; phone-first design." }
+    }
+  },
+
+  "radius": {
+    "xs":      { "$value": "8px", "$description": "Badges, micro-pills." },
+    "sm":      { "$value": "12px", "$description": "Chips, small list rows." },
+    "md":      { "$value": "16px", "$description": "Default cards, inputs." },
+    "lg":      { "$value": "18px", "$description": "Content cards." },
+    "xl":      { "$value": "22px", "$description": "Hero cards, photo slots." },
+    "xxl":     { "$value": "32px", "$description": "Outer wrappers, large hero blocks." },
+    "pill":    { "$value": "999px", "$description": "Pill / capsule." }
+  },
+
+  "size": {
+    "icon": {
+      "sm":    { "$value": "18px" },
+      "md":    { "$value": "20px" },
+      "lg":    { "$value": "22px" },
+      "xl":    { "$value": "24px" },
+      "hero":  { "$value": "36px" }
+    },
+    "component": {
+      "avatar":         { "$value": "56px" },
+      "iconBubble":     { "$value": "72px" },
+      "otpSlotHeight":  { "$value": "56px" },
+      "ctaMinHeight":   { "$value": "50px" }
+    }
+  },
+
+  "elevation": {
+    "$description": "AutoHub is a flat design. No drop shadows — hairline borders are used for separation."
+  },
+
+  "motion": {
+    "$description": "Minimal motion language. Only Material InkRipple on tap + onboarding step indicator AnimatedContainer."
+  },
+
+  "theme": {
+    "mode":            { "$value": "light", "$description": "Light-only by design. Dark mode deferred." }
+  },
+
+  "platform": {
+    "primary":         { "$value": "ios", "$description": "iOS-first; locked portrait on both iOS and Android." }
+  }
+}
