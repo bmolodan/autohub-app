@@ -1,8 +1,11 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../core/config/app_environment.dart';
+import '../../../core/network/dio_provider.dart';
 import '../../../core/storage/shared_prefs_provider.dart';
 import '../../../core/util/clock.dart';
 import '../../../core/util/id_generator.dart';
+import '../adapters/outbound/http_vehicle_repository.dart';
 import '../adapters/outbound/shared_prefs_vehicle_repository.dart';
 import '../application/ports/outbound/vehicle_repository_port.dart';
 import '../application/use_cases/add_vehicle.dart';
@@ -14,23 +17,26 @@ import '../domain/vehicle.dart';
 ///
 /// Override [vehicleRepositoryProvider] to swap in an HTTP/Hive adapter —
 /// use-cases and UI are unaffected.
-final vehicleRepositoryProvider = Provider<VehicleRepositoryPort>(
-  (ref) => SharedPrefsVehicleRepository(
-    ref.watch(sharedPreferencesProvider),
-    seed: const [
-      Vehicle(
-        id: 'v-camry-1',
-        make: 'Toyota',
-        model: 'Camry',
-        year: 2018,
-        plate: 'AA 1234 BC',
-        vin: 'JT2BG28K3X0123456',
-        mileageKm: 87500,
-        nextServiceMileageKm: 90000,
+final vehicleRepositoryProvider = Provider<VehicleRepositoryPort>((ref) {
+  return switch (ref.watch(appEnvironmentProvider)) {
+    AppEnvironment.remote => HttpVehicleRepository(ref.watch(dioProvider)),
+    AppEnvironment.local => SharedPrefsVehicleRepository(
+        ref.watch(sharedPreferencesProvider),
+        seed: const [
+          Vehicle(
+            id: 'v-camry-1',
+            make: 'Toyota',
+            model: 'Camry',
+            year: 2018,
+            plate: 'AA 1234 BC',
+            vin: 'JT2BG28K3X0123456',
+            mileageKm: 87500,
+            nextServiceMileageKm: 90000,
+          ),
+        ],
       ),
-    ],
-  ),
-);
+  };
+});
 
 final listVehiclesUseCaseProvider = Provider<ListVehiclesUseCase>(
   (ref) => ListVehiclesUseCase(ref.watch(vehicleRepositoryProvider)),

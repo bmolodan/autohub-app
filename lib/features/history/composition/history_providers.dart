@@ -1,16 +1,21 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../core/config/app_environment.dart';
+import '../../../core/network/dio_provider.dart';
+import '../adapters/outbound/http_service_history_repository.dart';
 import '../adapters/outbound/mock_service_history_repository.dart';
 import '../application/ports/outbound/service_history_repository_port.dart';
 import '../application/use_cases/get_service_history.dart';
 
 /// Composition root for the History feature.
-///
-/// Swap [serviceHistoryRepositoryProvider] override to switch
-/// MockServiceHistoryRepository → an HTTP adapter — UI/use-case won't change.
-final serviceHistoryRepositoryProvider = Provider<ServiceHistoryRepositoryPort>(
-  (_) => const MockServiceHistoryRepository(),
-);
+final serviceHistoryRepositoryProvider =
+    Provider<ServiceHistoryRepositoryPort>((ref) {
+  return switch (ref.watch(appEnvironmentProvider)) {
+    AppEnvironment.remote =>
+      HttpServiceHistoryRepository(ref.watch(dioProvider)),
+    AppEnvironment.local => const MockServiceHistoryRepository(),
+  };
+});
 
 final getServiceHistoryUseCaseProvider =
     Provider<GetServiceHistoryUseCase>((ref) {

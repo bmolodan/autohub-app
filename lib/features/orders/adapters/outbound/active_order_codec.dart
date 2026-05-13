@@ -14,6 +14,11 @@ String encodeActiveOrders(List<ActiveOrder> orders) {
   return jsonEncode(orders.map(_orderToJson).toList());
 }
 
+/// Map form for HTTP adapters that need to encode/decode a single order.
+ActiveOrder activeOrderFromMap(Map<String, dynamic> m) => _orderFromJson(m);
+
+Map<String, dynamic> activeOrderToMap(ActiveOrder o) => _orderToJson(o);
+
 ActiveOrder _orderFromJson(Map<String, dynamic> m) {
   final vehicle = m['vehicle'] as Map<String, dynamic>;
   final timeline = (m['timeline'] as List<dynamic>?)
@@ -85,24 +90,15 @@ Map<String, dynamic> _timelineToJson(OrderTimelineEntry e) => {
       'at': e.at.toIso8601String(),
     };
 
-OrderStage _stageFromString(String raw) {
-  switch (raw) {
-    case 'pending_confirmation':
-      return OrderStage.pendingConfirmation;
-    case 'accepted':
-      return OrderStage.accepted;
-    case 'diagnostics':
-      return OrderStage.diagnostics;
-    case 'in_progress':
-      return OrderStage.inProgress;
-    case 'done':
-      return OrderStage.done;
-    case 'canceled':
-      return OrderStage.canceled;
-    default:
-      throw FormatException('Unknown timeline stage: $raw');
-  }
-}
+OrderStage _stageFromString(String raw) => switch (raw) {
+      'pending_confirmation' => OrderStage.pendingConfirmation,
+      'accepted' => OrderStage.accepted,
+      'diagnostics' => OrderStage.diagnostics,
+      'in_progress' => OrderStage.inProgress,
+      'done' => OrderStage.done,
+      'canceled' => OrderStage.canceled,
+      _ => throw FormatException('Unknown timeline stage: $raw'),
+    };
 
 String _stageToString(OrderStage s) => switch (s) {
       OrderStage.pendingConfirmation => 'pending_confirmation',
@@ -113,18 +109,12 @@ String _stageToString(OrderStage s) => switch (s) {
       OrderStage.canceled => 'canceled',
     };
 
-ActiveOrderStatus _statusFromString(String raw) {
-  switch (raw) {
-    case 'in_progress':
-      return ActiveOrderStatus.inProgress;
-    case 'pending_confirmation':
-      return ActiveOrderStatus.pendingConfirmation;
-    case 'canceled':
-      return ActiveOrderStatus.canceled;
-    default:
-      throw FormatException('Unknown order status: $raw');
-  }
-}
+ActiveOrderStatus _statusFromString(String raw) => switch (raw) {
+      'in_progress' => ActiveOrderStatus.inProgress,
+      'pending_confirmation' => ActiveOrderStatus.pendingConfirmation,
+      'canceled' => ActiveOrderStatus.canceled,
+      _ => throw FormatException('Unknown order status: $raw'),
+    };
 
 String _statusToString(ActiveOrderStatus s) => switch (s) {
       ActiveOrderStatus.inProgress => 'in_progress',

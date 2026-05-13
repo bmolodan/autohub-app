@@ -13,6 +13,11 @@ String encodeVehicles(List<Vehicle> vehicles) {
   return jsonEncode(vehicles.map(_vehicleToJson).toList());
 }
 
+/// Map form for HTTP adapters that need to encode/decode a single vehicle.
+Map<String, dynamic> vehicleToMap(Vehicle v) => _vehicleToJson(v);
+
+Vehicle vehicleFromMap(Map<String, dynamic> m) => _vehicleFromJson(m);
+
 Map<String, dynamic> _vehicleToJson(Vehicle v) => {
       'id': v.id,
       'make': v.make,

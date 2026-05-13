@@ -1,9 +1,12 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../core/config/app_environment.dart';
+import '../../../core/network/dio_provider.dart';
 import '../../../core/storage/shared_prefs_provider.dart';
 import '../../../core/util/clock.dart';
 import '../../../core/util/id_generator.dart';
 import '../adapters/outbound/_seed.dart';
+import '../adapters/outbound/http_active_order_repository.dart';
 import '../adapters/outbound/image_picker_photo_storage.dart';
 import '../adapters/outbound/shared_prefs_active_order_repository.dart';
 import '../application/ports/outbound/active_order_repository_port.dart';
@@ -20,15 +23,16 @@ final photoStorageProvider = Provider<PhotoStoragePort>(
   (ref) => ImagePickerPhotoStorage(clock: ref.watch(clockProvider)),
 );
 
-final activeOrderRepositoryProvider = Provider<ActiveOrderRepositoryPort>(
-  (ref) {
-    final clock = ref.watch(clockProvider);
-    return SharedPrefsActiveOrderRepository(
-      ref.watch(sharedPreferencesProvider),
-      seedBuilder: () => buildActiveOrdersSeedJson(clock),
-    );
-  },
-);
+final activeOrderRepositoryProvider =
+    Provider<ActiveOrderRepositoryPort>((ref) {
+  return switch (ref.watch(appEnvironmentProvider)) {
+    AppEnvironment.remote => HttpActiveOrderRepository(ref.watch(dioProvider)),
+    AppEnvironment.local => SharedPrefsActiveOrderRepository(
+        ref.watch(sharedPreferencesProvider),
+        seedBuilder: () => buildActiveOrdersSeedJson(ref.watch(clockProvider)),
+      ),
+  };
+});
 
 final getActiveOrdersUseCaseProvider = Provider<GetActiveOrdersUseCase>(
   (ref) => GetActiveOrdersUseCase(ref.watch(activeOrderRepositoryProvider)),
