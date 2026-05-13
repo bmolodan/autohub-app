@@ -289,6 +289,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get carDetailVin => 'VIN';
 
   @override
+  String get carDetailTotalSpentLabel => 'Total spent';
+
+  @override
+  String get carDetailRecentJobs => 'RECENT JOBS';
+
+  @override
   String get carDetailBook => 'Book a repair';
 
   @override
@@ -319,6 +325,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get addCarFieldPlate => 'Plate';
 
   @override
+  String get addCarFieldMileage => 'Mileage (km)';
+
+  @override
+  String get addCarLegalNote => 'These details help the mechanic prep faster';
+
+  @override
   String addCarYearRange(int max) {
     return '1900–$max';
   }
@@ -331,6 +343,17 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get historyTotalLabel => 'Total spent';
+
+  @override
+  String historyCompletedCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count completed orders',
+      one: '$count completed order',
+    );
+    return '$_temp0';
+  }
 
   @override
   String get historyEmptyTitle => 'History is empty';

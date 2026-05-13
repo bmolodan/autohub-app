@@ -10,6 +10,7 @@ class AddVehicleInput {
     required this.year,
     required this.plate,
     this.vin,
+    this.mileageKm = 0,
   });
 
   final String make;
@@ -17,6 +18,7 @@ class AddVehicleInput {
   final int year;
   final String plate;
   final String? vin;
+  final int mileageKm;
 }
 
 class AddVehicleUseCase {
@@ -38,6 +40,9 @@ class AddVehicleUseCase {
     if (input.year < 1900 || input.year > _clock.now().year + 1) {
       throw ArgumentError('year ${input.year} is implausible');
     }
+    if (input.mileageKm < 0) {
+      throw ArgumentError('mileageKm must be >= 0');
+    }
 
     final vehicle = Vehicle(
       id: _idGen.next('v'),
@@ -46,7 +51,7 @@ class AddVehicleUseCase {
       year: input.year,
       plate: plate,
       vin: (vin == null || vin.isEmpty) ? null : vin,
-      mileageKm: 0,
+      mileageKm: input.mileageKm,
       nextServiceMileageKm: null,
     );
 

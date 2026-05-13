@@ -97,6 +97,8 @@
   "carDetailMileage": "Mileage",
   "carDetailMileageValue": "{km} km",
   "carDetailVin": "VIN",
+  "carDetailTotalSpentLabel": "Total spent",
+  "carDetailRecentJobs": "RECENT JOBS",
   "carDetailBook": "Book a repair",
   "carDetailBookTodo": "Booking: TODO",
   "carDetailNotFound": "Car not found",
@@ -107,11 +109,17 @@
   "addCarFieldModel": "Model",
   "addCarFieldYear": "Year",
   "addCarFieldPlate": "Plate",
+  "addCarFieldMileage": "Mileage (km)",
+  "addCarLegalNote": "These details help the mechanic prep faster",
   "addCarYearRange": "1900–{max}",
   "addCarSave": "Save car",
 
   "historyTitle": "History",
   "historyTotalLabel": "Total spent",
+  "historyCompletedCount": "{count, plural, one{{count} completed order} other{{count} completed orders}}",
+  "@historyCompletedCount": {
+    "placeholders": { "count": { "type": "int" } }
+  },
   "historyEmptyTitle": "History is empty",
   "historyEmptySubtitle": "Completed work will appear here after your first visit.",
   "monthJanuary": "JANUARY",

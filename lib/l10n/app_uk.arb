@@ -113,6 +113,8 @@
     "placeholders": { "km": { "type": "int" } }
   },
   "carDetailVin": "VIN",
+  "carDetailTotalSpentLabel": "Витрачено",
+  "carDetailRecentJobs": "ОСТАННІ РОБОТИ",
   "carDetailBook": "Записатись на ремонт",
   "carDetailBookTodo": "Запис: TODO",
   "carDetailNotFound": "Авто не знайдено",
@@ -123,6 +125,8 @@
   "addCarFieldModel": "Модель",
   "addCarFieldYear": "Рік",
   "addCarFieldPlate": "Номер",
+  "addCarFieldMileage": "Пробіг (км)",
+  "addCarLegalNote": "Дані потрібні щоб майстер швидше підготувався",
   "addCarYearRange": "1900–{max}",
   "@addCarYearRange": {
     "placeholders": { "max": { "type": "int" } }
@@ -130,6 +134,10 @@
   "addCarSave": "Зберегти авто",
   "historyTitle": "Історія",
   "historyTotalLabel": "Витрачено за весь час",
+  "historyCompletedCount": "{count, plural, one{{count} завершене замовлення} few{{count} завершених замовлення} other{{count} завершених замовлень}}",
+  "@historyCompletedCount": {
+    "placeholders": { "count": { "type": "int" } }
+  },
   "historyEmptyTitle": "Історія порожня",
   "historyEmptySubtitle": "Тут зʼявляться завершені роботи після першого візиту.",
   "monthJanuary": "СІЧЕНЬ",

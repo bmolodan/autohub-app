@@ -9,10 +9,32 @@ import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_typography.dart';
 import '../../../../core/theme/brand_colors.dart';
 import '../../../../core/widgets/confirm_dialog.dart';
+import '../../../../core/widgets/service_record_tile.dart';
 import '../../../../core/widgets/stat_card.dart';
+import '../../../../l10n/generated/app_localizations.dart';
 import '../../../../l10n/l10n_extension.dart';
+import '../../../history/composition/history_providers.dart';
+import '../../../history/domain/service_record.dart';
 import '../../composition/cars_providers.dart';
 import '../../domain/vehicle.dart';
+
+String _shortMonth(AppLocalizations l, int m) => _monthName(l, m).toLowerCase();
+
+String _monthName(AppLocalizations l, int month) => switch (month) {
+      1 => l.monthJanuary,
+      2 => l.monthFebruary,
+      3 => l.monthMarch,
+      4 => l.monthApril,
+      5 => l.monthMay,
+      6 => l.monthJune,
+      7 => l.monthJuly,
+      8 => l.monthAugust,
+      9 => l.monthSeptember,
+      10 => l.monthOctober,
+      11 => l.monthNovember,
+      12 => l.monthDecember,
+      _ => '',
+    };
 
 class CarDetailScreen extends ConsumerWidget {
   const CarDetailScreen({super.key, required this.vehicleId});
@@ -91,73 +113,107 @@ class CarDetailScreen extends ConsumerWidget {
   }
 }
 
-class _Detail extends StatelessWidget {
+class _Detail extends ConsumerWidget {
   const _Detail({required this.vehicle});
   final Vehicle vehicle;
 
   @override
-  Widget build(BuildContext context) {
-    return Padding(
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l = context.l10n;
+    final history = ref.watch(serviceHistoryProvider(vehicle.id)).value;
+    final totalSpent = history?.totalUah ?? 0;
+    final recent = <ServiceRecord>[];
+    if (history != null) {
+      for (final month in history.months) {
+        for (final r in month.records) {
+          if (recent.length >= 3) break;
+          recent.add(r);
+        }
+        if (recent.length >= 3) break;
+      }
+    }
+
+    return ListView(
       padding: const EdgeInsets.all(AppSpacing.lg),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Center(
-            child: Container(
-              width: AppSizes.iconBubble,
-              height: AppSizes.iconBubble,
-              decoration: BoxDecoration(
-                color: context.colors.brandYellowSoft,
-                borderRadius: AppRadii.lgAll,
-              ),
-              child: Icon(Icons.directions_car,
-                  size: AppIconSize.hero, color: context.colors.brandBlack),
+      children: [
+        Center(
+          child: Container(
+            width: AppSizes.iconBubble,
+            height: AppSizes.iconBubble,
+            decoration: BoxDecoration(
+              color: context.colors.brandYellowSoft,
+              borderRadius: AppRadii.lgAll,
             ),
+            child: Icon(Icons.directions_car,
+                size: AppIconSize.hero, color: context.colors.brandBlack),
           ),
-          const SizedBox(height: AppSpacing.md),
-          Text('${vehicle.make} ${vehicle.model}',
-              style: AppTypography.headlineMedium, textAlign: TextAlign.center),
+        ),
+        const SizedBox(height: AppSpacing.md),
+        Text('${vehicle.make} ${vehicle.model}',
+            style: AppTypography.headlineMedium, textAlign: TextAlign.center),
+        const SizedBox(height: AppSpacing.xxs),
+        Text('${vehicle.year} · ${vehicle.plate}',
+            style: AppTypography.bodyMedium
+                .copyWith(color: context.colors.textSecondary),
+            textAlign: TextAlign.center),
+        if (vehicle.vin != null && vehicle.vin!.isNotEmpty) ...[
           const SizedBox(height: AppSpacing.xxs),
-          Text('${vehicle.year} · ${vehicle.plate}',
-              style: AppTypography.bodyMedium
-                  .copyWith(color: context.colors.textSecondary),
+          Text('${l.carDetailVin}: ${vehicle.vin}',
+              style: AppTypography.bodySmall
+                  .copyWith(color: context.colors.textTertiary),
               textAlign: TextAlign.center),
-          const SizedBox(height: AppSpacing.xl),
-          if (vehicle.nextServiceMileageKm != null)
-            _NextServiceBanner(
-              currentKm: vehicle.mileageKm,
-              nextKm: vehicle.nextServiceMileageKm!,
-            ),
-          const SizedBox(height: AppSpacing.lg),
-          Row(
-            children: [
-              Expanded(
-                child: StatCard(
-                  axis: Axis.vertical,
-                  label: context.l10n.carDetailMileage,
-                  value: context.l10n.carDetailMileageValue(vehicle.mileageKm),
-                ),
-              ),
-              const SizedBox(width: AppSpacing.sm),
-              Expanded(
-                child: StatCard(
-                  axis: Axis.vertical,
-                  label: context.l10n.carDetailVin,
-                  value: vehicle.vin ?? '—',
-                ),
-              ),
-            ],
-          ),
-          const Spacer(),
-          ElevatedButton.icon(
-            onPressed: () => ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text(context.l10n.carDetailBookTodo)),
-            ),
-            icon: const Icon(Icons.add),
-            label: Text(context.l10n.carDetailBook),
-          ),
         ],
-      ),
+        const SizedBox(height: AppSpacing.xl),
+        if (vehicle.nextServiceMileageKm != null)
+          _NextServiceBanner(
+            currentKm: vehicle.mileageKm,
+            nextKm: vehicle.nextServiceMileageKm!,
+          ),
+        const SizedBox(height: AppSpacing.lg),
+        Row(
+          children: [
+            Expanded(
+              child: StatCard(
+                axis: Axis.vertical,
+                label: l.carDetailMileage,
+                value: l.carDetailMileageValue(vehicle.mileageKm),
+              ),
+            ),
+            const SizedBox(width: AppSpacing.sm),
+            Expanded(
+              child: StatCard(
+                axis: Axis.vertical,
+                label: l.carDetailTotalSpentLabel,
+                value: '$totalSpent ₴',
+              ),
+            ),
+          ],
+        ),
+        if (recent.isNotEmpty) ...[
+          const SizedBox(height: AppSpacing.lg),
+          Text(
+            l.carDetailRecentJobs,
+            style: AppTypography.overline
+                .copyWith(color: context.colors.textSecondary),
+          ),
+          const SizedBox(height: AppSpacing.sm),
+          for (final r in recent)
+            ServiceRecordTile(
+              title: r.title,
+              dateLabel:
+                  '${r.completedAt.day} ${_shortMonth(l, r.completedAt.month)}',
+              priceUah: r.priceUah,
+            ),
+        ],
+        const SizedBox(height: AppSpacing.lg),
+        FilledButton.icon(
+          onPressed: () => ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(l.carDetailBookTodo)),
+          ),
+          icon: const Icon(Icons.add),
+          label: Text(l.carDetailBook),
+        ),
+      ],
     );
   }
 }

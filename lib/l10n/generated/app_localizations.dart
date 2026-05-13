@@ -596,6 +596,18 @@ abstract class AppLocalizations {
   /// **'VIN'**
   String get carDetailVin;
 
+  /// No description provided for @carDetailTotalSpentLabel.
+  ///
+  /// In uk, this message translates to:
+  /// **'Витрачено'**
+  String get carDetailTotalSpentLabel;
+
+  /// No description provided for @carDetailRecentJobs.
+  ///
+  /// In uk, this message translates to:
+  /// **'ОСТАННІ РОБОТИ'**
+  String get carDetailRecentJobs;
+
   /// No description provided for @carDetailBook.
   ///
   /// In uk, this message translates to:
@@ -656,6 +668,18 @@ abstract class AppLocalizations {
   /// **'Номер'**
   String get addCarFieldPlate;
 
+  /// No description provided for @addCarFieldMileage.
+  ///
+  /// In uk, this message translates to:
+  /// **'Пробіг (км)'**
+  String get addCarFieldMileage;
+
+  /// No description provided for @addCarLegalNote.
+  ///
+  /// In uk, this message translates to:
+  /// **'Дані потрібні щоб майстер швидше підготувався'**
+  String get addCarLegalNote;
+
   /// No description provided for @addCarYearRange.
   ///
   /// In uk, this message translates to:
@@ -679,6 +703,12 @@ abstract class AppLocalizations {
   /// In uk, this message translates to:
   /// **'Витрачено за весь час'**
   String get historyTotalLabel;
+
+  /// No description provided for @historyCompletedCount.
+  ///
+  /// In uk, this message translates to:
+  /// **'{count, plural, one{{count} завершене замовлення} few{{count} завершених замовлення} other{{count} завершених замовлень}}'**
+  String historyCompletedCount(int count);
 
   /// No description provided for @historyEmptyTitle.
   ///

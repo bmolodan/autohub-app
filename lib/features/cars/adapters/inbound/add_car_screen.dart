@@ -41,6 +41,7 @@ class _AddCarScreenState extends ConsumerState<AddCarScreen> {
   final _model = TextEditingController();
   final _year = TextEditingController();
   final _plate = TextEditingController();
+  final _mileage = TextEditingController();
   bool _submitting = false;
   bool _prefilled = false;
 
@@ -53,6 +54,7 @@ class _AddCarScreenState extends ConsumerState<AddCarScreen> {
     _model.dispose();
     _year.dispose();
     _plate.dispose();
+    _mileage.dispose();
     super.dispose();
   }
 
@@ -64,6 +66,7 @@ class _AddCarScreenState extends ConsumerState<AddCarScreen> {
     _year.text = v.year.toString();
     _plate.text = v.plate;
     _vin.text = v.vin ?? '';
+    _mileage.text = v.mileageKm.toString();
   }
 
   Future<void> _submit() async {
@@ -71,6 +74,7 @@ class _AddCarScreenState extends ConsumerState<AddCarScreen> {
     setState(() => _submitting = true);
     try {
       final controller = ref.read(vehiclesControllerProvider.notifier);
+      final mileage = int.tryParse(_mileage.text.trim());
       if (_isEditing) {
         await controller.edit(
           UpdateVehicleInput(
@@ -80,6 +84,7 @@ class _AddCarScreenState extends ConsumerState<AddCarScreen> {
             year: int.parse(_year.text),
             plate: _plate.text,
             vin: _vin.text,
+            mileageKm: mileage,
           ),
         );
       } else {
@@ -90,6 +95,7 @@ class _AddCarScreenState extends ConsumerState<AddCarScreen> {
             year: int.parse(_year.text),
             plate: _plate.text,
             vin: _vin.text,
+            mileageKm: mileage ?? 0,
           ),
         );
       }
@@ -211,7 +217,7 @@ class _AddCarScreenState extends ConsumerState<AddCarScreen> {
       return catalog.hasModel(make, v!.trim()) ? null : l.addCarModelUnknown;
     }
 
-    return Padding(
+    return SingleChildScrollView(
       padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
       child: Form(
         key: _formKey,
@@ -290,23 +296,42 @@ class _AddCarScreenState extends ConsumerState<AddCarScreen> {
                 const SizedBox(width: AppSpacing.sm),
                 Expanded(
                   child: TextFormField(
-                    controller: _plate,
-                    textCapitalization: TextCapitalization.characters,
-                    inputFormatters: const [UaPlateInputFormatter()],
-                    validator: (v) => validateUaPlate(
-                      v,
-                      requiredMessage: l.commonRequiredField,
-                      invalidMessage: l.addCarPlateInvalid,
-                    ),
-                    decoration: InputDecoration(
-                      labelText: l.addCarFieldPlate,
-                      hintText: l.addCarPlateHint,
-                    ),
+                    controller: _mileage,
+                    keyboardType: TextInputType.number,
+                    inputFormatters: [
+                      FilteringTextInputFormatter.digitsOnly,
+                      LengthLimitingTextInputFormatter(7),
+                    ],
+                    validator: (v) {
+                      if (v == null || v.trim().isEmpty) return null;
+                      final n = int.tryParse(v.trim());
+                      if (n == null) return l.commonNumbersOnly;
+                      return null;
+                    },
+                    decoration:
+                        InputDecoration(labelText: l.addCarFieldMileage),
                   ),
                 ),
               ],
             ),
-            const Spacer(),
+            const SizedBox(height: AppSpacing.sm),
+            TextFormField(
+              controller: _plate,
+              textCapitalization: TextCapitalization.characters,
+              inputFormatters: const [UaPlateInputFormatter()],
+              validator: (v) => validateUaPlate(
+                v,
+                requiredMessage: l.commonRequiredField,
+                invalidMessage: l.addCarPlateInvalid,
+              ),
+              decoration: InputDecoration(
+                labelText: l.addCarFieldPlate,
+                hintText: l.addCarPlateHint,
+              ),
+            ),
+            const SizedBox(height: AppSpacing.md),
+            _LegalNote(text: l.addCarLegalNote),
+            const SizedBox(height: AppSpacing.lg),
             ElevatedButton(
               onPressed: _submitting ? null : _submit,
               child: _submitting
@@ -316,6 +341,41 @@ class _AddCarScreenState extends ConsumerState<AddCarScreen> {
             const SizedBox(height: AppSpacing.lg),
           ],
         ),
+      ),
+    );
+  }
+}
+
+/// Soft-yellow info banner explaining why the form asks for this info.
+class _LegalNote extends StatelessWidget {
+  const _LegalNote({required this.text});
+  final String text;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppSpacing.md,
+        vertical: AppSpacing.sm,
+      ),
+      decoration: BoxDecoration(
+        color: context.colors.brandYellowSoft,
+        borderRadius: const BorderRadius.all(Radius.circular(12)),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Icon(Icons.info_outline,
+              size: AppIconSize.sm, color: context.colors.textPrimary),
+          const SizedBox(width: AppSpacing.sm),
+          Expanded(
+            child: Text(
+              text,
+              style: AppTypography.bodySmall
+                  .copyWith(color: context.colors.textPrimary),
+            ),
+          ),
+        ],
       ),
     );
   }

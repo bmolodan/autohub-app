@@ -8,11 +8,11 @@ import '../../../../core/theme/app_typography.dart';
 import '../../../../core/theme/brand_colors.dart';
 import '../../../../core/widgets/empty_state.dart';
 import '../../../../core/widgets/error_state.dart';
+import '../../../../core/widgets/service_record_tile.dart';
 import '../../../../l10n/generated/app_localizations.dart';
 import '../../../../l10n/l10n_extension.dart';
 import '../../application/use_cases/get_service_history.dart';
 import '../../composition/history_providers.dart';
-import '../../domain/service_record.dart';
 
 String _monthName(AppLocalizations l, int month) => switch (month) {
       1 => l.monthJanuary,
@@ -69,6 +69,12 @@ class _HistoryView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final completed =
+        output.months.fold<int>(0, (n, m) => n + m.records.length);
+    // Year shown next to the vehicle pill — derive from the newest month
+    // (months are already returned newest-first).
+    final latestYear =
+        output.months.isEmpty ? null : output.months.first.year.toString();
     return ListView(
       padding: const EdgeInsets.fromLTRB(
         AppSpacing.lg,
@@ -77,7 +83,13 @@ class _HistoryView extends StatelessWidget {
         AppSpacing.lg,
       ),
       children: [
-        const _VehicleChip(label: 'Toyota Camry'),
+        Row(
+          children: [
+            const _VehicleChip(label: 'Toyota Camry'),
+            const Spacer(),
+            if (latestYear != null) _VehicleChip(label: latestYear),
+          ],
+        ),
         const SizedBox(height: AppSpacing.md),
         Text(
           context.l10n.historyTotalLabel,
@@ -86,11 +98,23 @@ class _HistoryView extends StatelessWidget {
         ),
         const SizedBox(height: AppSpacing.xxs),
         Text('${output.totalUah} ₴', style: AppTypography.headlineLarge),
+        const SizedBox(height: AppSpacing.xxs),
+        Text(
+          context.l10n.historyCompletedCount(completed),
+          style: AppTypography.bodySmall
+              .copyWith(color: context.colors.textSecondary),
+        ),
         const SizedBox(height: AppSpacing.lg),
         for (final month in output.months) ...[
           _MonthHeader(year: month.year, month: month.month),
           const SizedBox(height: AppSpacing.sm),
-          for (final record in month.records) _RecordTile(record: record),
+          for (final record in month.records)
+            ServiceRecordTile(
+              title: record.title,
+              dateLabel:
+                  '${record.completedAt.day} ${_monthName(context.l10n, record.completedAt.month).toLowerCase()}',
+              priceUah: record.priceUah,
+            ),
           const SizedBox(height: AppSpacing.lg),
         ],
       ],
@@ -137,49 +161,6 @@ class _MonthHeader extends StatelessWidget {
         '$label $year',
         style: AppTypography.overline
             .copyWith(color: context.colors.textSecondary),
-      ),
-    );
-  }
-}
-
-class _RecordTile extends StatelessWidget {
-  const _RecordTile({required this.record});
-  final ServiceRecord record;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: AppSpacing.sm),
-      padding: const EdgeInsets.symmetric(
-        horizontal: AppSpacing.md,
-        vertical: AppSpacing.md,
-      ),
-      decoration: BoxDecoration(
-        color: context.colors.surface,
-        borderRadius: AppRadii.lgAll,
-        border: Border.all(color: context.colors.border, width: 0.5),
-      ),
-      child: Row(
-        children: [
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(record.title, style: AppTypography.titleSmall),
-                const SizedBox(height: AppSpacing.xxs),
-                Text(
-                  '${record.completedAt.day} ${_monthName(context.l10n, record.completedAt.month).toLowerCase()}',
-                  style: AppTypography.bodySmall
-                      .copyWith(color: context.colors.textSecondary),
-                ),
-              ],
-            ),
-          ),
-          Text(
-            '${record.priceUah} ₴',
-            style: AppTypography.labelLarge,
-          ),
-        ],
       ),
     );
   }

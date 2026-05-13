@@ -291,6 +291,12 @@ class AppLocalizationsUk extends AppLocalizations {
   String get carDetailVin => 'VIN';
 
   @override
+  String get carDetailTotalSpentLabel => 'Витрачено';
+
+  @override
+  String get carDetailRecentJobs => 'ОСТАННІ РОБОТИ';
+
+  @override
   String get carDetailBook => 'Записатись на ремонт';
 
   @override
@@ -322,6 +328,12 @@ class AppLocalizationsUk extends AppLocalizations {
   String get addCarFieldPlate => 'Номер';
 
   @override
+  String get addCarFieldMileage => 'Пробіг (км)';
+
+  @override
+  String get addCarLegalNote => 'Дані потрібні щоб майстер швидше підготувався';
+
+  @override
   String addCarYearRange(int max) {
     return '1900–$max';
   }
@@ -334,6 +346,18 @@ class AppLocalizationsUk extends AppLocalizations {
 
   @override
   String get historyTotalLabel => 'Витрачено за весь час';
+
+  @override
+  String historyCompletedCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count завершених замовлень',
+      few: '$count завершених замовлення',
+      one: '$count завершене замовлення',
+    );
+    return '$_temp0';
+  }
 
   @override
   String get historyEmptyTitle => 'Історія порожня';
