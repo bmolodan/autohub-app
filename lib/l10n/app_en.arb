@@ -193,5 +193,16 @@
   "addCarMakeUnknown": "Pick a make from the list",
   "addCarModelUnknown": "Pick a model from the list",
   "addCarPlateInvalid": "Format: AA 1234 BB",
-  "addCarPlateHint": "AA 1234 BB"
+  "addCarPlateHint": "AA 1234 BB",
+
+  "addCarEditTitle": "Edit car",
+  "addCarEditHeading": "Update details",
+  "addCarUpdateSave": "Save changes",
+  "carDetailEditSemantics": "Edit",
+  "carDetailDeleteSemantics": "Delete",
+  "carDeleteDialogTitle": "Delete this car?",
+  "carDeleteDialogBody": "This action cannot be undone. Service history for this car remains in your account.",
+  "carDeleteDialogConfirm": "Yes, delete",
+  "carDeleteSuccessSnack": "Car deleted",
+  "carUpdateSuccessSnack": "Car details updated"
 }

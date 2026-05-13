@@ -10,11 +10,17 @@ import '../../../../core/theme/app_typography.dart';
 import '../../../../core/util/ua_plate_formatter.dart';
 import '../../../../l10n/l10n_extension.dart';
 import '../../application/use_cases/add_vehicle.dart';
+import '../../application/use_cases/update_vehicle.dart';
 import '../../composition/cars_providers.dart';
 import '../../data/car_catalog.dart';
+import '../../domain/vehicle.dart';
 
 class AddCarScreen extends ConsumerStatefulWidget {
-  const AddCarScreen({super.key});
+  const AddCarScreen({super.key, this.editVehicleId});
+
+  /// When non-null, the screen is in edit mode: it pre-fills the form
+  /// with the vehicle's current values and updates instead of inserting.
+  final String? editVehicleId;
 
   @override
   ConsumerState<AddCarScreen> createState() => _AddCarScreenState();
@@ -28,6 +34,9 @@ class _AddCarScreenState extends ConsumerState<AddCarScreen> {
   final _year = TextEditingController();
   final _plate = TextEditingController();
   bool _submitting = false;
+  bool _prefilled = false;
+
+  bool get _isEditing => widget.editVehicleId != null;
 
   @override
   void dispose() {
@@ -39,20 +48,50 @@ class _AddCarScreenState extends ConsumerState<AddCarScreen> {
     super.dispose();
   }
 
+  void _prefillFrom(Vehicle v) {
+    if (_prefilled) return;
+    _prefilled = true;
+    _make.text = v.make;
+    _model.text = v.model;
+    _year.text = v.year.toString();
+    _plate.text = v.plate;
+    _vin.text = v.vin ?? '';
+  }
+
   Future<void> _submit() async {
     if (!(_formKey.currentState?.validate() ?? false)) return;
     setState(() => _submitting = true);
     try {
-      await ref.read(vehiclesControllerProvider.notifier).add(
-            AddVehicleInput(
-              make: _make.text,
-              model: _model.text,
-              year: int.parse(_year.text),
-              plate: _plate.text,
-              vin: _vin.text,
-            ),
-          );
+      final controller = ref.read(vehiclesControllerProvider.notifier);
+      if (_isEditing) {
+        await controller.edit(
+          UpdateVehicleInput(
+            id: widget.editVehicleId!,
+            make: _make.text,
+            model: _model.text,
+            year: int.parse(_year.text),
+            plate: _plate.text,
+            vin: _vin.text,
+          ),
+        );
+      } else {
+        await controller.add(
+          AddVehicleInput(
+            make: _make.text,
+            model: _model.text,
+            year: int.parse(_year.text),
+            plate: _plate.text,
+            vin: _vin.text,
+          ),
+        );
+      }
       if (!mounted) return;
+      final snackText = _isEditing ? context.l10n.carUpdateSuccessSnack : null;
+      if (snackText != null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(snackText)),
+        );
+      }
       context.pop();
     } on Object catch (e) {
       if (!mounted) return;
@@ -102,13 +141,23 @@ class _AddCarScreenState extends ConsumerState<AddCarScreen> {
     final l = context.l10n;
     final catalogAsync = ref.watch(carCatalogProvider);
 
+    if (_isEditing) {
+      // Pre-fill on first build from the current vehicle, if available.
+      final v =
+          ref.watch(vehicleByIdProvider(widget.editVehicleId!)).valueOrNull;
+      if (v != null) _prefillFrom(v);
+    }
+
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () => context.pop(),
         ),
-        title: Text(l.carsAddCta, style: AppTypography.titleLarge),
+        title: Text(
+          _isEditing ? l.addCarEditTitle : l.carsAddCta,
+          style: AppTypography.titleLarge,
+        ),
       ),
       body: SafeArea(
         child: catalogAsync.when(
@@ -158,7 +207,10 @@ class _AddCarScreenState extends ConsumerState<AddCarScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Text(l.addCarHeading, style: AppTypography.headlineMedium),
+            Text(
+              _isEditing ? l.addCarEditHeading : l.addCarHeading,
+              style: AppTypography.headlineMedium,
+            ),
             const SizedBox(height: AppSpacing.xs),
             Text(
               l.addCarSubtitle,
@@ -247,7 +299,7 @@ class _AddCarScreenState extends ConsumerState<AddCarScreen> {
                       height: 20,
                       child: CircularProgressIndicator(strokeWidth: 2),
                     )
-                  : Text(l.addCarSave),
+                  : Text(_isEditing ? l.addCarUpdateSave : l.addCarSave),
             ),
             const SizedBox(height: AppSpacing.lg),
           ],

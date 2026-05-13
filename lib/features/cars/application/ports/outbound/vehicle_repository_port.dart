@@ -6,4 +6,7 @@ abstract interface class VehicleRepositoryPort {
   Future<List<Vehicle>> findAll();
   Future<Vehicle?> findById(String id);
   Future<void> save(Vehicle vehicle);
+
+  /// Removes the vehicle with [id]. No-op if it doesn't exist.
+  Future<void> delete(String id);
 }

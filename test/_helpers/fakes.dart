@@ -54,6 +54,11 @@ class FakeVehicleRepository implements VehicleRepositoryPort {
       _items.add(vehicle);
     }
   }
+
+  @override
+  Future<void> delete(String id) async {
+    _items.removeWhere((v) => v.id == id);
+  }
 }
 
 class FakeCarCatalogPort implements CarCatalogPort {

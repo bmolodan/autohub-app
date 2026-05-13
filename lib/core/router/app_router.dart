@@ -40,6 +40,7 @@ class AppRoutes {
 
   // Cars sub-routes (outside the shell)
   static const carAdd = '/cars/add';
+  static const carEdit = '/cars/edit';
   static const carDetail = '/cars/detail';
 
   // Profile sub-routes (outside the shell)
@@ -152,6 +153,11 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: AppRoutes.carAdd,
         builder: (_, __) => const AddCarScreen(),
+      ),
+      GoRoute(
+        path: '${AppRoutes.carEdit}/:id',
+        builder: (_, state) =>
+            AddCarScreen(editVehicleId: state.pathParameters['id']),
       ),
       GoRoute(
         path: '${AppRoutes.carDetail}/:id',

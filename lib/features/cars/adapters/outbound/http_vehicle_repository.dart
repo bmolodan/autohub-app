@@ -32,4 +32,15 @@ class HttpVehicleRepository implements VehicleRepositoryPort {
   Future<void> save(Vehicle vehicle) async {
     await _dio.post<void>('/vehicles', data: vehicleToMap(vehicle));
   }
+
+  @override
+  Future<void> delete(String id) async {
+    try {
+      await _dio.delete<void>('/vehicles/$id');
+    } on DioException catch (e) {
+      // 404 means already gone — treat as success.
+      if (e.response?.statusCode == 404) return;
+      rethrow;
+    }
+  }
 }

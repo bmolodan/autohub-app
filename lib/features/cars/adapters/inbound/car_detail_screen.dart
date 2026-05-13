@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../core/router/app_router.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_radii.dart';
 import '../../../../core/theme/app_spacing.dart';
@@ -15,9 +16,47 @@ class CarDetailScreen extends ConsumerWidget {
   const CarDetailScreen({super.key, required this.vehicleId});
   final String vehicleId;
 
+  Future<void> _confirmDelete(BuildContext context, WidgetRef ref) async {
+    final l = context.l10n;
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text(l.carDeleteDialogTitle),
+        content: Text(l.carDeleteDialogBody),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(false),
+            child: Text(l.commonNo),
+          ),
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(true),
+            style: TextButton.styleFrom(foregroundColor: AppColors.error),
+            child: Text(l.carDeleteDialogConfirm),
+          ),
+        ],
+      ),
+    );
+    if (confirmed != true || !context.mounted) return;
+    try {
+      await ref.read(vehiclesControllerProvider.notifier).remove(vehicleId);
+    } on Object catch (e) {
+      if (!context.mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('$e')),
+      );
+      return;
+    }
+    if (!context.mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(l.carDeleteSuccessSnack)),
+    );
+    Navigator.of(context).pop();
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final async = ref.watch(vehicleByIdProvider(vehicleId));
+    final l = context.l10n;
 
     return Scaffold(
       appBar: AppBar(
@@ -25,6 +64,22 @@ class CarDetailScreen extends ConsumerWidget {
           icon: const Icon(Icons.arrow_back),
           onPressed: () => context.pop(),
         ),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.edit_outlined),
+            tooltip: l.carDetailEditSemantics,
+            onPressed: async.valueOrNull == null
+                ? null
+                : () => context.push('${AppRoutes.carEdit}/$vehicleId'),
+          ),
+          IconButton(
+            icon: const Icon(Icons.delete_outline, color: AppColors.error),
+            tooltip: l.carDetailDeleteSemantics,
+            onPressed: async.valueOrNull == null
+                ? null
+                : () => _confirmDelete(context, ref),
+          ),
+        ],
       ),
       body: SafeArea(
         child: async.when(

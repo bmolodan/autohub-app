@@ -1117,6 +1117,66 @@ abstract class AppLocalizations {
   /// In uk, this message translates to:
   /// **'AA 1234 BB'**
   String get addCarPlateHint;
+
+  /// No description provided for @addCarEditTitle.
+  ///
+  /// In uk, this message translates to:
+  /// **'Редагувати авто'**
+  String get addCarEditTitle;
+
+  /// No description provided for @addCarEditHeading.
+  ///
+  /// In uk, this message translates to:
+  /// **'Оновити дані'**
+  String get addCarEditHeading;
+
+  /// No description provided for @addCarUpdateSave.
+  ///
+  /// In uk, this message translates to:
+  /// **'Зберегти зміни'**
+  String get addCarUpdateSave;
+
+  /// No description provided for @carDetailEditSemantics.
+  ///
+  /// In uk, this message translates to:
+  /// **'Редагувати'**
+  String get carDetailEditSemantics;
+
+  /// No description provided for @carDetailDeleteSemantics.
+  ///
+  /// In uk, this message translates to:
+  /// **'Видалити'**
+  String get carDetailDeleteSemantics;
+
+  /// No description provided for @carDeleteDialogTitle.
+  ///
+  /// In uk, this message translates to:
+  /// **'Видалити авто?'**
+  String get carDeleteDialogTitle;
+
+  /// No description provided for @carDeleteDialogBody.
+  ///
+  /// In uk, this message translates to:
+  /// **'Цю дію не можна скасувати. Історія обслуговування цього авто залишиться у вашому акаунті.'**
+  String get carDeleteDialogBody;
+
+  /// No description provided for @carDeleteDialogConfirm.
+  ///
+  /// In uk, this message translates to:
+  /// **'Так, видалити'**
+  String get carDeleteDialogConfirm;
+
+  /// No description provided for @carDeleteSuccessSnack.
+  ///
+  /// In uk, this message translates to:
+  /// **'Авто видалено'**
+  String get carDeleteSuccessSnack;
+
+  /// No description provided for @carUpdateSuccessSnack.
+  ///
+  /// In uk, this message translates to:
+  /// **'Дані авто оновлено'**
+  String get carUpdateSuccessSnack;
 }
 
 class _AppLocalizationsDelegate

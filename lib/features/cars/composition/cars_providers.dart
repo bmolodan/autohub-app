@@ -11,8 +11,10 @@ import '../adapters/outbound/shared_prefs_vehicle_repository.dart';
 import '../application/ports/outbound/car_catalog_port.dart';
 import '../application/ports/outbound/vehicle_repository_port.dart';
 import '../application/use_cases/add_vehicle.dart';
+import '../application/use_cases/delete_vehicle.dart';
 import '../application/use_cases/get_vehicle.dart';
 import '../application/use_cases/list_vehicles.dart';
+import '../application/use_cases/update_vehicle.dart';
 import '../data/car_catalog.dart';
 import '../domain/vehicle.dart';
 
@@ -57,6 +59,17 @@ final addVehicleUseCaseProvider = Provider<AddVehicleUseCase>(
   ),
 );
 
+final updateVehicleUseCaseProvider = Provider<UpdateVehicleUseCase>(
+  (ref) => UpdateVehicleUseCase(
+    ref.watch(vehicleRepositoryProvider),
+    ref.watch(clockProvider),
+  ),
+);
+
+final deleteVehicleUseCaseProvider = Provider<DeleteVehicleUseCase>(
+  (ref) => DeleteVehicleUseCase(ref.watch(vehicleRepositoryProvider)),
+);
+
 /// View-model: list of vehicles. Notifier so screens can refresh on add.
 class VehiclesController extends AsyncNotifier<List<Vehicle>> {
   @override
@@ -68,6 +81,21 @@ class VehiclesController extends AsyncNotifier<List<Vehicle>> {
     final added = await ref.read(addVehicleUseCaseProvider).execute(input);
     state = AsyncData(await ref.read(listVehiclesUseCaseProvider).execute());
     return added;
+  }
+
+  Future<Vehicle> edit(UpdateVehicleInput input) async {
+    final updated = await ref.read(updateVehicleUseCaseProvider).execute(input);
+    state = AsyncData(await ref.read(listVehiclesUseCaseProvider).execute());
+    ref.invalidate(vehicleByIdProvider(input.id));
+    return updated;
+  }
+
+  Future<void> remove(String id) async {
+    await ref.read(deleteVehicleUseCaseProvider).execute(
+          DeleteVehicleInput(id: id),
+        );
+    state = AsyncData(await ref.read(listVehiclesUseCaseProvider).execute());
+    ref.invalidate(vehicleByIdProvider(id));
   }
 }
 

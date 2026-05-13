@@ -555,4 +555,35 @@ class AppLocalizationsUk extends AppLocalizations {
 
   @override
   String get addCarPlateHint => 'AA 1234 BB';
+
+  @override
+  String get addCarEditTitle => 'Редагувати авто';
+
+  @override
+  String get addCarEditHeading => 'Оновити дані';
+
+  @override
+  String get addCarUpdateSave => 'Зберегти зміни';
+
+  @override
+  String get carDetailEditSemantics => 'Редагувати';
+
+  @override
+  String get carDetailDeleteSemantics => 'Видалити';
+
+  @override
+  String get carDeleteDialogTitle => 'Видалити авто?';
+
+  @override
+  String get carDeleteDialogBody =>
+      'Цю дію не можна скасувати. Історія обслуговування цього авто залишиться у вашому акаунті.';
+
+  @override
+  String get carDeleteDialogConfirm => 'Так, видалити';
+
+  @override
+  String get carDeleteSuccessSnack => 'Авто видалено';
+
+  @override
+  String get carUpdateSuccessSnack => 'Дані авто оновлено';
 }

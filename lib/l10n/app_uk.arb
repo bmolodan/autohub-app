@@ -217,5 +217,15 @@
   "addCarMakeUnknown": "Виберіть марку зі списку",
   "addCarModelUnknown": "Виберіть модель зі списку",
   "addCarPlateInvalid": "Формат: AA 1234 BB",
-  "addCarPlateHint": "AA 1234 BB"
+  "addCarPlateHint": "AA 1234 BB",
+  "addCarEditTitle": "Редагувати авто",
+  "addCarEditHeading": "Оновити дані",
+  "addCarUpdateSave": "Зберегти зміни",
+  "carDetailEditSemantics": "Редагувати",
+  "carDetailDeleteSemantics": "Видалити",
+  "carDeleteDialogTitle": "Видалити авто?",
+  "carDeleteDialogBody": "Цю дію не можна скасувати. Історія обслуговування цього авто залишиться у вашому акаунті.",
+  "carDeleteDialogConfirm": "Так, видалити",
+  "carDeleteSuccessSnack": "Авто видалено",
+  "carUpdateSuccessSnack": "Дані авто оновлено"
 }

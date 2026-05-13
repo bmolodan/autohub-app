@@ -554,4 +554,35 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get addCarPlateHint => 'AA 1234 BB';
+
+  @override
+  String get addCarEditTitle => 'Edit car';
+
+  @override
+  String get addCarEditHeading => 'Update details';
+
+  @override
+  String get addCarUpdateSave => 'Save changes';
+
+  @override
+  String get carDetailEditSemantics => 'Edit';
+
+  @override
+  String get carDetailDeleteSemantics => 'Delete';
+
+  @override
+  String get carDeleteDialogTitle => 'Delete this car?';
+
+  @override
+  String get carDeleteDialogBody =>
+      'This action cannot be undone. Service history for this car remains in your account.';
+
+  @override
+  String get carDeleteDialogConfirm => 'Yes, delete';
+
+  @override
+  String get carDeleteSuccessSnack => 'Car deleted';
+
+  @override
+  String get carUpdateSuccessSnack => 'Car details updated';
 }

@@ -2,8 +2,10 @@ import 'package:autohub/core/util/clock.dart';
 import 'package:autohub/core/util/id_generator.dart';
 import 'package:autohub/features/cars/application/ports/outbound/vehicle_repository_port.dart';
 import 'package:autohub/features/cars/application/use_cases/add_vehicle.dart';
+import 'package:autohub/features/cars/application/use_cases/delete_vehicle.dart';
 import 'package:autohub/features/cars/application/use_cases/get_vehicle.dart';
 import 'package:autohub/features/cars/application/use_cases/list_vehicles.dart';
+import 'package:autohub/features/cars/application/use_cases/update_vehicle.dart';
 import 'package:autohub/features/cars/domain/vehicle.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -27,6 +29,11 @@ class _FakeRepo implements VehicleRepositoryPort {
   @override
   Future<void> save(Vehicle vehicle) async {
     _store[vehicle.id] = vehicle;
+  }
+
+  @override
+  Future<void> delete(String id) async {
+    _store.remove(id);
   }
 }
 
@@ -159,6 +166,113 @@ void main() {
         ),
       );
       expect(added.vin, isNull);
+    });
+  });
+
+  group('UpdateVehicleUseCase', () {
+    UpdateVehicleUseCase useCase(VehicleRepositoryPort repo) =>
+        UpdateVehicleUseCase(repo, FixedClock(DateTime.utc(2026, 5, 13)));
+
+    test('updates editable fields, preserves id and mileage', () async {
+      final repo = _FakeRepo();
+      final added = await _addUseCase(repo).execute(
+        const AddVehicleInput(
+          make: 'Toyota',
+          model: 'Camry',
+          year: 2018,
+          plate: 'AA 1234 BB',
+        ),
+      );
+      // Seed a mileage to verify it survives.
+      await repo.save(Vehicle(
+        id: added.id,
+        make: added.make,
+        model: added.model,
+        year: added.year,
+        plate: added.plate,
+        vin: added.vin,
+        mileageKm: 50000,
+        nextServiceMileageKm: 60000,
+      ));
+
+      final updated = await useCase(repo).execute(UpdateVehicleInput(
+        id: added.id,
+        make: 'BMW',
+        model: 'X5',
+        year: 2020,
+        plate: 'BB 4242 BB',
+        vin: 'NEWVIN',
+      ));
+
+      expect(updated.id, added.id);
+      expect(updated.make, 'BMW');
+      expect(updated.model, 'X5');
+      expect(updated.year, 2020);
+      expect(updated.plate, 'BB 4242 BB');
+      expect(updated.vin, 'NEWVIN');
+      expect(updated.mileageKm, 50000);
+      expect(updated.nextServiceMileageKm, 60000);
+    });
+
+    test('throws StateError for unknown id', () async {
+      final repo = _FakeRepo();
+      expect(
+        () => useCase(repo).execute(const UpdateVehicleInput(
+          id: 'nope',
+          make: 'Toyota',
+          model: 'Camry',
+          year: 2018,
+          plate: 'AA 1234 BB',
+        )),
+        throwsA(isA<StateError>()),
+      );
+    });
+
+    test('rejects implausible year', () async {
+      final repo = _FakeRepo();
+      final added = await _addUseCase(repo).execute(
+        const AddVehicleInput(
+          make: 'Toyota',
+          model: 'Camry',
+          year: 2018,
+          plate: 'AA 1234 BB',
+        ),
+      );
+      expect(
+        () => useCase(repo).execute(UpdateVehicleInput(
+          id: added.id,
+          make: 'Toyota',
+          model: 'Camry',
+          year: 1800,
+          plate: 'AA 1234 BB',
+        )),
+        throwsA(isA<ArgumentError>()),
+      );
+    });
+  });
+
+  group('DeleteVehicleUseCase', () {
+    test('removes the vehicle', () async {
+      final repo = _FakeRepo();
+      final added = await _addUseCase(repo).execute(
+        const AddVehicleInput(
+          make: 'Toyota',
+          model: 'Camry',
+          year: 2018,
+          plate: 'AA 1234 BB',
+        ),
+      );
+      await DeleteVehicleUseCase(repo)
+          .execute(DeleteVehicleInput(id: added.id));
+      expect(await repo.findById(added.id), isNull);
+      expect(await repo.findAll(), isEmpty);
+    });
+
+    test('no-op for unknown id (does not throw)', () async {
+      final repo = _FakeRepo();
+      await DeleteVehicleUseCase(repo)
+          .execute(const DeleteVehicleInput(id: 'nope'));
+      expect(await repo.findAll(), isEmpty);
     });
   });
 }
