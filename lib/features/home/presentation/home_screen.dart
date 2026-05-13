@@ -9,6 +9,7 @@ import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_typography.dart';
 import '../../../core/theme/brand_colors.dart';
 import '../../../core/util/date_format.dart';
+import '../../../core/widgets/brand_progress_bar.dart';
 import '../../../core/widgets/empty_state.dart';
 import '../../../core/widgets/error_state.dart';
 import '../../../l10n/l10n_extension.dart';
@@ -187,7 +188,9 @@ class _CanceledArchive extends StatelessWidget {
           expandedCrossAxisAlignment: CrossAxisAlignment.stretch,
           title: Text(l.homeArchiveTitle, style: AppTypography.titleSmall),
           subtitle: Text(
-            l.homeArchiveCount(orders.length),
+            // Show the count we actually render — counter that disagrees with
+            // the visible list erodes trust ("8 shown but only 5 inside").
+            l.homeArchiveCount(visible.length),
             style: AppTypography.bodySmall
                 .copyWith(color: context.colors.textSecondary),
           ),
@@ -265,29 +268,24 @@ class _InProgressCard extends StatelessWidget {
               const SizedBox(height: AppSpacing.xxs),
               Text(
                 order.title,
-                style:
-                    AppTypography.titleLarge.copyWith(color: context.colors.onBlack),
+                style: AppTypography.titleLarge
+                    .copyWith(color: context.colors.onHeroSurface),
               ),
               const SizedBox(height: AppSpacing.xxs),
               Text(
                 order.vehicleSummary,
-                style: AppTypography.bodySmall
-                    .copyWith(color: context.colors.textDisabled),
+                style: AppTypography.bodySmall.copyWith(
+                  color:
+                      context.colors.onHeroSurface.withValues(alpha: 0.65),
+                ),
               ),
               const SizedBox(height: AppSpacing.sm),
               Row(
                 children: [
                   Expanded(
-                    child: ClipRRect(
-                      borderRadius: AppRadii.xsAll,
-                      child: LinearProgressIndicator(
-                        value: order.progress ?? 0,
-                        minHeight: 4,
-                        backgroundColor:
-                            context.colors.borderStrong.withValues(alpha: 0.4),
-                        valueColor:
-                            AlwaysStoppedAnimation(context.colors.brandYellow),
-                      ),
+                    child: BrandProgressBar(
+                      value: order.progress ?? 0,
+                      minHeight: 4,
                     ),
                   ),
                   const SizedBox(width: AppSpacing.sm),

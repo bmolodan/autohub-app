@@ -232,10 +232,13 @@ class AppTheme {
       ),
 
       // ─── Snackbars ───────────────────────────────────────────────
+      // Always-dark snackbar in both modes — heroSurface stays dark so the
+      // yellow action text keeps its 11:1 contrast (a brandBlack snackbar
+      // in dark mode flips to cream, hiding yellow action text).
       snackBarTheme: SnackBarThemeData(
-        backgroundColor: c.brandBlack,
+        backgroundColor: c.heroSurface,
         contentTextStyle:
-            AppTypography.bodyMedium.copyWith(color: c.onBlack),
+            AppTypography.bodyMedium.copyWith(color: c.onHeroSurface),
         actionTextColor: c.brandYellow,
         shape: const RoundedRectangleBorder(borderRadius: AppRadii.mdAll),
         behavior: SnackBarBehavior.floating,

@@ -41,6 +41,7 @@ class BrandColors extends ThemeExtension<BrandColors> {
     required this.onBlack,
     required this.onBlackAccent,
     required this.heroSurface,
+    required this.onHeroSurface,
   });
 
   factory BrandColors.light() => const BrandColors(
@@ -67,6 +68,8 @@ class BrandColors extends ThemeExtension<BrandColors> {
         onBlackAccent: AppColors.onBlackAccent,
         // In light mode the in-progress hero card sits on `brandBlack`.
         heroSurface: AppColors.brandBlack,
+        // Light: hero sits on brandBlack so foreground stays white.
+        onHeroSurface: AppColors.onBlack,
       );
 
   factory BrandColors.dark() => const BrandColors(
@@ -88,7 +91,10 @@ class BrandColors extends ThemeExtension<BrandColors> {
         border: Color(0xFF2A2A2A),
         borderStrong: Color(0xFF3A3A3A),
         error: AppColors.error,
-        errorSoft: AppColors.errorSoft,
+        // Light-mode errorSoft (0x1A alpha) composites near-invisibly on
+        // a near-black scaffold; bump to ~25% to keep the warning bubble
+        // legible.
+        errorSoft: Color(0x40C04545),
         onError: AppColors.onError,
         success: AppColors.success,
         warning: AppColors.warning,
@@ -102,6 +108,10 @@ class BrandColors extends ThemeExtension<BrandColors> {
         // it lifts off the background; a `brandBlack` card on a near-black
         // canvas would disappear.
         heroSurface: Color(0xFF262626),
+        // Dark hero stays dark in dark mode → foreground stays cream.
+        // Distinct from `onBlack` because brandBlack (the contrast anchor)
+        // flipped to light, while heroSurface intentionally did not.
+        onHeroSurface: Color(0xFFF5F3EE),
       );
 
   final Color brandYellow;
@@ -126,6 +136,7 @@ class BrandColors extends ThemeExtension<BrandColors> {
   final Color onBlack;
   final Color onBlackAccent;
   final Color heroSurface;
+  final Color onHeroSurface;
 
   @override
   BrandColors copyWith({
@@ -151,6 +162,7 @@ class BrandColors extends ThemeExtension<BrandColors> {
     Color? onBlack,
     Color? onBlackAccent,
     Color? heroSurface,
+    Color? onHeroSurface,
   }) =>
       BrandColors(
         brandYellow: brandYellow ?? this.brandYellow,
@@ -175,6 +187,7 @@ class BrandColors extends ThemeExtension<BrandColors> {
         onBlack: onBlack ?? this.onBlack,
         onBlackAccent: onBlackAccent ?? this.onBlackAccent,
         heroSurface: heroSurface ?? this.heroSurface,
+        onHeroSurface: onHeroSurface ?? this.onHeroSurface,
       );
 
   @override
@@ -203,6 +216,7 @@ class BrandColors extends ThemeExtension<BrandColors> {
       onBlack: Color.lerp(onBlack, other.onBlack, t)!,
       onBlackAccent: Color.lerp(onBlackAccent, other.onBlackAccent, t)!,
       heroSurface: Color.lerp(heroSurface, other.heroSurface, t)!,
+      onHeroSurface: Color.lerp(onHeroSurface, other.onHeroSurface, t)!,
     );
   }
 }

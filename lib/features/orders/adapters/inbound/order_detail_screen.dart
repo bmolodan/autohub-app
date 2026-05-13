@@ -8,6 +8,7 @@ import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_typography.dart';
 import '../../../../core/theme/brand_colors.dart';
 import '../../../../core/util/date_format.dart';
+import '../../../../core/widgets/brand_progress_bar.dart';
 import '../../../../core/widgets/confirm_dialog.dart';
 import '../../../../core/widgets/empty_state.dart';
 import '../../../../core/widgets/error_state.dart';
@@ -103,26 +104,17 @@ class _InProgressBody extends StatelessWidget {
                   const SizedBox(height: AppSpacing.xxs),
                   Text(order.title,
                       style: AppTypography.headlineSmall
-                          .copyWith(color: context.colors.onBlack)),
+                          .copyWith(color: context.colors.onHeroSurface)),
                   const SizedBox(height: AppSpacing.xxs),
                   Text(order.vehicleSummary,
-                      style: AppTypography.bodySmall
-                          .copyWith(color: context.colors.textDisabled)),
+                      style: AppTypography.bodySmall.copyWith(
+                          color: context.colors.onHeroSurface
+                              .withValues(alpha: 0.65))),
                   const SizedBox(height: AppSpacing.md),
                   Row(
                     children: [
                       Expanded(
-                        child: ClipRRect(
-                          borderRadius: AppRadii.xsAll,
-                          child: LinearProgressIndicator(
-                            value: order.progress ?? 0,
-                            minHeight: 6,
-                            backgroundColor:
-                                context.colors.borderStrong.withValues(alpha: 0.4),
-                            valueColor: AlwaysStoppedAnimation(
-                                context.colors.brandYellow),
-                          ),
-                        ),
+                        child: BrandProgressBar(value: order.progress ?? 0),
                       ),
                       const SizedBox(width: AppSpacing.sm),
                       Text(

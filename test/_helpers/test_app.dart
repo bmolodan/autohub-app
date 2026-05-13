@@ -23,6 +23,7 @@ Future<void> pumpScreen(
   Map<String, Object> initialPrefs = const {},
   Size surfaceSize = const Size(390, 844),
   Locale locale = const Locale('uk'),
+  Brightness brightness = Brightness.light,
 }) async {
   await tester.binding.setSurfaceSize(surfaceSize);
   addTearDown(() => tester.binding.setSurfaceSize(null));
@@ -40,6 +41,9 @@ Future<void> pumpScreen(
       ],
       child: MaterialApp(
         theme: AppTheme.light(),
+        darkTheme: AppTheme.dark(),
+        themeMode:
+            brightness == Brightness.dark ? ThemeMode.dark : ThemeMode.light,
         locale: locale,
         localizationsDelegates: AppLocalizations.localizationsDelegates,
         supportedLocales: AppLocalizations.supportedLocales,

@@ -171,7 +171,10 @@ class _UserHeader extends StatelessWidget {
               width: AppSizes.avatar,
               height: AppSizes.avatar,
               decoration: BoxDecoration(
-                color: context.colors.brandBlack,
+                // heroSurface stays dark in both modes — keeps the
+                // dark-circle / yellow-initials brand look (brandBlack
+                // would flip to cream in dark, hiding yellow initials).
+                color: context.colors.heroSurface,
                 shape: BoxShape.circle,
               ),
               alignment: Alignment.center,

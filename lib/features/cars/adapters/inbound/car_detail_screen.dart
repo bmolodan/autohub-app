@@ -178,7 +178,7 @@ class _NextServiceBanner extends StatelessWidget {
       ),
       child: Row(
         children: [
-          Icon(Icons.event, color: context.colors.brandBlack),
+          Icon(Icons.event, color: context.colors.onYellow),
           const SizedBox(width: AppSpacing.sm),
           Expanded(
             child: Column(
@@ -186,14 +186,14 @@ class _NextServiceBanner extends StatelessWidget {
               children: [
                 Text(context.l10n.carDetailNextService,
                     style: AppTypography.labelMedium
-                        .copyWith(color: context.colors.brandBlack)),
+                        .copyWith(color: context.colors.onYellow)),
                 const SizedBox(height: AppSpacing.xxs),
                 Text(
                   remaining > 0
                       ? context.l10n.carDetailDueIn(remaining)
                       : context.l10n.carDetailOverdue,
                   style: AppTypography.titleMedium
-                      .copyWith(color: context.colors.brandBlack),
+                      .copyWith(color: context.colors.onYellow),
                 ),
               ],
             ),
