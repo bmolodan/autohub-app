@@ -36,7 +36,7 @@ dependencies:
 
   # ─── Telemetry ────────────────────────────────────────────────────
   # No-op when SENTRY_DSN is unset (dev / local builds).
-  sentry_flutter: ^8.14.0
+  sentry_flutter: ^9.20.0
 
   # ─── i18n ─────────────────────────────────────────────────────────
   intl: any
