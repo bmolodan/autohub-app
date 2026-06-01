@@ -46,7 +46,10 @@ final verifyOtpUseCaseProvider = Provider<VerifyOtpUseCase>(
 );
 
 final signOutUseCaseProvider = Provider<SignOutUseCase>(
-  (ref) => SignOutUseCase(ref.watch(sessionStorageProvider)),
+  (ref) => SignOutUseCase(
+    ref.watch(otpGatewayProvider),
+    ref.watch(sessionStorageProvider),
+  ),
 );
 
 /// View-model: the current session. Null when signed out.

@@ -10,6 +10,8 @@ import '../../../../_helpers/in_memory_session_storage.dart';
 class _FakeGateway implements OtpGatewayPort {
   String? requestedPhone;
   String? lastChallenge;
+  String? loggedOutRefreshToken;
+  bool logoutThrows = false;
 
   @override
   Future<OtpChallenge> request(String phone) async {
@@ -26,6 +28,12 @@ class _FakeGateway implements OtpGatewayPort {
     if (code != '0000') throw const InvalidOtpException();
     final phone = challengeId.replaceFirst('ch-', '');
     return testSession(phone: phone);
+  }
+
+  @override
+  Future<void> logout(String refreshToken) async {
+    if (logoutThrows) throw StateError('boom');
+    loggedOutRefreshToken = refreshToken;
   }
 }
 
@@ -105,11 +113,33 @@ void main() {
   });
 
   group('SignOutUseCase', () {
-    test('clears session in storage', () async {
+    test('calls gateway.logout with the refresh token, then clears storage',
+        () async {
+      final gateway = _FakeGateway();
+      final storage =
+          InMemorySessionStorage(testSession(refreshToken: 'rt-xyz'));
+
+      await SignOutUseCase(gateway, storage).execute();
+
+      expect(gateway.loggedOutRefreshToken, 'rt-xyz');
+      expect(await storage.read(), isNull);
+    });
+
+    test('still clears storage when gateway.logout throws (best-effort)',
+        () async {
+      final gateway = _FakeGateway()..logoutThrows = true;
       final storage = InMemorySessionStorage(testSession());
 
-      await SignOutUseCase(storage).execute();
+      await SignOutUseCase(gateway, storage).execute();
       expect(await storage.read(), isNull);
+    });
+
+    test('skips gateway call when there is no session', () async {
+      final gateway = _FakeGateway();
+      final storage = InMemorySessionStorage();
+
+      await SignOutUseCase(gateway, storage).execute();
+      expect(gateway.loggedOutRefreshToken, isNull);
     });
   });
 }

@@ -52,5 +52,13 @@ class HttpOtpGateway implements OtpGatewayPort {
       rethrow;
     }
   }
+
+  @override
+  Future<void> logout(String refreshToken) async {
+    await _dio.post<void>(
+      '/auth/logout',
+      data: {'refreshToken': refreshToken},
+    );
+  }
 }
 

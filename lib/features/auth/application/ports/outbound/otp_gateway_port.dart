@@ -23,4 +23,8 @@ abstract interface class OtpGatewayPort {
   Future<OtpChallenge> request(String phone);
 
   Future<Session> verify({required String challengeId, required String code});
+
+  /// Best-effort server-side logout. Implementations should not throw on
+  /// network errors — the caller will clear local storage regardless.
+  Future<void> logout(String refreshToken);
 }

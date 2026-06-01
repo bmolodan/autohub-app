@@ -42,4 +42,9 @@ class FakeOtpGateway implements OtpGatewayPort {
       createdAt: now,
     );
   }
+
+  @override
+  Future<void> logout(String refreshToken) async {
+    // No-op for local env — there's no server to revoke against.
+  }
 }

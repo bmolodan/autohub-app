@@ -70,6 +70,21 @@ void main() {
     });
   });
 
+  group('HttpOtpGateway.logout', () {
+    test('POSTs the refresh token to /auth/logout', () async {
+      final adapter = FakeHttpAdapter(
+        (_) => const FakeResponse(statusCode: 204, body: ''),
+      );
+      final gateway = HttpOtpGateway(dioWith(adapter));
+
+      await gateway.logout('rt-secret');
+
+      expect(adapter.requests.single.method, 'POST');
+      expect(adapter.requests.single.path, '/auth/logout');
+      expect(adapter.requests.single.data, {'refreshToken': 'rt-secret'});
+    });
+  });
+
   group('jwtExpiresAt', () {
     test('extracts exp claim as a UTC DateTime', () {
       final exp = DateTime.utc(2030, 1, 1).millisecondsSinceEpoch ~/ 1000;
