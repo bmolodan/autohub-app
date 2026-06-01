@@ -19,6 +19,10 @@ class InMemorySessionStorage implements SessionStoragePort {
 }
 
 /// Convenience factory for tests that just need a non-empty session.
+///
+/// `accessExpiresAt` defaults to a wall-clock-future timestamp so the dio
+/// proactive-refresh interceptor does not fire on every test. Tests that
+/// exercise the proactive path must pass `accessExpiresAt` explicitly.
 Session testSession({
   String phone = '+380671234567',
   String accessToken = 'fake-access',
@@ -26,12 +30,12 @@ Session testSession({
   DateTime? accessExpiresAt,
   DateTime? createdAt,
 }) {
-  final now = createdAt ?? DateTime.utc(2026, 5, 13);
   return Session(
     phone: phone,
     accessToken: accessToken,
     refreshToken: refreshToken,
-    accessExpiresAt: accessExpiresAt ?? now.add(const Duration(minutes: 15)),
-    createdAt: now,
+    accessExpiresAt:
+        accessExpiresAt ?? DateTime.now().toUtc().add(const Duration(hours: 24)),
+    createdAt: createdAt ?? DateTime.utc(2026, 5, 13),
   );
 }

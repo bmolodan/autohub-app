@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:autohub/core/util/jwt_payload.dart';
 import 'package:autohub/features/auth/adapters/outbound/http_otp_gateway.dart';
 import 'package:autohub/features/auth/application/ports/outbound/otp_gateway_port.dart';
 import 'package:flutter_test/flutter_test.dart';
