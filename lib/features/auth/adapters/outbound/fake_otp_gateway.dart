@@ -33,6 +33,13 @@ class FakeOtpGateway implements OtpGatewayPort {
     if (code != '0000') {
       throw const InvalidOtpException();
     }
-    return Session(phone: phone, createdAt: _clock.now());
+    final now = _clock.now();
+    return Session(
+      phone: phone,
+      accessToken: 'fake-access',
+      refreshToken: 'fake-refresh',
+      accessExpiresAt: now.add(const Duration(minutes: 15)),
+      createdAt: now,
+    );
   }
 }

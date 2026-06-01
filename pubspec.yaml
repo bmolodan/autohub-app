@@ -26,7 +26,8 @@ dependencies:
   dio: ^5.5.0
 
   # ─── Local storage ────────────────────────────────────────────────
-  shared_preferences: ^2.3.2
+  shared_preferences: ^2.3.2          # non-sensitive prefs (env flags, UI state)
+  flutter_secure_storage: ^10.3.1     # Keychain (iOS) / EncryptedSharedPrefs (Android) for tokens
 
   # ─── Media ────────────────────────────────────────────────────────
   image_picker: ^1.1.2
@@ -40,8 +41,6 @@ dependencies:
 
   # ─── i18n ─────────────────────────────────────────────────────────
   intl: any
-  # hive_flutter: ^1.1.0           # if we need indexed/typed boxes later
-  # flutter_secure_storage: ^9.2.2 # if we need OS keychain for tokens
 
   # ─── Firebase (auth + push + analytics + crashlytics) ─────────────
   # firebase_core: ^3.3.0

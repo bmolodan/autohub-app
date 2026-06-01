@@ -1,13 +1,13 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 import '../../../core/config/app_environment.dart';
 import '../../../core/network/dio_provider.dart';
-import '../../../core/storage/shared_prefs_provider.dart';
 import '../../../core/util/clock.dart';
 import '../../../core/util/id_generator.dart';
 import '../adapters/outbound/fake_otp_gateway.dart';
 import '../adapters/outbound/http_otp_gateway.dart';
-import '../adapters/outbound/shared_prefs_session_storage.dart';
+import '../adapters/outbound/secure_storage_session_storage.dart';
 import '../application/ports/outbound/otp_gateway_port.dart';
 import '../application/ports/outbound/session_storage_port.dart';
 import '../application/use_cases/request_otp.dart';
@@ -26,8 +26,12 @@ final otpGatewayProvider = Provider<OtpGatewayPort>((ref) {
   };
 });
 
+final secureStorageProvider = Provider<FlutterSecureStorage>((_) {
+  return const FlutterSecureStorage();
+});
+
 final sessionStorageProvider = Provider<SessionStoragePort>(
-  (ref) => SharedPrefsSessionStorage(ref.watch(sharedPreferencesProvider)),
+  (ref) => SecureStorageSessionStorage(storage: ref.watch(secureStorageProvider)),
 );
 
 final requestOtpUseCaseProvider = Provider<RequestOtpUseCase>(

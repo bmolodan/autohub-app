@@ -1,10 +1,11 @@
 import 'package:autohub/features/auth/application/ports/outbound/otp_gateway_port.dart';
-import 'package:autohub/features/auth/application/ports/outbound/session_storage_port.dart';
 import 'package:autohub/features/auth/application/use_cases/request_otp.dart';
 import 'package:autohub/features/auth/application/use_cases/sign_out.dart';
 import 'package:autohub/features/auth/application/use_cases/verify_otp.dart';
 import 'package:autohub/features/auth/domain/session.dart';
 import 'package:flutter_test/flutter_test.dart';
+
+import '../../../../_helpers/in_memory_session_storage.dart';
 
 class _FakeGateway implements OtpGatewayPort {
   String? requestedPhone;
@@ -24,21 +25,8 @@ class _FakeGateway implements OtpGatewayPort {
   }) async {
     if (code != '0000') throw const InvalidOtpException();
     final phone = challengeId.replaceFirst('ch-', '');
-    return Session(phone: phone, createdAt: DateTime(2026, 5, 12));
+    return testSession(phone: phone);
   }
-}
-
-class _FakeStorage implements SessionStoragePort {
-  Session? _session;
-
-  @override
-  Future<Session?> read() async => _session;
-
-  @override
-  Future<void> write(Session session) async => _session = session;
-
-  @override
-  Future<void> clear() async => _session = null;
 }
 
 void main() {
@@ -67,9 +55,9 @@ void main() {
   });
 
   group('VerifyOtpUseCase', () {
-    test('returns session and persists it on success', () async {
+    test('returns session and persists all fields on success', () async {
       final gateway = _FakeGateway();
-      final storage = _FakeStorage();
+      final storage = InMemorySessionStorage();
       final useCase = VerifyOtpUseCase(gateway, storage);
 
       final session = await useCase.execute(
@@ -77,14 +65,20 @@ void main() {
       );
 
       expect(session.phone, '+380671234567');
+      expect(session.accessToken, isNotEmpty);
+      expect(session.refreshToken, isNotEmpty);
+
       final persisted = await storage.read();
       expect(persisted, isNotNull);
       expect(persisted!.phone, '+380671234567');
+      expect(persisted.accessToken, session.accessToken);
+      expect(persisted.refreshToken, session.refreshToken);
+      expect(persisted.accessExpiresAt, session.accessExpiresAt);
     });
 
     test('throws InvalidOtpException on wrong code; storage stays empty',
         () async {
-      final storage = _FakeStorage();
+      final storage = InMemorySessionStorage();
       final useCase = VerifyOtpUseCase(_FakeGateway(), storage);
 
       expect(
@@ -98,7 +92,7 @@ void main() {
 
     test('rejects short code without calling gateway', () async {
       final gateway = _FakeGateway();
-      final useCase = VerifyOtpUseCase(gateway, _FakeStorage());
+      final useCase = VerifyOtpUseCase(gateway, InMemorySessionStorage());
 
       expect(
         () => useCase.execute(
@@ -112,10 +106,7 @@ void main() {
 
   group('SignOutUseCase', () {
     test('clears session in storage', () async {
-      final storage = _FakeStorage();
-      await storage.write(
-        Session(phone: '+380671234567', createdAt: DateTime(2026, 5, 12)),
-      );
+      final storage = InMemorySessionStorage(testSession());
 
       await SignOutUseCase(storage).execute();
       expect(await storage.read(), isNull);

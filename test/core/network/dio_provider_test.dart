@@ -1,30 +1,15 @@
 import 'package:autohub/core/network/dio_provider.dart';
-import 'package:autohub/features/auth/application/ports/outbound/session_storage_port.dart';
 import 'package:autohub/features/auth/composition/auth_providers.dart';
-import 'package:autohub/features/auth/domain/session.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../../_helpers/fake_http_adapter.dart';
-
-class _InMemorySessionStorage implements SessionStoragePort {
-  Session? _session;
-  @override
-  Future<Session?> read() async => _session;
-  @override
-  Future<void> write(Session s) async => _session = s;
-  @override
-  Future<void> clear() async => _session = null;
-}
+import '../../_helpers/in_memory_session_storage.dart';
 
 void main() {
   group('dioProvider auth interceptor', () {
     test('injects Authorization header when a session is present', () async {
-      final storage = _InMemorySessionStorage();
-      await storage.write(Session(
-        phone: '+380671234567',
-        createdAt: DateTime.utc(2026, 5, 13),
-      ));
+      final storage = InMemorySessionStorage(testSession(accessToken: 'jwt-1'));
       final adapter = FakeHttpAdapter(
         (_) => const FakeResponse(statusCode: 200, body: '[]'),
       );
@@ -40,6 +25,10 @@ void main() {
       await dio.get<List<dynamic>>('/vehicles');
 
       final auth = adapter.requests.single.headers['Authorization'];
+      // NOTE: dio_provider still sends `Bearer ${session.phone}` as a
+      // placeholder. Phase 2 Task #3 switches it to ${session.accessToken}
+      // alongside the 401-refresh interceptor — this expectation will
+      // flip then.
       expect(auth, 'Bearer +380671234567');
     });
 
@@ -49,7 +38,7 @@ void main() {
       );
 
       final container = ProviderContainer(overrides: [
-        sessionStorageProvider.overrideWithValue(_InMemorySessionStorage()),
+        sessionStorageProvider.overrideWithValue(InMemorySessionStorage()),
       ]);
       addTearDown(container.dispose);
 

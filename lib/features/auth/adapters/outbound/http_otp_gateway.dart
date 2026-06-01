@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:dio/dio.dart';
 
 import '../../application/ports/outbound/otp_gateway_port.dart';
@@ -17,10 +19,8 @@ class HttpOtpGateway implements OtpGatewayPort {
     if (m == null) {
       throw const FormatException('OTP request returned empty body');
     }
-    return OtpChallenge(
-      id: m['challengeId'] as String,
-      phone: m['phone'] as String,
-    );
+    // Middleware response is { challengeId } — phone is the caller's input.
+    return OtpChallenge(id: m['challengeId'] as String, phone: phone);
   }
 
   @override
@@ -35,9 +35,16 @@ class HttpOtpGateway implements OtpGatewayPort {
       );
       final m = response.data;
       if (m == null) throw const InvalidOtpException();
+
+      final accessToken = m['accessToken'] as String;
+      final refreshToken = m['refreshToken'] as String;
+      final profile = m['profile'] as Map<String, dynamic>;
       return Session(
-        phone: m['phone'] as String,
-        createdAt: DateTime.parse(m['createdAt'] as String),
+        phone: profile['phone'] as String,
+        accessToken: accessToken,
+        refreshToken: refreshToken,
+        accessExpiresAt: jwtExpiresAt(accessToken),
+        createdAt: DateTime.now().toUtc(),
       );
     } on DioException catch (e) {
       if (e.response?.statusCode == 401) {
@@ -46,4 +53,19 @@ class HttpOtpGateway implements OtpGatewayPort {
       rethrow;
     }
   }
+}
+
+/// Reads the `exp` claim from a JWT and returns it as a UTC DateTime.
+/// Visible for testing.
+DateTime jwtExpiresAt(String jwt) {
+  final parts = jwt.split('.');
+  if (parts.length != 3) {
+    throw const FormatException('not a JWT (expected 3 segments)');
+  }
+  final payload =
+      jsonDecode(utf8.decode(base64Url.decode(base64Url.normalize(parts[1]))))
+          as Map<String, dynamic>;
+  final exp = payload['exp'];
+  if (exp is! int) throw const FormatException('JWT missing exp claim');
+  return DateTime.fromMillisecondsSinceEpoch(exp * 1000, isUtc: true);
 }

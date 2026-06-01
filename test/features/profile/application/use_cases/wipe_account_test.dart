@@ -49,6 +49,9 @@ void main() {
       final session = FakeSessionStorage(
         seed: Session(
           phone: '+380671234567',
+          accessToken: 'fake-access',
+          refreshToken: 'fake-refresh',
+          accessExpiresAt: DateTime.utc(2026, 5, 13, 0, 15),
           createdAt: DateTime.utc(2026, 5, 13),
         ),
       );
