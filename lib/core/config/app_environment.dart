@@ -5,11 +5,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 enum AppEnvironment { local, remote }
 
 /// Pass at build time:
-///   flutter run --dart-define=APP_ENV=remote --dart-define=API_URL=http://localhost:8080
+///   flutter run --dart-define=APP_ENV=remote --dart-define=API_URL=http://localhost:8787/v1
 const _envName = String.fromEnvironment('APP_ENV', defaultValue: 'local');
 
 const String apiBaseUrl =
-    String.fromEnvironment('API_URL', defaultValue: 'http://localhost:8080');
+    String.fromEnvironment('API_URL', defaultValue: 'http://localhost:8787/v1');
 
 final appEnvironmentProvider = Provider<AppEnvironment>((_) {
   const env =
