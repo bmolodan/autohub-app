@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'core/config/app_environment.dart';
+import 'core/dev/api_base_override.dart';
 import 'core/router/app_router.dart';
 import 'core/storage/shared_prefs_provider.dart';
 import 'core/telemetry/sentry.dart';
@@ -20,10 +22,13 @@ Future<void> main() async {
 
   await bootstrapSentry(runApp: () async {
     final prefs = await SharedPreferences.getInstance();
+    final apiBaseOverride = loadApiBaseOverride(prefs);
     runApp(
       ProviderScope(
         overrides: [
           sharedPreferencesProvider.overrideWithValue(prefs),
+          if (apiBaseOverride != null)
+            apiBaseUrlProvider.overrideWithValue(apiBaseOverride),
         ],
         child: const AutoHubApp(),
       ),

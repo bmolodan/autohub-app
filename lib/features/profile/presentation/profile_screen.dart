@@ -1,8 +1,12 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../core/config/app_environment.dart';
+import '../../../core/dev/api_base_override.dart';
 import '../../../core/router/app_router.dart';
+import '../../../core/storage/shared_prefs_provider.dart';
 import '../../../core/theme/app_radii.dart';
 import '../../../core/theme/app_sizes.dart';
 import '../../../core/theme/app_spacing.dart';
@@ -66,6 +70,14 @@ class ProfileScreen extends ConsumerWidget {
                 SnackBar(content: Text(l.profileSupportTodo)),
               ),
             ),
+            if (kDebugMode)
+              _SettingsRow(
+                icon: Icons.cloud_outlined,
+                label: 'Сервер API',
+                trailing: Uri.tryParse(ref.watch(apiBaseUrlProvider))?.host ??
+                    ref.watch(apiBaseUrlProvider),
+                onTap: () => _showApiBaseOverrideDialog(context, ref),
+              ),
             const SizedBox(height: AppSpacing.lg),
             OutlinedButton(
               onPressed: () async {
@@ -88,6 +100,68 @@ class ProfileScreen extends ConsumerWidget {
     );
   }
 }
+
+Future<void> _showApiBaseOverrideDialog(
+  BuildContext context,
+  WidgetRef ref,
+) async {
+  final prefs = ref.read(sharedPreferencesProvider);
+  final current = loadApiBaseOverride(prefs) ?? apiBaseUrlDefault;
+  final controller = TextEditingController(text: current);
+  final action = await showDialog<_ApiBaseAction>(
+    context: context,
+    builder: (ctx) => AlertDialog(
+      title: const Text('Сервер API'),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'За замовчуванням: $apiBaseUrlDefault',
+            style: AppTypography.bodySmall,
+          ),
+          const SizedBox(height: AppSpacing.sm),
+          TextField(
+            controller: controller,
+            autofocus: true,
+            keyboardType: TextInputType.url,
+            autocorrect: false,
+            decoration: const InputDecoration(
+              hintText: 'https://<id>.trycloudflare.com',
+            ),
+          ),
+        ],
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.of(ctx).pop(_ApiBaseAction.clear),
+          child: const Text('Скинути'),
+        ),
+        TextButton(
+          onPressed: () => Navigator.of(ctx).pop(_ApiBaseAction.cancel),
+          child: const Text('Скасувати'),
+        ),
+        FilledButton(
+          onPressed: () => Navigator.of(ctx).pop(_ApiBaseAction.save),
+          child: const Text('Зберегти'),
+        ),
+      ],
+    ),
+  );
+
+  if (action == null || action == _ApiBaseAction.cancel) return;
+  if (action == _ApiBaseAction.save) {
+    await saveApiBaseOverride(prefs, controller.text);
+  } else {
+    await saveApiBaseOverride(prefs, null);
+  }
+  if (!context.mounted) return;
+  ScaffoldMessenger.of(context).showSnackBar(
+    const SnackBar(content: Text('Перезапустіть застосунок')),
+  );
+}
+
+enum _ApiBaseAction { save, clear, cancel }
 
 class _UserHeader extends StatelessWidget {
   const _UserHeader({required this.name, required this.phone, this.email});

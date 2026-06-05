@@ -33,7 +33,7 @@ final dioProvider = Provider<Dio>((ref) {
   final sessionStorage = ref.watch(sessionStorageProvider);
   final dio = Dio(
     BaseOptions(
-      baseUrl: apiBaseUrl,
+      baseUrl: ref.watch(apiBaseUrlProvider),
       connectTimeout: const Duration(seconds: 10),
       receiveTimeout: const Duration(seconds: 30),
       headers: {'Content-Type': 'application/json'},
