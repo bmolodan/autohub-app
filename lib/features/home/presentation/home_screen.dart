@@ -13,10 +13,11 @@ import '../../../core/widgets/brand_progress_bar.dart';
 import '../../../core/widgets/empty_state.dart';
 import '../../../core/widgets/error_state.dart';
 import '../../../l10n/l10n_extension.dart';
+import '../../cars/composition/cars_providers.dart';
 import '../../orders/composition/orders_providers.dart';
 import '../../orders/domain/active_order.dart';
-import '../../cars/composition/cars_providers.dart';
 import '../../orders/presentation/order_l10n.dart';
+import '../../profile/composition/profile_providers.dart';
 
 class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
@@ -41,6 +42,16 @@ class HomeScreen extends ConsumerWidget {
     final async = ref.watch(ordersControllerProvider);
     final vehicles = ref.watch(vehiclesControllerProvider).value;
     final bookingTarget = _bookingTarget(vehicles);
+    // Greet by the name we got from RoApp. Empty for users with no NESEMOS
+    // footprint — the row collapses.
+    final name = ref.watch(clientProfileControllerProvider).value?.name ?? '';
+
+    Future<void> refresh() async {
+      ref.invalidate(ordersControllerProvider);
+      ref.invalidate(vehiclesControllerProvider);
+      // Wait on orders only — vehicles refetch happens in parallel.
+      await ref.read(ordersControllerProvider.future);
+    }
 
     return SafeArea(
       child: Padding(
@@ -78,29 +89,32 @@ class HomeScreen extends ConsumerWidget {
               style: AppTypography.bodyMedium
                   .copyWith(color: context.colors.textSecondary),
             ),
-            Text(context.l10n.homeUserName,
-                style: AppTypography.headlineMedium),
+            if (name.isNotEmpty)
+              Text(name, style: AppTypography.headlineMedium),
             const SizedBox(height: AppSpacing.lg),
             Expanded(
-              child: async.when(
-                loading: () => HeroMode(
-                  enabled: false,
-                  child: Skeletonizer(
-                    enabled: true,
-                    child: ListView.separated(
-                      padding: EdgeInsets.zero,
-                      itemCount: 2,
-                      separatorBuilder: (_, __) =>
-                          const SizedBox(height: AppSpacing.sm),
-                      itemBuilder: (_, __) => _OrderCard(order: _skeletonOrder),
+              child: RefreshIndicator(
+                onRefresh: refresh,
+                child: async.when(
+                  loading: () => HeroMode(
+                    enabled: false,
+                    child: Skeletonizer(
+                      enabled: true,
+                      child: ListView.separated(
+                        physics: const AlwaysScrollableScrollPhysics(),
+                        padding: EdgeInsets.zero,
+                        itemCount: 2,
+                        separatorBuilder: (_, __) =>
+                            const SizedBox(height: AppSpacing.sm),
+                        itemBuilder: (_, __) =>
+                            _OrderCard(order: _skeletonOrder),
+                      ),
                     ),
                   ),
+                  error: (e, _) => ErrorState(onRetry: refresh),
+                  data: (orders) =>
+                      _buildOrderList(context, orders, bookingTarget),
                 ),
-                error: (e, _) => ErrorState(
-                  onRetry: () => ref.invalidate(ordersControllerProvider),
-                ),
-                data: (orders) =>
-                    _buildOrderList(context, orders, bookingTarget),
               ),
             ),
             const SizedBox(height: AppSpacing.sm),
@@ -125,15 +139,26 @@ class HomeScreen extends ConsumerWidget {
     // case still shows the archive (canceled orders are real history)
     // and relies on the persistent "+ Записатись" CTA below the list.
     if (active.isEmpty && canceled.isEmpty) {
-      return EmptyState(
-        icon: Icons.car_repair_outlined,
-        title: context.l10n.homeEmptyTitle,
-        subtitle: context.l10n.homeEmptySubtitle,
-        ctaLabel: context.l10n.homeEmptyCta,
-        onCta: () => context.push(bookingTarget),
+      // ScrollView so RefreshIndicator above us can still receive pull.
+      return ListView(
+        physics: const AlwaysScrollableScrollPhysics(),
+        padding: EdgeInsets.zero,
+        children: [
+          SizedBox(
+            height: MediaQuery.of(context).size.height * 0.5,
+            child: EmptyState(
+              icon: Icons.car_repair_outlined,
+              title: context.l10n.homeEmptyTitle,
+              subtitle: context.l10n.homeEmptySubtitle,
+              ctaLabel: context.l10n.homeEmptyCta,
+              onCta: () => context.push(bookingTarget),
+            ),
+          ),
+        ],
       );
     }
     return ListView(
+      physics: const AlwaysScrollableScrollPhysics(),
       padding: EdgeInsets.zero,
       children: [
         for (int i = 0; i < active.length; i++) ...[
@@ -242,6 +267,11 @@ class _InProgressCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final etaLabel = order.eta != null ? '~${formatHm(order.eta!)}' : '';
+    final bg = _parseHexColor(order.statusColor) ?? context.colors.heroSurface;
+    final onBg = _onSurface(bg);
+    final accent = bg == context.colors.heroSurface
+        ? context.colors.brandYellow
+        : onBg;
 
     return Hero(
       tag: 'order-hero-${order.id}',
@@ -250,32 +280,39 @@ class _InProgressCard extends StatelessWidget {
         child: Container(
           padding: const EdgeInsets.all(AppSpacing.md),
           decoration: BoxDecoration(
-            // heroSurface: dark anchor in both modes (slightly raised in
-            // dark; brandBlack in light) — a brandBlack-on-dark card would
-            // flip light and lose the hero contrast.
-            color: context.colors.heroSurface,
+            color: bg,
             borderRadius: AppRadii.xlAll,
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                orderStatusLabel(context.l10n, order.status).toUpperCase(),
-                style: AppTypography.overline.copyWith(
-                  color: context.colors.brandYellow,
-                ),
+              Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      orderStatusLabel(context.l10n, order.status).toUpperCase(),
+                      style: AppTypography.overline.copyWith(color: accent),
+                    ),
+                  ),
+                  if (order.isOverdue)
+                    Icon(Icons.error_outline,
+                        size: 16, color: context.colors.error)
+                  else if (order.isUrgent)
+                    Icon(Icons.priority_high,
+                        size: 16, color: context.colors.brandYellow),
+                ],
               ),
               const SizedBox(height: AppSpacing.xxs),
               Text(
                 order.title,
-                style: AppTypography.titleLarge
-                    .copyWith(color: context.colors.onHeroSurface),
+                style:
+                    AppTypography.titleLarge.copyWith(color: onBg),
               ),
               const SizedBox(height: AppSpacing.xxs),
               Text(
                 order.vehicleSummary,
                 style: AppTypography.bodySmall.copyWith(
-                  color: context.colors.onHeroSurface.withValues(alpha: 0.65),
+                  color: onBg.withValues(alpha: 0.65),
                 ),
               ),
               const SizedBox(height: AppSpacing.sm),
@@ -290,9 +327,7 @@ class _InProgressCard extends StatelessWidget {
                   const SizedBox(width: AppSpacing.sm),
                   Text(
                     etaLabel,
-                    style: AppTypography.labelMedium.copyWith(
-                      color: context.colors.brandYellow,
-                    ),
+                    style: AppTypography.labelMedium.copyWith(color: accent),
                   ),
                 ],
               ),
@@ -302,6 +337,21 @@ class _InProgressCard extends StatelessWidget {
       ),
     );
   }
+}
+
+Color? _parseHexColor(String? hex) {
+  if (hex == null) return null;
+  var s = hex.trim();
+  if (s.startsWith('#')) s = s.substring(1);
+  if (s.length == 6) s = 'FF$s';
+  if (s.length != 8) return null;
+  final v = int.tryParse(s, radix: 16);
+  if (v == null) return null;
+  return Color(v);
+}
+
+Color _onSurface(Color bg) {
+  return bg.computeLuminance() > 0.55 ? Colors.black87 : Colors.white;
 }
 
 class _PendingConfirmationCard extends StatelessWidget {

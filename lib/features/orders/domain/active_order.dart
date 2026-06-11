@@ -1,5 +1,7 @@
+import 'order_item.dart';
 import 'order_photo.dart';
 
+export 'order_item.dart';
 export 'order_photo.dart';
 
 enum OrderStage {
@@ -47,8 +49,19 @@ class ActiveOrder {
     required this.eta,
     required this.scheduledFor,
     required this.totalUah,
+    this.paidUah,
+    this.discountUah,
+    this.number,
+    this.orderType,
+    this.resource,
+    this.statusColor,
+    this.createdAt,
+    this.dueDate,
+    this.isUrgent = false,
+    this.isOverdue = false,
     this.timeline = const [],
     this.photos = const [],
+    this.items = const [],
   });
 
   final String id;
@@ -63,8 +76,19 @@ class ActiveOrder {
   final DateTime? eta;
   final DateTime? scheduledFor;
   final int? totalUah;
+  final int? paidUah;
+  final int? discountUah;
+  final String? number;
+  final String? orderType;
+  final String? resource;
+  final String? statusColor;
+  final DateTime? createdAt;
+  final DateTime? dueDate;
+  final bool isUrgent;
+  final bool isOverdue;
   final List<OrderTimelineEntry> timeline;
   final List<OrderPhoto> photos;
+  final List<OrderItem> items;
 
   String get vehicleSummary => '$vehicleMake $vehicleModel · $vehiclePlate';
 
@@ -80,6 +104,10 @@ class ActiveOrder {
     for (var i = 0; i < photos.length; i++) {
       if (photos[i] != other.photos[i]) return false;
     }
+    if (items.length != other.items.length) return false;
+    for (var i = 0; i < items.length; i++) {
+      if (items[i] != other.items[i]) return false;
+    }
     return id == other.id &&
         title == other.title &&
         status == other.status &&
@@ -89,7 +117,17 @@ class ActiveOrder {
         progress == other.progress &&
         eta == other.eta &&
         scheduledFor == other.scheduledFor &&
-        totalUah == other.totalUah;
+        totalUah == other.totalUah &&
+        paidUah == other.paidUah &&
+        discountUah == other.discountUah &&
+        number == other.number &&
+        orderType == other.orderType &&
+        resource == other.resource &&
+        statusColor == other.statusColor &&
+        createdAt == other.createdAt &&
+        dueDate == other.dueDate &&
+        isUrgent == other.isUrgent &&
+        isOverdue == other.isOverdue;
   }
 
   @override
@@ -104,8 +142,21 @@ class ActiveOrder {
         eta,
         scheduledFor,
         totalUah,
+        paidUah,
+        discountUah,
+        Object.hash(
+          number,
+          orderType,
+          resource,
+          statusColor,
+          createdAt,
+          dueDate,
+          isUrgent,
+          isOverdue,
+        ),
         Object.hashAll(timeline),
         Object.hashAll(photos),
+        Object.hashAll(items),
       );
 }
 

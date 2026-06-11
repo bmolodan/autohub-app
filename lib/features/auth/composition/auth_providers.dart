@@ -5,6 +5,10 @@ import '../../../core/config/app_environment.dart';
 import '../../../core/network/dio_provider.dart';
 import '../../../core/util/clock.dart';
 import '../../../core/util/id_generator.dart';
+import '../../cars/composition/cars_providers.dart';
+import '../../history/composition/history_providers.dart';
+import '../../orders/composition/orders_providers.dart';
+import '../../profile/composition/profile_providers.dart';
 import '../adapters/outbound/fake_otp_gateway.dart';
 import '../adapters/outbound/http_otp_gateway.dart';
 import '../adapters/outbound/secure_storage_session_storage.dart';
@@ -76,11 +80,28 @@ class AuthController extends AsyncNotifier<Session?> {
     if (state.hasError) {
       throw state.error!;
     }
+    // Drop cached data from any prior session — new JWT belongs to a
+    // different customer; their orders/vehicles/profile must reload.
+    _invalidateSessionScopedData();
   }
 
   Future<void> signOut() async {
     await ref.read(signOutUseCaseProvider).execute();
     state = const AsyncData(null);
+    _invalidateSessionScopedData();
+  }
+
+  void _invalidateSessionScopedData() {
+    ref.invalidate(ordersControllerProvider);
+    ref.invalidate(vehiclesControllerProvider);
+    ref.invalidate(clientProfileControllerProvider);
+    ref.invalidate(aggregatedServiceHistoryProvider);
+    // Family caches: every (vehicleId, orderId) entry the prior session
+    // populated must also be cleared, otherwise direct navigation to a
+    // detail screen will return the previous customer's data.
+    ref.invalidate(vehicleByIdProvider);
+    ref.invalidate(orderByIdProvider);
+    ref.invalidate(serviceHistoryProvider);
   }
 }
 

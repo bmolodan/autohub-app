@@ -263,6 +263,52 @@ class AppLocalizationsUk extends AppLocalizations {
   String get orderTimelineEmpty => 'Поки що жодних подій';
 
   @override
+  String get orderInfoType => 'Тип робіт';
+
+  @override
+  String get orderInfoResource => 'Місце';
+
+  @override
+  String get orderInfoDueDate => 'Виконати до';
+
+  @override
+  String get orderUrgent => 'Терміново';
+
+  @override
+  String get orderOverdue => 'Прострочено';
+
+  @override
+  String get orderEstimateHeading => 'КОШТОРИС';
+
+  @override
+  String get orderEstimateServices => 'Послуги';
+
+  @override
+  String get orderEstimateProducts => 'Запчастини';
+
+  @override
+  String get orderEstimateSubtotal => 'Сума';
+
+  @override
+  String get orderEstimateDiscount => 'Знижка';
+
+  @override
+  String get orderEstimatePaid => 'Сплачено';
+
+  @override
+  String get orderEstimateBalance => 'До сплати';
+
+  @override
+  String orderItemQtyPrice(int qty, int price) {
+    return '$qty × $price ₴';
+  }
+
+  @override
+  String orderMoney(int amount) {
+    return '$amount ₴';
+  }
+
+  @override
   String get carsListTitle => 'Мої авто';
 
   @override

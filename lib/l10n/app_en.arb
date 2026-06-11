@@ -88,6 +88,29 @@
   "orderCancelDialogConfirm": "Yes, cancel",
   "orderCancelError": "Could not cancel: {error}",
   "orderTimelineEmpty": "No events yet",
+  "orderInfoType": "Work type",
+  "orderInfoResource": "Bay",
+  "orderInfoDueDate": "Due by",
+  "orderUrgent": "Urgent",
+  "orderOverdue": "Overdue",
+  "orderEstimateHeading": "ESTIMATE",
+  "orderEstimateServices": "Services",
+  "orderEstimateProducts": "Parts",
+  "orderEstimateSubtotal": "Subtotal",
+  "orderEstimateDiscount": "Discount",
+  "orderEstimatePaid": "Paid",
+  "orderEstimateBalance": "Balance",
+  "orderItemQtyPrice": "{qty} × {price} ₴",
+  "@orderItemQtyPrice": {
+    "placeholders": {
+      "qty": { "type": "int" },
+      "price": { "type": "int" }
+    }
+  },
+  "orderMoney": "{amount} ₴",
+  "@orderMoney": {
+    "placeholders": { "amount": { "type": "int" } }
+  },
 
   "carsListTitle": "My cars",
   "carsAddCta": "Add a car",

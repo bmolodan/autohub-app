@@ -10,16 +10,49 @@ class HttpOtpGateway implements OtpGatewayPort {
 
   @override
   Future<OtpChallenge> request(String phone) async {
-    final response = await _dio.post<Map<String, dynamic>>(
-      '/auth/otp/request',
-      data: {'phone': phone},
-    );
-    final m = response.data;
-    if (m == null) {
-      throw const FormatException('OTP request returned empty body');
+    try {
+      final response = await _dio.post<Map<String, dynamic>>(
+        '/auth/otp/request',
+        data: {'phone': phone},
+      );
+      final m = response.data;
+      if (m == null) {
+        throw const FormatException('OTP request returned empty body');
+      }
+      // Middleware response is { challengeId } — phone is the caller's input.
+      return OtpChallenge(id: m['challengeId'] as String, phone: phone);
+    } on DioException catch (e) {
+      throw _mapRequestError(e);
     }
-    // Middleware response is { challengeId } — phone is the caller's input.
-    return OtpChallenge(id: m['challengeId'] as String, phone: phone);
+  }
+
+  OtpRequestException _mapRequestError(DioException e) {
+    final status = e.response?.statusCode;
+    final body = e.response?.data;
+    final error = body is Map<String, dynamic> ? body['error'] as String? : null;
+    final retryAfterSec =
+        body is Map<String, dynamic> ? (body['retryAfterSec'] as num?)?.toInt() : null;
+
+    if (status == 429 && error == 'otp_cooldown') {
+      return OtpRequestException(
+        OtpRequestFailure.cooldown,
+        retryAfterSec: retryAfterSec,
+      );
+    }
+    if (status == 429 && error == 'otp_daily_cap_reached') {
+      return OtpRequestException(
+        OtpRequestFailure.dailyCap,
+        retryAfterSec: retryAfterSec,
+      );
+    }
+    if (status == 400 && error == 'invalid_phone') {
+      return const OtpRequestException(OtpRequestFailure.invalidPhone);
+    }
+    if (status == 502 && error == 'sms_send_failed') {
+      return const OtpRequestException(OtpRequestFailure.smsFailed);
+    }
+    // Connection / unknown — treat as network so the user is told to retry.
+    return const OtpRequestException(OtpRequestFailure.network);
   }
 
   @override

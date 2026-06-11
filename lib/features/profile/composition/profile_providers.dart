@@ -1,9 +1,12 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../core/config/app_environment.dart';
+import '../../../core/network/dio_provider.dart';
 import '../../../core/storage/shared_prefs_provider.dart';
 import '../../auth/composition/auth_providers.dart';
 import '../../cars/composition/cars_providers.dart';
 import '../../orders/composition/orders_providers.dart';
+import '../adapters/outbound/http_client_profile_repository.dart';
 import '../adapters/outbound/shared_prefs_client_profile_repository.dart';
 import '../application/ports/outbound/client_profile_repository_port.dart';
 import '../application/use_cases/get_client_profile.dart';
@@ -11,12 +14,19 @@ import '../application/use_cases/save_client_profile.dart';
 import '../application/use_cases/wipe_account.dart';
 import '../domain/client_profile.dart';
 
-/// Storage for the registered client (name, email). Single-tenant for now
-/// — keyed by the session's phone so a phone swap re-prompts onboarding.
+/// Storage for the client profile (name, email). In remote mode the data is
+/// derived from RoApp on every read (via GET /v1/profile); in local mode it
+/// persists to SharedPrefs and is editable through RegisterClientScreen.
 final clientProfileRepositoryProvider = Provider<ClientProfileRepositoryPort>(
-  (ref) => SharedPrefsClientProfileRepository(
-    ref.watch(sharedPreferencesProvider),
-  ),
+  (ref) {
+    return switch (ref.watch(appEnvironmentProvider)) {
+      AppEnvironment.remote =>
+        HttpClientProfileRepository(ref.watch(dioProvider)),
+      AppEnvironment.local => SharedPrefsClientProfileRepository(
+          ref.watch(sharedPreferencesProvider),
+        ),
+    };
+  },
 );
 
 final getClientProfileUseCaseProvider = Provider<GetClientProfileUseCase>(

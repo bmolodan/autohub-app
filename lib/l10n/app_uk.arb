@@ -99,6 +99,29 @@
     "placeholders": { "error": { "type": "String" } }
   },
   "orderTimelineEmpty": "Поки що жодних подій",
+  "orderInfoType": "Тип робіт",
+  "orderInfoResource": "Місце",
+  "orderInfoDueDate": "Виконати до",
+  "orderUrgent": "Терміново",
+  "orderOverdue": "Прострочено",
+  "orderEstimateHeading": "КОШТОРИС",
+  "orderEstimateServices": "Послуги",
+  "orderEstimateProducts": "Запчастини",
+  "orderEstimateSubtotal": "Сума",
+  "orderEstimateDiscount": "Знижка",
+  "orderEstimatePaid": "Сплачено",
+  "orderEstimateBalance": "До сплати",
+  "orderItemQtyPrice": "{qty} × {price} ₴",
+  "@orderItemQtyPrice": {
+    "placeholders": {
+      "qty": { "type": "int" },
+      "price": { "type": "int" }
+    }
+  },
+  "orderMoney": "{amount} ₴",
+  "@orderMoney": {
+    "placeholders": { "amount": { "type": "int" } }
+  },
   "carsListTitle": "Мої авто",
   "carsAddCta": "Додати авто",
   "carDetailNextService": "Наступне ТО",

@@ -94,7 +94,10 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      expect(find.text('Богдане'), findsOneWidget);
+      // Greeting prefix is always shown. The name slot is empty when the
+      // profile has no name (e.g. user with no RoApp footprint), which is
+      // the default state in widget tests that don't override the profile.
+      expect(find.text('Привіт,'), findsOneWidget);
       expect(find.text('+ Записатись'), findsOneWidget);
     });
   });

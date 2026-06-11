@@ -13,6 +13,7 @@ import '../../../../l10n/generated/app_localizations.dart';
 import '../../../../l10n/l10n_extension.dart';
 import '../../application/use_cases/get_service_history.dart';
 import '../../composition/history_providers.dart';
+import '../../domain/service_record.dart';
 
 String _monthName(AppLocalizations l, int month) => switch (month) {
       1 => l.monthJanuary,
@@ -30,15 +31,82 @@ String _monthName(AppLocalizations l, int month) => switch (month) {
       _ => throw ArgumentError.value(month, 'month', 'must be 1..12'),
     };
 
-/// Mockup 08 — service history grouped by month.
-class HistoryScreen extends ConsumerWidget {
-  const HistoryScreen({super.key, this.vehicleId = 'v-camry-1'});
+/// Aggregated service history grouped by month. When [vehicleId] is null
+/// (the default for the tab) the screen fetches every closed service across
+/// every vehicle the customer owns. When non-null, the screen narrows to a
+/// single vehicle — used by deeplinks from CarDetailScreen.
+class HistoryScreen extends ConsumerStatefulWidget {
+  const HistoryScreen({super.key, this.vehicleId});
 
-  final String vehicleId;
+  final String? vehicleId;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final async = ref.watch(serviceHistoryProvider(vehicleId));
+  ConsumerState<HistoryScreen> createState() => _HistoryScreenState();
+}
+
+class _HistoryScreenState extends ConsumerState<HistoryScreen> {
+  /// Records revealed per "page". Ten matches roughly one phone-screen worth
+  /// of tiles — small enough that the user sees progress on each bump,
+  /// big enough that we don't thrash setState during a fast fling.
+  static const _pageSize = 10;
+
+  /// Distance from the bottom (in logical pixels) at which we kick off the
+  /// next batch. Bumping early avoids a visible gap while the next slice
+  /// renders.
+  static const _prefetchPx = 300.0;
+
+  final _scrollController = ScrollController();
+  int _visibleCount = _pageSize;
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollController.addListener(_onScroll);
+  }
+
+  @override
+  void dispose() {
+    _scrollController
+      ..removeListener(_onScroll)
+      ..dispose();
+    super.dispose();
+  }
+
+  void _onScroll() {
+    if (!_scrollController.hasClients) return;
+    final pos = _scrollController.position;
+    if (pos.pixels < pos.maxScrollExtent - _prefetchPx) return;
+
+    // Skip the bump if we've already revealed every record — otherwise
+    // _visibleCount grows unbounded as the user keeps overscrolling at the
+    // bottom, causing useless rebuilds.
+    final id = widget.vehicleId;
+    final total = id == null
+        ? ref.read(aggregatedServiceHistoryProvider).value?.totalRecords
+        : ref.read(serviceHistoryProvider(id)).value?.totalRecords;
+    if (total != null && _visibleCount >= total) return;
+
+    if (mounted) setState(() => _visibleCount += _pageSize);
+  }
+
+  Future<void> _refresh() async {
+    if (mounted) setState(() => _visibleCount = _pageSize);
+    final id = widget.vehicleId;
+    if (id == null) {
+      ref.invalidate(aggregatedServiceHistoryProvider);
+      await ref.read(aggregatedServiceHistoryProvider.future);
+    } else {
+      ref.invalidate(serviceHistoryProvider(id));
+      await ref.read(serviceHistoryProvider(id).future);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final id = widget.vehicleId;
+    final async = id == null
+        ? ref.watch(aggregatedServiceHistoryProvider)
+        : ref.watch(serviceHistoryProvider(id));
 
     return Scaffold(
       appBar: AppBar(
@@ -47,65 +115,102 @@ class HistoryScreen extends ConsumerWidget {
       body: SafeArea(
         child: async.when(
           loading: () => const _HistorySkeleton(),
-          error: (e, _) => ErrorState(
-            onRetry: () => ref.invalidate(serviceHistoryProvider(vehicleId)),
+          error: (e, _) => ErrorState(onRetry: _refresh),
+          data: (output) => RefreshIndicator(
+            onRefresh: _refresh,
+            child: output.months.isEmpty
+                ? ListView(
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    children: [
+                      SizedBox(
+                        height: MediaQuery.of(context).size.height * 0.5,
+                        child: EmptyState(
+                          icon: Icons.history,
+                          title: context.l10n.historyEmptyTitle,
+                          subtitle: context.l10n.historyEmptySubtitle,
+                        ),
+                      ),
+                    ],
+                  )
+                : _HistoryView(
+                    output: output,
+                    showVehicleLabel: id == null,
+                    scrollController: _scrollController,
+                    visibleCount: _visibleCount,
+                  ),
           ),
-          data: (output) => output.months.isEmpty
-              ? EmptyState(
-                  icon: Icons.history,
-                  title: context.l10n.historyEmptyTitle,
-                  subtitle: context.l10n.historyEmptySubtitle,
-                )
-              : _HistoryView(output: output),
         ),
       ),
     );
   }
 }
 
+/// Slice the month-grouped output to the first [n] records (records are
+/// already newest-first inside and across months). Months that fall entirely
+/// past the cut are dropped; the boundary month is truncated.
+List<ServiceHistoryMonth> _firstNRecords(
+  List<ServiceHistoryMonth> months,
+  int n,
+) {
+  final out = <ServiceHistoryMonth>[];
+  var remaining = n;
+  for (final m in months) {
+    if (remaining <= 0) break;
+    if (m.records.length <= remaining) {
+      out.add(m);
+      remaining -= m.records.length;
+    } else {
+      out.add(
+        ServiceHistoryMonth(
+          year: m.year,
+          month: m.month,
+          records: m.records.take(remaining).toList(),
+        ),
+      );
+      remaining = 0;
+    }
+  }
+  return out;
+}
+
 class _HistoryView extends StatelessWidget {
-  const _HistoryView({required this.output});
+  const _HistoryView({
+    required this.output,
+    required this.showVehicleLabel,
+    required this.scrollController,
+    required this.visibleCount,
+  });
+
   final GetServiceHistoryOutput output;
+  final bool showVehicleLabel;
+  final ScrollController scrollController;
+  final int visibleCount;
 
   @override
   Widget build(BuildContext context) {
-    final completed =
-        output.months.fold<int>(0, (n, m) => n + m.records.length);
-    // Year shown next to the vehicle pill — derive from the newest month
-    // (months are already returned newest-first).
-    final latestYear =
-        output.months.isEmpty ? null : output.months.first.year.toString();
+    final completedTotal = output.totalRecords;
+    final hasMore = visibleCount < completedTotal;
+    final visibleMonths = _firstNRecords(output.months, visibleCount);
+
     return ListView(
+      controller: scrollController,
+      physics: const AlwaysScrollableScrollPhysics(),
       padding: const EdgeInsets.fromLTRB(
         AppSpacing.lg,
-        AppSpacing.sm,
+        AppSpacing.md,
         AppSpacing.lg,
         AppSpacing.lg,
       ),
       children: [
-        Row(
-          children: [
-            const _VehicleChip(label: 'Toyota Camry'),
-            const Spacer(),
-            if (latestYear != null) _VehicleChip(label: latestYear),
-          ],
-        ),
-        const SizedBox(height: AppSpacing.md),
+        // Completed count always reflects the full set — pagination is a
+        // rendering concern, not a counting one.
         Text(
-          context.l10n.historyTotalLabel,
-          style: AppTypography.bodySmall
-              .copyWith(color: context.colors.textSecondary),
-        ),
-        const SizedBox(height: AppSpacing.xxs),
-        Text('${output.totalUah} ₴', style: AppTypography.headlineLarge),
-        const SizedBox(height: AppSpacing.xxs),
-        Text(
-          context.l10n.historyCompletedCount(completed),
+          context.l10n.historyCompletedCount(completedTotal),
           style: AppTypography.bodySmall
               .copyWith(color: context.colors.textSecondary),
         ),
         const SizedBox(height: AppSpacing.lg),
-        for (final month in output.months) ...[
+        for (final month in visibleMonths) ...[
           _MonthHeader(year: month.year, month: month.month),
           const SizedBox(height: AppSpacing.sm),
           for (final record in month.records)
@@ -113,36 +218,22 @@ class _HistoryView extends StatelessWidget {
               title: record.title,
               dateLabel:
                   '${record.completedAt.day} ${_monthName(context.l10n, record.completedAt.month).toLowerCase()}',
-              priceUah: record.priceUah,
+              vehicleLabel: showVehicleLabel ? record.vehicle.label : null,
             ),
           const SizedBox(height: AppSpacing.lg),
         ],
+        if (hasMore)
+          const Padding(
+            padding: EdgeInsets.symmetric(vertical: AppSpacing.md),
+            child: Center(
+              child: SizedBox(
+                width: 24,
+                height: 24,
+                child: CircularProgressIndicator(strokeWidth: 2),
+              ),
+            ),
+          ),
       ],
-    );
-  }
-}
-
-class _VehicleChip extends StatelessWidget {
-  const _VehicleChip({required this.label});
-  final String label;
-
-  @override
-  Widget build(BuildContext context) {
-    return Align(
-      alignment: Alignment.centerLeft,
-      child: Container(
-        padding: const EdgeInsets.symmetric(
-          horizontal: AppSpacing.md,
-          vertical: AppSpacing.xs,
-        ),
-        decoration: BoxDecoration(
-          color: context.colors.brandYellow,
-          borderRadius: AppRadii.pillAll,
-        ),
-        child: Text(label,
-            style: AppTypography.labelMedium
-                .copyWith(color: context.colors.onYellow)),
-      ),
     );
   }
 }
@@ -186,22 +277,14 @@ class _HistorySkeleton extends StatelessWidget {
             borderRadius: AppRadii.lgAll,
             border: Border.all(color: context.colors.border, width: 0.5),
           ),
-          child: Row(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text('Loading record title',
-                        style: AppTypography.titleSmall),
-                    const SizedBox(height: AppSpacing.xxs),
-                    Text('Jan 1 · 0 km',
-                        style: AppTypography.bodySmall
-                            .copyWith(color: context.colors.textSecondary)),
-                  ],
-                ),
-              ),
-              Text('0 ₴', style: AppTypography.labelLarge),
+              Text('Loading record title', style: AppTypography.titleSmall),
+              const SizedBox(height: AppSpacing.xxs),
+              Text('Jan 1',
+                  style: AppTypography.bodySmall
+                      .copyWith(color: context.colors.textSecondary)),
             ],
           ),
         ),

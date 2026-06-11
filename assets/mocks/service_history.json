@@ -1,30 +1,27 @@
 [
-  {
-    "id": "h-1001",
-    "title": "ТО-15000",
-    "completed_at": "2026-04-18T11:30:00+03:00",
-    "price_uah": 2400,
-    "vehicle_id": "v-camry-1"
-  },
-  {
-    "id": "h-1002",
-    "title": "Гальм. колодки",
-    "completed_at": "2026-04-05T15:10:00+03:00",
-    "price_uah": 1850,
-    "vehicle_id": "v-camry-1"
-  },
-  {
-    "id": "h-1003",
-    "title": "Шиномонтаж",
-    "completed_at": "2026-04-02T09:45:00+03:00",
-    "price_uah": 800,
-    "vehicle_id": "v-camry-1"
-  },
-  {
-    "id": "h-1004",
-    "title": "Заміна масла",
-    "completed_at": "2026-03-15T13:20:00+03:00",
-    "price_uah": 1200,
-    "vehicle_id": "v-camry-1"
-  }
+  {"id": "h-2601", "title": "ТО-15000", "completed_at": "2026-04-18T11:30:00+03:00", "vehicle_id": "v-camry-1", "vehicle": {"make": "Toyota", "model": "Camry", "plate": "AA 1234 BC"}},
+  {"id": "h-2602", "title": "Гальм. колодки", "completed_at": "2026-04-15T15:10:00+03:00", "vehicle_id": "v-camry-1", "vehicle": {"make": "Toyota", "model": "Camry", "plate": "AA 1234 BC"}},
+  {"id": "h-2603", "title": "Шиномонтаж", "completed_at": "2026-04-10T09:45:00+03:00", "vehicle_id": "v-camry-1", "vehicle": {"make": "Toyota", "model": "Camry", "plate": "AA 1234 BC"}},
+  {"id": "h-2604", "title": "Заміна масла", "completed_at": "2026-04-05T13:20:00+03:00", "vehicle_id": "v-camry-1", "vehicle": {"make": "Toyota", "model": "Camry", "plate": "AA 1234 BC"}},
+  {"id": "h-2605", "title": "Заміна фільтрів", "completed_at": "2026-04-02T08:30:00+03:00", "vehicle_id": "v-camry-1", "vehicle": {"make": "Toyota", "model": "Camry", "plate": "AA 1234 BC"}},
+  {"id": "h-2606", "title": "Ремонт стартера", "completed_at": "2026-03-28T12:00:00+03:00", "vehicle_id": "v-camry-1", "vehicle": {"make": "Toyota", "model": "Camry", "plate": "AA 1234 BC"}},
+  {"id": "h-2607", "title": "Розвал-сходження", "completed_at": "2026-03-22T16:15:00+03:00", "vehicle_id": "v-camry-1", "vehicle": {"make": "Toyota", "model": "Camry", "plate": "AA 1234 BC"}},
+  {"id": "h-2608", "title": "Заміна свічок запалювання", "completed_at": "2026-03-18T10:40:00+03:00", "vehicle_id": "v-camry-1", "vehicle": {"make": "Toyota", "model": "Camry", "plate": "AA 1234 BC"}},
+  {"id": "h-2609", "title": "Ремонт підвіски", "completed_at": "2026-03-12T11:25:00+03:00", "vehicle_id": "v-camry-1", "vehicle": {"make": "Toyota", "model": "Camry", "plate": "AA 1234 BC"}},
+  {"id": "h-2610", "title": "Діагностика", "completed_at": "2026-03-05T09:00:00+03:00", "vehicle_id": "v-camry-1", "vehicle": {"make": "Toyota", "model": "Camry", "plate": "AA 1234 BC"}},
+  {"id": "h-2611", "title": "Заміна ременя ГРМ", "completed_at": "2026-02-28T13:45:00+03:00", "vehicle_id": "v-camry-1", "vehicle": {"make": "Toyota", "model": "Camry", "plate": "AA 1234 BC"}},
+  {"id": "h-2612", "title": "Чистка форсунок", "completed_at": "2026-02-22T15:00:00+03:00", "vehicle_id": "v-camry-1", "vehicle": {"make": "Toyota", "model": "Camry", "plate": "AA 1234 BC"}},
+  {"id": "h-2613", "title": "Ремонт кондиціонера", "completed_at": "2026-02-15T11:30:00+03:00", "vehicle_id": "v-camry-1", "vehicle": {"make": "Toyota", "model": "Camry", "plate": "AA 1234 BC"}},
+  {"id": "h-2614", "title": "Заміна гальм. дисків", "completed_at": "2026-02-08T14:20:00+03:00", "vehicle_id": "v-camry-1", "vehicle": {"make": "Toyota", "model": "Camry", "plate": "AA 1234 BC"}},
+  {"id": "h-2615", "title": "Заміна антифризу", "completed_at": "2026-02-03T10:00:00+03:00", "vehicle_id": "v-camry-1", "vehicle": {"make": "Toyota", "model": "Camry", "plate": "AA 1234 BC"}},
+  {"id": "h-2616", "title": "Ремонт глушника", "completed_at": "2026-01-26T12:50:00+03:00", "vehicle_id": "v-camry-1", "vehicle": {"make": "Toyota", "model": "Camry", "plate": "AA 1234 BC"}},
+  {"id": "h-2617", "title": "Балансування коліс", "completed_at": "2026-01-19T09:15:00+03:00", "vehicle_id": "v-camry-1", "vehicle": {"make": "Toyota", "model": "Camry", "plate": "AA 1234 BC"}},
+  {"id": "h-2618", "title": "Заміна акумулятора", "completed_at": "2026-01-12T11:10:00+03:00", "vehicle_id": "v-camry-1", "vehicle": {"make": "Toyota", "model": "Camry", "plate": "AA 1234 BC"}},
+  {"id": "h-2619", "title": "Заміна щіток склоочисника", "completed_at": "2026-01-06T08:40:00+03:00", "vehicle_id": "v-camry-1", "vehicle": {"make": "Toyota", "model": "Camry", "plate": "AA 1234 BC"}},
+  {"id": "h-2620", "title": "Ремонт електропроводки", "completed_at": "2025-12-22T13:30:00+03:00", "vehicle_id": "v-camry-1", "vehicle": {"make": "Toyota", "model": "Camry", "plate": "AA 1234 BC"}},
+  {"id": "h-2621", "title": "Заміна датчика кисню", "completed_at": "2025-12-15T15:20:00+03:00", "vehicle_id": "v-camry-1", "vehicle": {"make": "Toyota", "model": "Camry", "plate": "AA 1234 BC"}},
+  {"id": "h-2622", "title": "Ремонт зчеплення", "completed_at": "2025-12-08T10:55:00+03:00", "vehicle_id": "v-camry-1", "vehicle": {"make": "Toyota", "model": "Camry", "plate": "AA 1234 BC"}},
+  {"id": "h-2623", "title": "Заміна салонного фільтра", "completed_at": "2025-12-01T12:00:00+03:00", "vehicle_id": "v-camry-1", "vehicle": {"make": "Toyota", "model": "Camry", "plate": "AA 1234 BC"}},
+  {"id": "h-2624", "title": "Ремонт ходової", "completed_at": "2025-11-24T14:45:00+03:00", "vehicle_id": "v-camry-1", "vehicle": {"make": "Toyota", "model": "Camry", "plate": "AA 1234 BC"}},
+  {"id": "h-2625", "title": "ТО-10000", "completed_at": "2025-11-17T09:30:00+03:00", "vehicle_id": "v-camry-1", "vehicle": {"make": "Toyota", "model": "Camry", "plate": "AA 1234 BC"}}
 ]

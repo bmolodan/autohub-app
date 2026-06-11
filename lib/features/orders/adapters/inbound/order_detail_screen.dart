@@ -13,6 +13,7 @@ import '../../../../core/widgets/confirm_dialog.dart';
 import '../../../../core/widgets/empty_state.dart';
 import '../../../../core/widgets/error_state.dart';
 import '../../../../core/widgets/stat_card.dart';
+import '../../../../l10n/generated/app_localizations.dart';
 import '../../../../l10n/l10n_extension.dart';
 import '../../composition/orders_providers.dart';
 import '../../domain/active_order.dart';
@@ -78,7 +79,12 @@ class _InProgressBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = context.l10n;
     final etaLabel = order.eta != null ? formatHm(order.eta!) : '—';
+    // Background bleed from RoApp's per-status color (e.g. #099B49 for
+    // "Платний"/in-work). Falls back to the design baseline.
+    final heroBg = _parseHexColor(order.statusColor) ?? context.colors.heroSurface;
+    final onHero = _onSurface(heroBg);
 
     return ListView(
       padding: const EdgeInsets.symmetric(vertical: AppSpacing.md),
@@ -90,26 +96,32 @@ class _InProgressBody extends StatelessWidget {
             child: Container(
               padding: const EdgeInsets.all(AppSpacing.md),
               decoration: BoxDecoration(
-                color: context.colors.heroSurface,
+                color: heroBg,
                 borderRadius: AppRadii.xlAll,
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    orderStatusLabel(context.l10n, order.status).toUpperCase(),
-                    style: AppTypography.overline
-                        .copyWith(color: context.colors.brandYellow),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          orderStatusLabel(l, order.status).toUpperCase(),
+                          style: AppTypography.overline
+                              .copyWith(color: onHero.withValues(alpha: 0.85)),
+                        ),
+                      ),
+                      _UrgencyChip(order: order),
+                    ],
                   ),
                   const SizedBox(height: AppSpacing.xxs),
                   Text(order.title,
-                      style: AppTypography.headlineSmall
-                          .copyWith(color: context.colors.onHeroSurface)),
+                      style:
+                          AppTypography.headlineSmall.copyWith(color: onHero)),
                   const SizedBox(height: AppSpacing.xxs),
                   Text(order.vehicleSummary,
                       style: AppTypography.bodySmall.copyWith(
-                          color: context.colors.onHeroSurface
-                              .withValues(alpha: 0.65))),
+                          color: onHero.withValues(alpha: 0.7))),
                   const SizedBox(height: AppSpacing.md),
                   Row(
                     children: [
@@ -120,7 +132,7 @@ class _InProgressBody extends StatelessWidget {
                       Text(
                         '~$etaLabel',
                         style: AppTypography.labelMedium
-                            .copyWith(color: context.colors.brandYellow),
+                            .copyWith(color: onHero),
                       ),
                     ],
                   ),
@@ -130,17 +142,15 @@ class _InProgressBody extends StatelessWidget {
           ),
         ),
         const SizedBox(height: AppSpacing.lg),
-        Text(context.l10n.orderTimelineHeading,
+        _InfoRow(order: order),
+        const SizedBox(height: AppSpacing.lg),
+        Text(l.orderTimelineHeading,
             style: AppTypography.overline
                 .copyWith(color: context.colors.textSecondary)),
         const SizedBox(height: AppSpacing.sm),
         _Timeline(entries: order.timeline),
         const SizedBox(height: AppSpacing.lg),
-        if (order.totalUah != null)
-          StatCard(
-            label: context.l10n.orderEstimate,
-            value: context.l10n.orderEstimateValue(order.totalUah!),
-          ),
+        _EstimateSection(order: order),
         const SizedBox(height: AppSpacing.lg),
       ],
     );
@@ -200,10 +210,17 @@ class _PendingBodyState extends ConsumerState<_PendingBody> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    l.orderPendingHeroLabel,
-                    style: AppTypography.overline
-                        .copyWith(color: context.colors.onYellow),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          l.orderPendingHeroLabel,
+                          style: AppTypography.overline
+                              .copyWith(color: context.colors.onYellow),
+                        ),
+                      ),
+                      _UrgencyChip(order: order),
+                    ],
                   ),
                   const SizedBox(height: AppSpacing.xxs),
                   Text(order.title,
@@ -220,22 +237,19 @@ class _PendingBodyState extends ConsumerState<_PendingBody> {
         ),
         const SizedBox(height: AppSpacing.lg),
         StatCard(label: l.orderScheduledTime, value: scheduledLabel),
-        if (order.totalUah != null) ...[
-          const SizedBox(height: AppSpacing.sm),
-          StatCard(
-            label: l.orderEstimate,
-            value: l.orderEstimateValueFrom(order.totalUah!),
-          ),
-        ],
         const SizedBox(height: AppSpacing.lg),
+        _InfoRow(order: order),
         if (order.timeline.isNotEmpty) ...[
+          const SizedBox(height: AppSpacing.lg),
           Text(l.orderJournalHeading,
               style: AppTypography.overline
                   .copyWith(color: context.colors.textSecondary)),
           const SizedBox(height: AppSpacing.sm),
           _Timeline(entries: order.timeline),
-          const SizedBox(height: AppSpacing.lg),
         ],
+        const SizedBox(height: AppSpacing.lg),
+        _EstimateSection(order: order),
+        const SizedBox(height: AppSpacing.lg),
         OutlinedButton(
           onPressed: _confirmCancel,
           style:
@@ -298,6 +312,266 @@ class _CanceledBody extends StatelessWidget {
       ],
     );
   }
+}
+
+class _InfoRow extends StatelessWidget {
+  const _InfoRow({required this.order});
+  final ActiveOrder order;
+
+  @override
+  Widget build(BuildContext context) {
+    final l = context.l10n;
+    final entries = <(String, String)>[
+      if (order.orderType != null && order.orderType!.isNotEmpty)
+        (l.orderInfoType, order.orderType!),
+      if (order.resource != null && order.resource!.isNotEmpty)
+        (l.orderInfoResource, order.resource!),
+      if (order.dueDate != null)
+        (l.orderInfoDueDate, formatDdMmHm(order.dueDate!)),
+    ];
+    if (entries.isEmpty) return const SizedBox.shrink();
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        for (var i = 0; i < entries.length; i++) ...[
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(entries[i].$1,
+                    style: AppTypography.overline
+                        .copyWith(color: context.colors.textSecondary)),
+                const SizedBox(height: AppSpacing.xxs),
+                Text(entries[i].$2, style: AppTypography.bodyMedium),
+              ],
+            ),
+          ),
+          if (i < entries.length - 1) const SizedBox(width: AppSpacing.sm),
+        ],
+      ],
+    );
+  }
+}
+
+class _UrgencyChip extends StatelessWidget {
+  const _UrgencyChip({required this.order});
+  final ActiveOrder order;
+
+  @override
+  Widget build(BuildContext context) {
+    if (order.isOverdue) {
+      return _Chip(
+        icon: Icons.error_outline,
+        label: context.l10n.orderOverdue,
+        background: context.colors.error,
+        foreground: Colors.white,
+      );
+    }
+    if (order.isUrgent) {
+      return _Chip(
+        icon: Icons.priority_high,
+        label: context.l10n.orderUrgent,
+        background: context.colors.brandYellow,
+        foreground: context.colors.onYellow,
+      );
+    }
+    return const SizedBox.shrink();
+  }
+}
+
+class _Chip extends StatelessWidget {
+  const _Chip({
+    required this.icon,
+    required this.label,
+    required this.background,
+    required this.foreground,
+  });
+  final IconData icon;
+  final String label;
+  final Color background;
+  final Color foreground;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(
+          horizontal: AppSpacing.xs, vertical: AppSpacing.xxs),
+      decoration: BoxDecoration(
+        color: background,
+        borderRadius: AppRadii.smAll,
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: 14, color: foreground),
+          const SizedBox(width: AppSpacing.xxs),
+          Text(label,
+              style: AppTypography.labelSmall.copyWith(color: foreground)),
+        ],
+      ),
+    );
+  }
+}
+
+class _EstimateSection extends StatelessWidget {
+  const _EstimateSection({required this.order});
+  final ActiveOrder order;
+
+  @override
+  Widget build(BuildContext context) {
+    if (order.items.isEmpty && order.totalUah == null) {
+      return const SizedBox.shrink();
+    }
+    final l = context.l10n;
+    final services =
+        order.items.where((i) => i.kind == OrderItemKind.service).toList();
+    final products =
+        order.items.where((i) => i.kind == OrderItemKind.product).toList();
+    final total = order.totalUah ?? 0;
+    final paid = order.paidUah ?? 0;
+    final discount = order.discountUah ?? 0;
+    final balance = total - paid;
+
+    return Container(
+      padding: const EdgeInsets.all(AppSpacing.md),
+      decoration: BoxDecoration(
+        color: context.colors.surface,
+        borderRadius: AppRadii.lgAll,
+        border: Border.all(color: context.colors.border, width: 0.5),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(l.orderEstimateHeading,
+              style: AppTypography.overline
+                  .copyWith(color: context.colors.textSecondary)),
+          const SizedBox(height: AppSpacing.sm),
+          if (services.isNotEmpty)
+            _ItemGroup(label: l.orderEstimateServices, items: services),
+          if (services.isNotEmpty && products.isNotEmpty)
+            const SizedBox(height: AppSpacing.sm),
+          if (products.isNotEmpty)
+            _ItemGroup(label: l.orderEstimateProducts, items: products),
+          if (order.items.isNotEmpty)
+            const Padding(
+              padding: EdgeInsets.symmetric(vertical: AppSpacing.sm),
+              child: Divider(height: 1),
+            ),
+          if (order.totalUah != null) ...[
+            _TotalRow(label: l.orderEstimateSubtotal, value: total),
+            if (discount > 0)
+              _TotalRow(
+                  label: l.orderEstimateDiscount,
+                  value: discount,
+                  emphasize: false,
+                  isNegative: true),
+            if (paid > 0)
+              _TotalRow(label: l.orderEstimatePaid, value: paid),
+            const SizedBox(height: AppSpacing.xxs),
+            _TotalRow(
+                label: l.orderEstimateBalance, value: balance, emphasize: true),
+          ],
+        ],
+      ),
+    );
+  }
+}
+
+class _ItemGroup extends StatelessWidget {
+  const _ItemGroup({required this.label, required this.items});
+  final String label;
+  final List<OrderItem> items;
+
+  @override
+  Widget build(BuildContext context) {
+    final l = context.l10n;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(label,
+            style: AppTypography.labelMedium
+                .copyWith(color: context.colors.textSecondary)),
+        const SizedBox(height: AppSpacing.xs),
+        for (final item in items)
+          Padding(
+            padding: const EdgeInsets.only(bottom: AppSpacing.xs),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(item.name, style: AppTypography.bodyMedium),
+                      Text(
+                        l.orderItemQtyPrice(item.quantity, item.priceUah),
+                        style: AppTypography.bodySmall
+                            .copyWith(color: context.colors.textSecondary),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(width: AppSpacing.sm),
+                Text(
+                  l.orderMoney(item.sumUah),
+                  style: AppTypography.bodyMedium
+                      .copyWith(fontWeight: FontWeight.w600),
+                ),
+              ],
+            ),
+          ),
+      ],
+    );
+  }
+}
+
+class _TotalRow extends StatelessWidget {
+  const _TotalRow({
+    required this.label,
+    required this.value,
+    this.emphasize = false,
+    this.isNegative = false,
+  });
+  final String label;
+  final int value;
+  final bool emphasize;
+  final bool isNegative;
+
+  @override
+  Widget build(BuildContext context) {
+    final l = context.l10n;
+    final amount = isNegative ? '−${l.orderMoney(value)}' : l.orderMoney(value);
+    final style = emphasize
+        ? AppTypography.titleMedium.copyWith(fontWeight: FontWeight.w700)
+        : AppTypography.bodyMedium;
+    final labelStyle = emphasize
+        ? style
+        : AppTypography.bodyMedium.copyWith(color: context.colors.textSecondary);
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: AppSpacing.xxs),
+      child: Row(
+        children: [
+          Expanded(child: Text(label, style: labelStyle)),
+          Text(amount, style: style),
+        ],
+      ),
+    );
+  }
+}
+
+Color? _parseHexColor(String? hex) {
+  if (hex == null) return null;
+  var s = hex.trim();
+  if (s.startsWith('#')) s = s.substring(1);
+  if (s.length == 6) s = 'FF$s';
+  if (s.length != 8) return null;
+  final v = int.tryParse(s, radix: 16);
+  if (v == null) return null;
+  return Color(v);
+}
+
+Color _onSurface(Color bg) {
+  return bg.computeLuminance() > 0.55 ? Colors.black87 : Colors.white;
 }
 
 class _Timeline extends StatelessWidget {
@@ -523,3 +797,9 @@ class _LoadingSkeleton extends StatelessWidget {
     );
   }
 }
+
+// Keep the import non-unused: AppLocalizations is referenced through
+// `context.l10n` (ext getter) — the explicit import is for callers of
+// helpers below if/when they need typed `l` outside `context.l10n`.
+// ignore: unused_element
+typedef _UnusedL = AppLocalizations;

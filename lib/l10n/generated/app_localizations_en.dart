@@ -261,6 +261,52 @@ class AppLocalizationsEn extends AppLocalizations {
   String get orderTimelineEmpty => 'No events yet';
 
   @override
+  String get orderInfoType => 'Work type';
+
+  @override
+  String get orderInfoResource => 'Bay';
+
+  @override
+  String get orderInfoDueDate => 'Due by';
+
+  @override
+  String get orderUrgent => 'Urgent';
+
+  @override
+  String get orderOverdue => 'Overdue';
+
+  @override
+  String get orderEstimateHeading => 'ESTIMATE';
+
+  @override
+  String get orderEstimateServices => 'Services';
+
+  @override
+  String get orderEstimateProducts => 'Parts';
+
+  @override
+  String get orderEstimateSubtotal => 'Subtotal';
+
+  @override
+  String get orderEstimateDiscount => 'Discount';
+
+  @override
+  String get orderEstimatePaid => 'Paid';
+
+  @override
+  String get orderEstimateBalance => 'Balance';
+
+  @override
+  String orderItemQtyPrice(int qty, int price) {
+    return '$qty × $price ₴';
+  }
+
+  @override
+  String orderMoney(int amount) {
+    return '$amount ₴';
+  }
+
+  @override
   String get carsListTitle => 'My cars';
 
   @override

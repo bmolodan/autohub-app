@@ -104,9 +104,18 @@ final vehiclesControllerProvider =
   VehiclesController.new,
 );
 
+/// Look up a vehicle by id from the already-loaded list. The list itself is
+/// kept in [vehiclesControllerProvider] (AsyncNotifier, alive for the
+/// session), so this provider doesn't hit the network — there is no
+/// `/v1/vehicles/{id}` endpoint to call. In local mode the repo's findById
+/// would work, but for consistency between modes we always use the list.
 final vehicleByIdProvider =
-    FutureProvider.family.autoDispose<Vehicle?, String>((ref, id) {
-  return ref.watch(getVehicleUseCaseProvider).execute(GetVehicleInput(id: id));
+    FutureProvider.family.autoDispose<Vehicle?, String>((ref, id) async {
+  final all = await ref.watch(vehiclesControllerProvider.future);
+  for (final v in all) {
+    if (v.id == id) return v;
+  }
+  return null;
 });
 
 /// Bundled make/model catalog used by the Add Car screen autocomplete.

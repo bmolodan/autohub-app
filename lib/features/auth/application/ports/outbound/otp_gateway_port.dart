@@ -17,6 +17,36 @@ class InvalidOtpException implements Exception {
   String toString() => 'InvalidOtpException($reason)';
 }
 
+enum OtpRequestFailure {
+  /// Server-side per-phone cooldown (429 otp_cooldown).
+  cooldown,
+
+  /// Server-side per-phone daily cap (429 otp_daily_cap_reached).
+  dailyCap,
+
+  /// Phone failed validation (400 invalid_phone).
+  invalidPhone,
+
+  /// SMS provider rejected (502 sms_send_failed) — usually balance, blocked
+  /// sender name, or transport error on the upstream side.
+  smsFailed,
+
+  /// Network/connection problem reaching the middleware.
+  network,
+}
+
+/// Thrown when [OtpGatewayPort.request] cannot deliver a challenge.
+class OtpRequestException implements Exception {
+  const OtpRequestException(this.reason, {this.retryAfterSec});
+  final OtpRequestFailure reason;
+
+  /// Populated for [OtpRequestFailure.cooldown] and [OtpRequestFailure.dailyCap].
+  final int? retryAfterSec;
+
+  @override
+  String toString() => 'OtpRequestException($reason, retryAfter=$retryAfterSec)';
+}
+
 /// Outbound port — speaks to whatever issues + validates OTP codes
 /// (SMS provider, Firebase Auth, etc.).
 abstract interface class OtpGatewayPort {

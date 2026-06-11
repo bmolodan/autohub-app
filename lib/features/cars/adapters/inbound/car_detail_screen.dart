@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../core/config/app_environment.dart';
 import '../../../../core/router/app_router.dart';
 import '../../../../core/theme/app_radii.dart';
 import '../../../../core/theme/app_sizes.dart';
@@ -69,6 +70,9 @@ class CarDetailScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final async = ref.watch(vehicleByIdProvider(vehicleId));
     final l = context.l10n;
+    // Edit/delete not available in remote mode — vehicles are read-only,
+    // synced from RoApp orders.
+    final canEdit = ref.watch(appEnvironmentProvider) == AppEnvironment.local;
 
     return Scaffold(
       appBar: AppBar(
@@ -77,19 +81,22 @@ class CarDetailScreen extends ConsumerWidget {
           onPressed: () => context.pop(),
         ),
         actions: [
-          IconButton(
-            icon: const Icon(Icons.edit_outlined),
-            tooltip: l.carDetailEditSemantics,
-            onPressed: async.value == null
-                ? null
-                : () => context.push('${AppRoutes.carEdit}/$vehicleId'),
-          ),
-          IconButton(
-            icon: Icon(Icons.delete_outline, color: context.colors.error),
-            tooltip: l.carDetailDeleteSemantics,
-            onPressed:
-                async.value == null ? null : () => _confirmDelete(context, ref),
-          ),
+          if (canEdit) ...[
+            IconButton(
+              icon: const Icon(Icons.edit_outlined),
+              tooltip: l.carDetailEditSemantics,
+              onPressed: async.value == null
+                  ? null
+                  : () => context.push('${AppRoutes.carEdit}/$vehicleId'),
+            ),
+            IconButton(
+              icon: Icon(Icons.delete_outline, color: context.colors.error),
+              tooltip: l.carDetailDeleteSemantics,
+              onPressed: async.value == null
+                  ? null
+                  : () => _confirmDelete(context, ref),
+            ),
+          ],
         ],
       ),
       body: SafeArea(
@@ -121,7 +128,6 @@ class _Detail extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final l = context.l10n;
     final history = ref.watch(serviceHistoryProvider(vehicle.id)).value;
-    final totalSpent = history?.totalUah ?? 0;
     final recent = <ServiceRecord>[];
     if (history != null) {
       for (final month in history.months) {
@@ -149,16 +155,33 @@ class _Detail extends ConsumerWidget {
           ),
         ),
         const SizedBox(height: AppSpacing.md),
-        Text('${vehicle.make} ${vehicle.model}',
-            style: AppTypography.headlineMedium, textAlign: TextAlign.center),
+        Text(
+          [vehicle.make, vehicle.model, vehicle.modification]
+              .where((s) => s.isNotEmpty)
+              .join(' '),
+          style: AppTypography.headlineMedium,
+          textAlign: TextAlign.center,
+        ),
         const SizedBox(height: AppSpacing.xxs),
-        Text('${vehicle.year} · ${vehicle.plate}',
-            style: AppTypography.bodyMedium
-                .copyWith(color: context.colors.textSecondary),
-            textAlign: TextAlign.center),
+        Text(
+          [
+            vehicle.year.toString(),
+            if (vehicle.plate.isNotEmpty) vehicle.plate,
+          ].join(' · '),
+          style: AppTypography.bodyMedium
+              .copyWith(color: context.colors.textSecondary),
+          textAlign: TextAlign.center,
+        ),
         if (vehicle.vin != null && vehicle.vin!.isNotEmpty) ...[
           const SizedBox(height: AppSpacing.xxs),
           Text('${l.carDetailVin}: ${vehicle.vin}',
+              style: AppTypography.bodySmall
+                  .copyWith(color: context.colors.textTertiary),
+              textAlign: TextAlign.center),
+        ],
+        if (vehicle.color.isNotEmpty) ...[
+          const SizedBox(height: AppSpacing.xxs),
+          Text(vehicle.color,
               style: AppTypography.bodySmall
                   .copyWith(color: context.colors.textTertiary),
               textAlign: TextAlign.center),
@@ -169,26 +192,16 @@ class _Detail extends ConsumerWidget {
             currentKm: vehicle.mileageKm,
             nextKm: vehicle.nextServiceMileageKm!,
           ),
-        const SizedBox(height: AppSpacing.lg),
-        Row(
-          children: [
-            Expanded(
-              child: StatCard(
-                axis: Axis.vertical,
-                label: l.carDetailMileage,
-                value: l.carDetailMileageValue(vehicle.mileageKm),
-              ),
-            ),
-            const SizedBox(width: AppSpacing.sm),
-            Expanded(
-              child: StatCard(
-                axis: Axis.vertical,
-                label: l.carDetailTotalSpentLabel,
-                value: '$totalSpent ₴',
-              ),
-            ),
-          ],
-        ),
+        // Mileage card only when we actually have a non-zero value — RoApp
+        // doesn't carry mileage today, so in remote mode this stays hidden.
+        if (vehicle.mileageKm > 0) ...[
+          const SizedBox(height: AppSpacing.lg),
+          StatCard(
+            axis: Axis.vertical,
+            label: l.carDetailMileage,
+            value: l.carDetailMileageValue(vehicle.mileageKm),
+          ),
+        ],
         if (recent.isNotEmpty) ...[
           const SizedBox(height: AppSpacing.lg),
           Text(
@@ -202,7 +215,6 @@ class _Detail extends ConsumerWidget {
               title: r.title,
               dateLabel:
                   '${r.completedAt.day} ${_shortMonth(l, r.completedAt.month)}',
-              priceUah: r.priceUah,
             ),
         ],
         const SizedBox(height: AppSpacing.lg),

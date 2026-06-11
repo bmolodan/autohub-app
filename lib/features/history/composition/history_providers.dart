@@ -24,9 +24,22 @@ final getServiceHistoryUseCaseProvider =
   );
 });
 
-/// View-model: runs the use case for a vehicle id and caches the result.
+/// View-model: per-vehicle history. Cached for the session — closed orders
+/// rarely change in real time, and tab switches shouldn't re-fetch. Cleared
+/// explicitly by AuthController on logout via _invalidateSessionScopedData.
 final serviceHistoryProvider = FutureProvider.family
     .autoDispose<GetServiceHistoryOutput, String>((ref, vehicleId) {
+  // autoDispose with keepAlive: cleared on family invalidate (logout) but
+  // not dropped when the screen briefly unsubscribes during navigation.
+  ref.keepAlive();
   final useCase = ref.watch(getServiceHistoryUseCaseProvider);
   return useCase.execute(GetServiceHistoryInput(vehicleId: vehicleId));
+});
+
+/// View-model: aggregated history across every vehicle the customer owns.
+/// Used by the History tab. Cached the same way as the per-vehicle variant.
+final aggregatedServiceHistoryProvider =
+    FutureProvider.autoDispose<GetServiceHistoryOutput>((ref) {
+  ref.keepAlive();
+  return ref.watch(getServiceHistoryUseCaseProvider).executeAll();
 });

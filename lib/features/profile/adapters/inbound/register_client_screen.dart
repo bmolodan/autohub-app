@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../core/config/app_environment.dart';
 import '../../../../core/router/app_router.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_typography.dart';
@@ -69,10 +70,16 @@ class _RegisterClientScreenState extends ConsumerState<RegisterClientScreen> {
         );
         Navigator.of(context).pop();
       } else {
-        // First-time onboarding: drop the registration off the stack and
-        // open Add Car so the user lands with a vehicle ready.
-        context.go(AppRoutes.home);
-        unawaited(context.push(AppRoutes.carAdd));
+        // First-time onboarding: go to home.
+        // In remote mode vehicles come from RoApp — skip the "Add Car" push.
+        // In local mode, open Add Car so the user can seed a vehicle.
+        // Capture the router up-front so the post-go push doesn't depend on
+        // a possibly-stale BuildContext after this frame.
+        final router = GoRouter.of(context);
+        final isRemote =
+            ref.read(appEnvironmentProvider) == AppEnvironment.remote;
+        router.go(AppRoutes.home);
+        if (!isRemote) unawaited(router.push(AppRoutes.carAdd));
       }
     } on Object catch (_) {
       if (!mounted) return;

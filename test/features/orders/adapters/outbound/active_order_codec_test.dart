@@ -210,5 +210,85 @@ void main() {
       expect(round.eta, DateTime.utc(2026, 5, 14, 12, 30));
       expect(round.totalUah, 1234);
     });
+
+    test('round-trips pricing + metadata + items', () {
+      final o = ActiveOrder(
+        id: '60802439',
+        title: 'комп вакуумний',
+        status: ActiveOrderStatus.inProgress,
+        vehicleMake: 'Mitsubishi',
+        vehicleModel: 'Pajero',
+        vehiclePlate: 'JMBLYV98W8J403478',
+        progress: null,
+        eta: null,
+        scheduledFor: DateTime.utc(2026, 6, 10, 8, 30),
+        totalUah: 9940,
+        paidUah: 0,
+        discountUah: 160,
+        number: 'A1966',
+        orderType: 'Платний',
+        resource: 'Підйомник 1',
+        statusColor: '#099B49',
+        createdAt: DateTime.utc(2026, 6, 1, 12, 14, 37),
+        dueDate: DateTime.utc(2026, 6, 5, 12, 13),
+        isUrgent: false,
+        isOverdue: true,
+        items: const [
+          OrderItem(
+            id: '1',
+            name: 'Заміна',
+            quantity: 1,
+            priceUah: 800,
+            discountUah: 160,
+            sumUah: 640,
+            kind: OrderItemKind.service,
+          ),
+          OrderItem(
+            id: '2',
+            name: 'Очисник',
+            quantity: 2,
+            priceUah: 250,
+            discountUah: 0,
+            sumUah: 500,
+            kind: OrderItemKind.product,
+          ),
+        ],
+      );
+      final round = decodeActiveOrders(encodeActiveOrders([o])).single;
+      expect(round, o);
+      expect(round.statusColor, '#099B49');
+      expect(round.isOverdue, true);
+      expect(round.items.length, 2);
+      expect(round.items[0].kind, OrderItemKind.service);
+      expect(round.items[1].kind, OrderItemKind.product);
+      expect(round.items[0].sumUah, 640);
+    });
+
+    test('decodes items absent → empty list; unknown kind → service', () {
+      const json = '''
+        [
+          {
+            "id":"x","title":"y","status":"in_progress",
+            "vehicle":{"make":"a","model":"b","plate":"c"}
+          }
+        ]
+      ''';
+      expect(decodeActiveOrders(json).single.items, isEmpty);
+
+      const jsonUnknownKind = '''
+        [
+          {
+            "id":"x","title":"y","status":"in_progress",
+            "vehicle":{"make":"a","model":"b","plate":"c"},
+            "items":[
+              {"id":"1","name":"n","quantity":1,"price_uah":10,"sum_uah":10,"kind":"weird"}
+            ]
+          }
+        ]
+      ''';
+      final item = decodeActiveOrders(jsonUnknownKind).single.items.single;
+      expect(item.kind, OrderItemKind.service);
+      expect(item.discountUah, 0);
+    });
   });
 }

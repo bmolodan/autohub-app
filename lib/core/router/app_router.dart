@@ -14,7 +14,6 @@ import '../../features/home/presentation/home_screen.dart';
 import '../../features/onboarding/presentation/onboarding_screen.dart';
 import '../../features/orders/adapters/inbound/order_detail_screen.dart';
 import '../../features/profile/adapters/inbound/register_client_screen.dart';
-import '../../features/profile/composition/profile_providers.dart';
 import '../../features/profile/presentation/account_delete_screen.dart';
 import '../../features/profile/presentation/notifications_screen.dart';
 import '../../features/profile/presentation/profile_screen.dart';
@@ -82,15 +81,11 @@ const _publicRoutes = <String>{
 /// Bridges Riverpod auth and profile state to GoRouter's Listenable-based
 /// refresh API. Profile state needs to drive redirects too — first-time
 /// users get bounced to /register after session is loaded but before
-/// profile finishes loading.
+/// session changes.
 class _RouterRefresh extends ChangeNotifier {
   _RouterRefresh(Ref ref) {
     ref.listen<AsyncValue<Object?>>(
       authControllerProvider,
-      (_, __) => notifyListeners(),
-    );
-    ref.listen<AsyncValue<Object?>>(
-      clientProfileControllerProvider,
       (_, __) => notifyListeners(),
     );
   }
@@ -113,17 +108,12 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         return AppRoutes.onboarding;
       }
       if (session != null) {
-        final profileAsync = ref.read(clientProfileControllerProvider);
-        final profile = profileAsync.asData?.value;
-        final atRegister = state.matchedLocation == AppRoutes.register;
-        if (profileAsync is AsyncData && profile == null && !atRegister) {
-          return AppRoutes.register;
-        }
-        if (profile != null &&
-            (state.matchedLocation == AppRoutes.onboarding ||
-                state.matchedLocation == AppRoutes.phone ||
-                state.matchedLocation == AppRoutes.otp ||
-                atRegister)) {
+        // First-time onboarding no longer needs a name-input gate — the
+        // profile is auto-populated from RoApp by GET /v1/profile. If the
+        // user just landed via OTP, bounce them straight to home.
+        if (state.matchedLocation == AppRoutes.onboarding ||
+            state.matchedLocation == AppRoutes.phone ||
+            state.matchedLocation == AppRoutes.otp) {
           return AppRoutes.home;
         }
       }

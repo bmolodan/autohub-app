@@ -548,6 +548,90 @@ abstract class AppLocalizations {
   /// **'Поки що жодних подій'**
   String get orderTimelineEmpty;
 
+  /// No description provided for @orderInfoType.
+  ///
+  /// In uk, this message translates to:
+  /// **'Тип робіт'**
+  String get orderInfoType;
+
+  /// No description provided for @orderInfoResource.
+  ///
+  /// In uk, this message translates to:
+  /// **'Місце'**
+  String get orderInfoResource;
+
+  /// No description provided for @orderInfoDueDate.
+  ///
+  /// In uk, this message translates to:
+  /// **'Виконати до'**
+  String get orderInfoDueDate;
+
+  /// No description provided for @orderUrgent.
+  ///
+  /// In uk, this message translates to:
+  /// **'Терміново'**
+  String get orderUrgent;
+
+  /// No description provided for @orderOverdue.
+  ///
+  /// In uk, this message translates to:
+  /// **'Прострочено'**
+  String get orderOverdue;
+
+  /// No description provided for @orderEstimateHeading.
+  ///
+  /// In uk, this message translates to:
+  /// **'КОШТОРИС'**
+  String get orderEstimateHeading;
+
+  /// No description provided for @orderEstimateServices.
+  ///
+  /// In uk, this message translates to:
+  /// **'Послуги'**
+  String get orderEstimateServices;
+
+  /// No description provided for @orderEstimateProducts.
+  ///
+  /// In uk, this message translates to:
+  /// **'Запчастини'**
+  String get orderEstimateProducts;
+
+  /// No description provided for @orderEstimateSubtotal.
+  ///
+  /// In uk, this message translates to:
+  /// **'Сума'**
+  String get orderEstimateSubtotal;
+
+  /// No description provided for @orderEstimateDiscount.
+  ///
+  /// In uk, this message translates to:
+  /// **'Знижка'**
+  String get orderEstimateDiscount;
+
+  /// No description provided for @orderEstimatePaid.
+  ///
+  /// In uk, this message translates to:
+  /// **'Сплачено'**
+  String get orderEstimatePaid;
+
+  /// No description provided for @orderEstimateBalance.
+  ///
+  /// In uk, this message translates to:
+  /// **'До сплати'**
+  String get orderEstimateBalance;
+
+  /// No description provided for @orderItemQtyPrice.
+  ///
+  /// In uk, this message translates to:
+  /// **'{qty} × {price} ₴'**
+  String orderItemQtyPrice(int qty, int price);
+
+  /// No description provided for @orderMoney.
+  ///
+  /// In uk, this message translates to:
+  /// **'{amount} ₴'**
+  String orderMoney(int amount);
+
   /// No description provided for @carsListTitle.
   ///
   /// In uk, this message translates to:

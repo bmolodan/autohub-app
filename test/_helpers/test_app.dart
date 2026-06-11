@@ -1,3 +1,4 @@
+import 'package:autohub/core/config/app_environment.dart';
 import 'package:autohub/core/storage/shared_prefs_provider.dart';
 import 'package:autohub/core/theme/app_theme.dart';
 import 'package:autohub/core/util/clock.dart';
@@ -37,6 +38,9 @@ Future<void> pumpScreen(
   await tester.pumpWidget(
     ProviderScope(
       overrides: [
+        // Default to local (Fake adapters) in widget tests — the app's
+        // production default is now `remote`, which would try real HTTP.
+        appEnvironmentProvider.overrideWithValue(AppEnvironment.local),
         sharedPreferencesProvider.overrideWithValue(prefs),
         sessionStorageProvider.overrideWithValue(InMemorySessionStorage()),
         clockProvider.overrideWithValue(FixedClock(DateTime.utc(2026, 5, 13))),

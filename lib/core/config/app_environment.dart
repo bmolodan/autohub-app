@@ -4,9 +4,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 /// Remote = HTTP adapters hitting [apiBaseUrlProvider].
 enum AppEnvironment { local, remote }
 
-/// Pass at build time:
-///   flutter run --dart-define=APP_ENV=remote --dart-define=API_URL=http://localhost:8787/v1
-const _envName = String.fromEnvironment('APP_ENV', defaultValue: 'local');
+/// Pass at build time to force offline/fake mode:
+///   flutter run --dart-define=APP_ENV=local
+/// Default is remote — debug builds talk to staging.
+const _envName = String.fromEnvironment('APP_ENV', defaultValue: 'remote');
 
 /// Compile-time fallback. Runtime override (SharedPrefs key `dev.api_base_url`)
 /// takes precedence — see `core/dev/api_base_override.dart` and `main.dart`.

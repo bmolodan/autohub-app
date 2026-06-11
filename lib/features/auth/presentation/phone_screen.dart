@@ -11,6 +11,7 @@ import '../../../core/theme/app_typography.dart';
 import '../../../core/theme/brand_colors.dart';
 import '../../../core/widgets/button_spinner.dart';
 import '../../../l10n/l10n_extension.dart';
+import '../application/ports/outbound/otp_gateway_port.dart';
 import '../composition/auth_providers.dart';
 
 /// Phone number entry — step 1 of auth.
@@ -28,6 +29,22 @@ class _PhoneScreenState extends ConsumerState<PhoneScreen> {
   bool _submitting = false;
 
   String get _rawPhone => _phoneCtrl.text.replaceAll(' ', '');
+
+  String _otpErrorMessage(OtpRequestException e) {
+    switch (e.reason) {
+      case OtpRequestFailure.cooldown:
+        final sec = e.retryAfterSec ?? 60;
+        return 'Зачекайте $sec секунд перед повторною відправкою.';
+      case OtpRequestFailure.dailyCap:
+        return 'Ліміт SMS на сьогодні вичерпано. Спробуйте завтра.';
+      case OtpRequestFailure.invalidPhone:
+        return 'Невірний номер телефону.';
+      case OtpRequestFailure.smsFailed:
+        return 'Не вдалось відправити SMS. Спробуйте ще раз пізніше.';
+      case OtpRequestFailure.network:
+        return 'Проблема зі з\'єднанням. Перевірте інтернет і спробуйте знову.';
+    }
+  }
 
   bool get _canSubmit => _consent && _rawPhone.length >= 9 && !_submitting;
 
@@ -50,6 +67,10 @@ class _PhoneScreenState extends ConsumerState<PhoneScreen> {
         '?${QueryParams.challengeId}=${Uri.encodeComponent(challenge.id)}'
         '&${QueryParams.phone}=${Uri.encodeComponent(phone)}',
       );
+    } on OtpRequestException catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text(_otpErrorMessage(e))));
     } on Object catch (_) {
       if (!mounted) return;
       ScaffoldMessenger.of(context)

@@ -9,18 +9,27 @@ class _FakeRepo implements ServiceHistoryRepositoryPort {
   final List<ServiceRecord> _records;
 
   @override
+  Future<List<ServiceRecord>> findAll() async => List.of(_records);
+
+  @override
   Future<List<ServiceRecord>> findByVehicle(String vehicleId) async {
     return _records.where((r) => r.vehicleId == vehicleId).toList();
   }
 }
 
-ServiceRecord _r(String id, DateTime at, int price, {String vehicleId = 'v1'}) {
+const _vehicle = ServiceVehicleRef(
+  make: 'Mitsubishi',
+  model: 'Pajero',
+  plate: 'JMB',
+);
+
+ServiceRecord _r(String id, DateTime at, {String vehicleId = 'v1'}) {
   return ServiceRecord(
     id: id,
     title: 'svc-$id',
     completedAt: at,
-    priceUah: price,
     vehicleId: vehicleId,
+    vehicle: _vehicle,
   );
 }
 
@@ -28,9 +37,9 @@ void main() {
   group('GetServiceHistoryUseCase', () {
     test('groups records by year-month, newest month first', () async {
       final repo = _FakeRepo([
-        _r('a', DateTime(2026, 3, 15), 100),
-        _r('b', DateTime(2026, 4, 2), 200),
-        _r('c', DateTime(2026, 4, 18), 300),
+        _r('a', DateTime(2026, 3, 15)),
+        _r('b', DateTime(2026, 4, 2)),
+        _r('c', DateTime(2026, 4, 18)),
       ]);
       final useCase = GetServiceHistoryUseCase(repo);
 
@@ -46,8 +55,8 @@ void main() {
 
     test('sorts records within a month newest-first', () async {
       final repo = _FakeRepo([
-        _r('a', DateTime(2026, 4, 2), 100),
-        _r('b', DateTime(2026, 4, 18), 200),
+        _r('a', DateTime(2026, 4, 2)),
+        _r('b', DateTime(2026, 4, 18)),
       ]);
       final useCase = GetServiceHistoryUseCase(repo);
 
@@ -58,10 +67,10 @@ void main() {
       expect(out.months[0].records.map((r) => r.id), ['b', 'a']);
     });
 
-    test('sums prices across all months', () async {
+    test('counts records across all months', () async {
       final repo = _FakeRepo([
-        _r('a', DateTime(2026, 3, 15), 100),
-        _r('b', DateTime(2026, 4, 2), 250),
+        _r('a', DateTime(2026, 3, 15)),
+        _r('b', DateTime(2026, 4, 2)),
       ]);
       final useCase = GetServiceHistoryUseCase(repo);
 
@@ -69,13 +78,13 @@ void main() {
         const GetServiceHistoryInput(vehicleId: 'v1'),
       );
 
-      expect(out.totalUah, 350);
+      expect(out.totalRecords, 2);
     });
 
     test('filters records by vehicleId via the port', () async {
       final repo = _FakeRepo([
-        _r('a', DateTime(2026, 4, 1), 100, vehicleId: 'v1'),
-        _r('b', DateTime(2026, 4, 2), 200, vehicleId: 'v2'),
+        _r('a', DateTime(2026, 4, 1), vehicleId: 'v1'),
+        _r('b', DateTime(2026, 4, 2), vehicleId: 'v2'),
       ]);
       final useCase = GetServiceHistoryUseCase(repo);
 
@@ -83,8 +92,20 @@ void main() {
         const GetServiceHistoryInput(vehicleId: 'v1'),
       );
 
-      expect(out.totalUah, 100);
+      expect(out.totalRecords, 1);
       expect(out.months.single.records.single.id, 'a');
+    });
+
+    test('executeAll() returns all records across every vehicle', () async {
+      final repo = _FakeRepo([
+        _r('a', DateTime(2026, 4, 1), vehicleId: 'v1'),
+        _r('b', DateTime(2026, 3, 2), vehicleId: 'v2'),
+      ]);
+      final useCase = GetServiceHistoryUseCase(repo);
+
+      final out = await useCase.executeAll();
+
+      expect(out.totalRecords, 2);
     });
   });
 }

@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
+import '../../../../core/config/app_environment.dart';
 import '../../../../core/router/app_router.dart';
 import '../../../../core/theme/app_radii.dart';
 import '../../../../core/theme/app_sizes.dart';
@@ -19,48 +20,71 @@ class CarsListScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final async = ref.watch(vehiclesControllerProvider);
+    // In remote mode vehicles are synced from RoApp orders — manual add is
+    // not supported until the booking creation flow is implemented.
+    final canAdd = ref.watch(appEnvironmentProvider) == AppEnvironment.local;
+
+    Future<void> refresh() async {
+      ref.invalidate(vehiclesControllerProvider);
+      await ref.read(vehiclesControllerProvider.future);
+    }
 
     return Scaffold(
       appBar: AppBar(
           title: Text(context.l10n.carsListTitle,
               style: AppTypography.titleLarge)),
       body: SafeArea(
-        child: async.when(
-          loading: () => Skeletonizer(
-            enabled: true,
-            child: ListView(
-              padding: const EdgeInsets.all(AppSpacing.lg),
-              children: const [
-                Padding(
-                  padding: EdgeInsets.only(bottom: AppSpacing.sm),
-                  child: _VehicleCard(vehicle: _skeletonVehicle),
-                ),
-                Padding(
-                  padding: EdgeInsets.only(bottom: AppSpacing.sm),
-                  child: _VehicleCard(vehicle: _skeletonVehicle),
+        child: RefreshIndicator(
+          onRefresh: refresh,
+          child: async.when(
+            loading: () => Skeletonizer(
+              enabled: true,
+              child: ListView(
+                physics: const AlwaysScrollableScrollPhysics(),
+                padding: const EdgeInsets.all(AppSpacing.lg),
+                children: const [
+                  Padding(
+                    padding: EdgeInsets.only(bottom: AppSpacing.sm),
+                    child: _VehicleCard(vehicle: _skeletonVehicle),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.only(bottom: AppSpacing.sm),
+                    child: _VehicleCard(vehicle: _skeletonVehicle),
+                  ),
+                ],
+              ),
+            ),
+            error: (e, _) => ListView(
+              physics: const AlwaysScrollableScrollPhysics(),
+              children: [
+                SizedBox(
+                  height: MediaQuery.of(context).size.height * 0.6,
+                  child: Center(
+                    child: Text(context.l10n.carsLoadFailed(e.toString()),
+                        style: AppTypography.bodyMedium),
+                  ),
                 ),
               ],
             ),
-          ),
-          error: (e, _) => Center(
-            child: Text(context.l10n.carsLoadFailed(e.toString()),
-                style: AppTypography.bodyMedium),
-          ),
-          data: (vehicles) => ListView(
-            padding: const EdgeInsets.all(AppSpacing.lg),
-            children: [
-              for (final v in vehicles)
-                Padding(
-                  padding: const EdgeInsets.only(bottom: AppSpacing.sm),
-                  child: _VehicleCard(vehicle: v),
-                ),
-              const SizedBox(height: AppSpacing.sm),
-              OutlinedButton.icon(
-                onPressed: () => context.push(AppRoutes.carAdd),
-                icon: const Icon(Icons.add),
-                label: Text(context.l10n.carsAddCta),
-              ),
-            ],
+            data: (vehicles) => ListView(
+              physics: const AlwaysScrollableScrollPhysics(),
+              padding: const EdgeInsets.all(AppSpacing.lg),
+              children: [
+                for (final v in vehicles)
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: AppSpacing.sm),
+                    child: _VehicleCard(vehicle: v),
+                  ),
+                if (canAdd) ...[
+                  const SizedBox(height: AppSpacing.sm),
+                  OutlinedButton.icon(
+                    onPressed: () => context.push(AppRoutes.carAdd),
+                    icon: const Icon(Icons.add),
+                    label: Text(context.l10n.carsAddCta),
+                  ),
+                ],
+              ],
+            ),
           ),
         ),
       ),
