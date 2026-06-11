@@ -1,88 +1,299 @@
-# Data
+# Flutter App Data & Storage Codemap
 
-<!-- Generated: 2026-05-13 | Files scanned: 10 adapters + 2 mock JSON + 1 catalog asset | Token estimate: ~800 -->
+**Last Updated:** 2026-06-11  
+**Local Storage:** SharedPreferences (non-sensitive) + flutter_secure_storage (tokens)  
+**Codecs:** JSON ↔ Dart via dedicated codec files
 
-No real backend yet. All persistence is **SharedPreferences** key-value (JSON-serialized) seeded from in-memory constants or asset JSON. Swappable behind hexagonal outbound ports.
+## Session Storage (Secure)
 
-## Storage map
+**File:** `lib/core/storage/session_storage.dart`
 
-| Port | Adapter (active) | Storage | Key | Seed source |
-|---|---|---|---|---|
-| `SessionStoragePort` (auth) | `SharedPrefsSessionStorage` | SharedPreferences | `session` | — (empty on first launch) |
-| `VehicleRepositoryPort` (cars) | `SharedPrefsVehicleRepository` | SharedPreferences | `vehicles` | Hardcoded Toyota Camry in `cars_providers.dart` |
-| `CarCatalogPort` (cars) | `AssetCarCatalogRepository` | Asset (read-only) | n/a | `assets/data/car_makes.json` |
-| `ActiveOrderRepositoryPort` (orders) | `SharedPrefsActiveOrderRepository` | SharedPreferences | `active_orders` | `lib/features/orders/adapters/outbound/_seed.dart` (Dart constant) |
-| `ClientProfileRepositoryPort` (profile) | `SharedPrefsClientProfileRepository` | SharedPreferences | `client_profile` | — (empty on first launch — triggers `/register` redirect) |
-| `ServiceHistoryRepositoryPort` (history) | `MockServiceHistoryRepository` | Asset (read-only) | n/a | `assets/mocks/service_history.json` |
-| `OtpGatewayPort` (auth) | `FakeOtpGateway` | In-memory map | n/a | Accepts code `0000` for any phone |
+Uses `flutter_secure_storage`:
+- iOS: Keychain
+- Android: EncryptedSharedPreferences
 
-## Domain entities
-
-```
-features/auth/domain/session.dart            Session(phone, createdAt)
-features/cars/domain/vehicle.dart            Vehicle(id, make, model, year, plate, vin?, mileageKm, nextServiceMileageKm?)
-features/history/domain/service_record.dart  ServiceRecord, ServiceHistoryMonth
-features/orders/domain/active_order.dart     ActiveOrder, OrderTimelineEntry, OrderStage enum, ActiveOrderStatus enum
-features/profile/domain/client_profile.dart  ClientProfile(name, phone, email?, createdAt)
+**Stored on successful OTP verify:**
+```json
+{
+  "accessToken": "eyJhbGc...",
+  "refreshToken": "token-hash",
+  "phone": "380501234567",
+  "createdAt": "2026-06-11T..."
+}
 ```
 
-`ActiveOrder` is a tagged-union (`ActiveOrderStatus.{inProgress, pendingConfirmation, canceled}`) with optional fields per branch.
+Access via Riverpod:
+```dart
+final sessionProvider = FutureProvider<Session?>((ref) async {
+  return ref.watch(sessionStorageProvider).read();
+});
+```
 
-## Codecs
+## Local Preferences (Non-Sensitive)
 
-Codec extraction (single file owning JSON ↔ domain) is used where the same shape is read from both seed JSON and SharedPreferences:
+**File:** `lib/core/storage/shared_preferences_wrapper.dart`
 
-- `features/orders/adapters/outbound/active_order_codec.dart`
-- `features/profile/adapters/outbound/client_profile_codec.dart`
+| Key | Value | Purpose |
+|-----|-------|---------|
+| `dev.api_base_url` | String | Runtime API override (empty = disabled) |
+| `local:vehicles:list` | JSON array | Cached vehicles (local mode) |
+| `local:orders:list` | JSON array | Cached orders (local mode) |
 
-Cars + session adapters inline their own `_toJson/_fromJson` (codecs not yet extracted — minor inconsistency).
+## HTTP Codecs (JSON ↔ Dart)
 
-## Seed lifecycle
+All responses parsed via dedicated codec files with type safety.
 
-`SharedPrefsActiveOrderRepository` and `SharedPrefsVehicleRepository`:
-- Constructor checks `!_prefs.containsKey(_key)`. If absent and seed provided → seed-write.
-- After first user write, the seed is **not** re-applied on subsequent restarts.
-
-## Account wipe
-
-`WipeAccountUseCase` (profile) is the inverse of seeding: it deletes every persisted key — `session`, `vehicles`, `active_orders`, `client_profile` — through `SharedPreferences.remove(key)`. Invoked from `/profile/account/delete` after a confirm dialog.
-
-## Read/write contracts
+### vehicle_codec.dart
 
 ```dart
-// Read-only
-abstract interface class ServiceHistoryRepositoryPort {
-  Future<List<ServiceRecord>> findByVehicle(String vehicleId);
-}
+Vehicle vehicleFromMap(Map<String, dynamic> json) => Vehicle(
+  id: json['id'] as String,
+  make: json['make'] as String,
+  model: json['model'] as String,
+  year: json['year'] as int,
+  plate: json['plate'] as String,
+  vin: json['vin'] as String?,
+  mileageKm: json['mileageKm'] as int? ?? 0,
+  nextServiceMileageKm: json['nextServiceMileageKm'] as int?,
+);
 
-abstract interface class CarCatalogPort {
-  Future<List<String>> findMakes();
-  Future<List<String>> findModels(String make);
-}
+Map<String, dynamic> vehicleToMap(Vehicle v) => {
+  'id': v.id,
+  'make': v.make,
+  'model': v.model,
+  'year': v.year,
+  'plate': v.plate,
+  'vin': v.vin,
+  'mileageKm': v.mileageKm,
+  'nextServiceMileageKm': v.nextServiceMileageKm,
+};
+```
 
-// Read + write
-abstract interface class VehicleRepositoryPort {
-  Future<List<Vehicle>> findAll();
-  Future<Vehicle?> findById(String id);
-  Future<void> save(Vehicle vehicle);
-  Future<void> delete(String id);
-}
+### active_order_codec.dart
 
-abstract interface class ActiveOrderRepositoryPort {
-  Future<List<ActiveOrder>> findAll();
-  Future<ActiveOrder?> findById(String id);
-  Future<void> save(ActiveOrder order);
-}
+```dart
+ActiveOrder activeOrderFromMap(Map<String, dynamic> json) => ActiveOrder(
+  id: json['id'] as String,
+  title: json['title'] as String,
+  status: _parseStatus(json['status'] as String),
+  vehicle: _parseVehicle(json['vehicle'] as Map),
+  progress: json['progress'] as int?,
+  eta: json['eta'] as String?,
+  scheduledFor: json['scheduled_for'] as String?,
+  totalUah: null,  // Always null (pricing stripped)
+  timeline: [],
+  photos: [],
+);
 
-abstract interface class ClientProfileRepositoryPort {
-  Future<ClientProfile?> find();
-  Future<void> save(ClientProfile profile);
-  Future<void> clear();
+ActiveOrderStatus _parseStatus(String s) {
+  return switch (s) {
+    'in_progress' => ActiveOrderStatus.inProgress,
+    'pending_confirmation' => ActiveOrderStatus.pendingConfirmation,
+    'canceled' => ActiveOrderStatus.canceled,
+    _ => throw FormatException('Unknown status: $s'),
+  };
 }
 ```
 
-## Known gaps
+### otp_codec.dart
 
-- ID generation uses `microsecondsSinceEpoch` — collision-possible on platforms with ms-quantized clocks.
-- Seed JSON timestamps are fixed dates (2026-05-13); on long-running install the "У ремонті" card shows stale ETA.
-- Real backend / HTTP adapters are not wired yet — `dio` and `core/network/dio_provider.dart` are present but unused by feature adapters.
+```dart
+OtpChallenge otpChallengeFromMap(Map<String, dynamic> json) =>
+  OtpChallenge(id: json['challengeId'] as String, phone: json['phone'] as String);
+
+Session sessionFromMap(Map<String, dynamic> json) => Session(
+  phone: json['phone'] as String,
+  accessToken: json['accessToken'] as String,
+  refreshToken: json['refreshToken'] as String,
+  accessExpiresAt: jwtExpiresAt(json['accessToken'] as String),
+  createdAt: DateTime.parse(json['createdAt'] as String).toUtc(),
+);
+```
+
+## JWT Handling
+
+**File:** `lib/core/util/jwt_payload.dart`
+
+```dart
+/// Parse exp claim from JWT (Unix timestamp seconds).
+DateTime jwtExpiresAt(String token) {
+  final parts = token.split('.');
+  if (parts.length != 3) throw FormatException('Invalid JWT');
+  
+  final payload = utf8.decode(base64Url.decode(parts[1] + '=='));
+  final json = jsonDecode(payload) as Map<String, dynamic>;
+  final exp = json['exp'] as int?;
+  
+  if (exp == null) throw FormatException('Missing exp claim');
+  return DateTime.fromMillisecondsSinceEpoch(exp * 1000).toUtc();
+}
+```
+
+Used to detect access token expiry before API calls.
+
+## Domain Entities
+
+| Entity | File | Purpose |
+|--------|------|---------|
+| `Vehicle` | `features/cars/domain/vehicle.dart` | Car make/model/year/plate/VIN |
+| `ActiveOrder` | `features/orders/domain/active_order.dart` | Order with status (in_progress, pending, canceled) |
+| `Session` | `features/auth/domain/session.dart` | JWT + phone + creation timestamp |
+| `ServiceRecord` | `features/history/domain/service_record.dart` | Past service entry (read-only) |
+| `ClientProfile` | `features/profile/domain/client_profile.dart` | Name + phone + email |
+
+**ActiveOrder:** Sealed union by status with optional fields:
+```dart
+enum ActiveOrderStatus { inProgress, pendingConfirmation, canceled }
+
+class ActiveOrder {
+  final String id, title;
+  final ActiveOrderStatus status;
+  final int? progress;  // null if not in_progress
+  final String? eta;    // null if no ETA
+  // ...
+}
+```
+
+## State Controller Optimization
+
+**Optimistic updates:** Modify local state before server response.
+
+```dart
+Future<void> add(Vehicle v) async {
+  // 1. Update local state immediately
+  state = AsyncData([...state.valueOrNull ?? [], v]);
+  
+  // 2. Persist
+  try {
+    await _repo.save(v);
+  } catch (e) {
+    // 3. Revert on error
+    state = AsyncData([...state.valueOrNull ?? []..remove(v)]);
+    rethrow;
+  }
+}
+```
+
+## Error Serialization
+
+**OtpRequestException:**
+```dart
+enum OtpRequestFailure {
+  cooldown,        // 429, wait retryAfterSec
+  dailyCap,        // 429, wait retryAfterSec
+  invalidPhone,    // 400
+  smsFailed,       // 502
+  network,         // Timeout or connection error
+}
+
+class OtpRequestException implements Exception {
+  final OtpRequestFailure failure;
+  final int? retryAfterSec;
+}
+```
+
+Mapped from middleware HTTP responses:
+- `429 otp_cooldown` → `failure.cooldown` + retryAfterSec
+- `429 otp_daily_cap_reached` → `failure.dailyCap` + retryAfterSec
+- `400 invalid_phone` → `failure.invalidPhone`
+- `502 sms_send_failed` → `failure.smsFailed`
+- Timeout/network → `failure.network`
+
+## Seed Data
+
+**File:** `lib/features/<feature>/adapters/outbound/_seed.dart`
+
+Fixture data for local mode:
+
+```dart
+final _seedVehicles = [
+  Vehicle(
+    id: 'v1',
+    make: 'Toyota',
+    model: 'Camry',
+    year: 2020,
+    plate: 'AA1234BB',
+    vin: null,
+    mileageKm: 15000,
+    nextServiceMileageKm: 20000,
+  ),
+];
+
+List<Vehicle> seedVehicles() => [..._seedVehicles];  // defensive copy
+```
+
+## API Response Shapes (from Middleware)
+
+### OTP Request
+```json
+{ "challengeId": "550e8400-e29b-41d4-a716-446655440000" }
+```
+
+### OTP Verify
+```json
+{
+  "accessToken": "eyJhbGc...",
+  "refreshToken": "token-hash",
+  "profile": { "phone": "380501234567", "personId": null }
+}
+```
+
+### Vehicle
+```json
+{
+  "id": "123",
+  "make": "Toyota",
+  "model": "Camry",
+  "year": 2020,
+  "plate": "AA1234BB",
+  "vin": "JTNBE...",
+  "mileageKm": 0,
+  "nextServiceMileageKm": null
+}
+```
+
+### ActiveOrder
+```json
+{
+  "id": "456",
+  "title": "Заміна масла",
+  "status": "in_progress",
+  "vehicle": { "make": "Toyota", "model": "Camry", "plate": "AA1234BB" },
+  "progress": null,
+  "eta": null,
+  "scheduled_for": "2026-06-15T09:00:00Z",
+  "total_uah": null,
+  "timeline": [],
+  "photos": []
+}
+```
+
+## Date Handling
+
+**Wire format:** ISO 8601 UTC (e.g., `"2026-06-15T09:00:00Z"`)
+
+```dart
+// Parse
+DateTime dt = DateTime.parse('2026-06-15T09:00:00Z').toUtc();
+
+// Display (use util functions only)
+String s = formatHm(dt);        // "14:30"
+String s = formatDdMmHm(dt);    // "15.06 14:30"
+```
+
+Never `DateTime.toString()` or inline formatting.
+
+## Cache Invalidation
+
+- **On app relaunch:** No persistent cache (Riverpod memory-only)
+- **On screen unmount:** `.autoDispose` providers clean up automatically
+- **Manual refresh:** Controller method or pull-to-refresh
+
+Example:
+```dart
+final vehiclesProvider = FutureProvider.autoDispose<List<Vehicle>>((ref) async {
+  return ref.watch(vehicleRepositoryProvider).findAll();
+});
+// Unmounted → invalidated → next watch re-fetches
+```
+

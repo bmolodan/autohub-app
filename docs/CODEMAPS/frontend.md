@@ -1,112 +1,268 @@
-# Frontend
+# Flutter App Frontend Codemap
 
-<!-- Generated: 2026-05-13 | Files scanned: ~80 dart src | Token estimate: ~1000 -->
+**Last Updated:** 2026-06-11  
+**UI Framework:** Flutter 3.22+  
+**HTTP Client:** Dio 5.5.0 (with custom interceptors)
 
-Flutter 3.22+ / Dart 3.4+. State: Riverpod 3.3. Navigation: go_router 17.2.
+## HTTP Adapters (Active)
 
-## Route tree
+All adapters inherit from port interfaces and are wired via Riverpod composition.
 
+### HttpOtpGateway
+
+**File:** `lib/features/auth/adapters/outbound/http_otp_gateway.dart`
+
+```dart
+class HttpOtpGateway implements OtpGatewayPort {
+  Future<OtpChallenge> request(String phone) async {
+    // POST /auth/otp/request { phone }
+    // Response: { challengeId }
+    // Errors:
+    //   - 429 otp_cooldown → OtpRequestException(cooldown, retryAfterSec)
+    //   - 429 otp_daily_cap_reached → OtpRequestException(dailyCap, retryAfterSec)
+    //   - 400 invalid_phone → OtpRequestException(invalidPhone)
+    //   - 502 sms_send_failed → OtpRequestException(smsFailed)
+    //   - Other → OtpRequestException(network)
+  }
+
+  Future<Session> verify({
+    required String challengeId,
+    required String code,
+  }) async {
+    // POST /auth/otp/verify { challengeId, code }
+    // Response: { accessToken, refreshToken, profile: { phone, personId } }
+    // Errors: 401 → InvalidOtpException()
+  }
+}
 ```
-/onboarding                      OnboardingScreen
-/auth/phone                      PhoneScreen          (fmt: XX XXX XX XX + dev hint)
-/auth/otp?challengeId&phone      OtpScreen            (code "0000" accepted)
 
-/register                        RegisterClientScreen (first-time profile)
-/profile/edit                    RegisterClientScreen (editMode = true)
+### HttpVehicleRepository
 
-ShellRoute (AppShell — bottom nav)
-├─ /home                         HomeScreen
-├─ /history                      HistoryScreen
-├─ /cars                         CarsListScreen
-└─ /profile                      ProfileScreen
+**File:** `lib/features/cars/adapters/outbound/http_vehicle_repository.dart`
 
-/booking                         BookingScreen            (single-screen client intake)
-/cars/add?next=                  AddCarScreen             (optional ?next= for empty-vehicle detour)
-/cars/edit/:id                   AddCarScreen (editMode)
-/cars/detail/:id                 CarDetailScreen
-/orders/:id                      OrderDetailScreen
-/profile/notifications           NotificationsScreen
-/profile/account/delete          AccountDeleteScreen
-/dev/showcase                    ThemeShowcase            (design tokens)
-/dev/states                      StatesShowcase           (empty + error)
+Implements read-only vehicles from RoApp (via middleware):
+```dart
+class HttpVehicleRepository implements VehicleRepositoryPort {
+  Future<List<Vehicle>> findAll() async;       // GET /vehicles
+  Future<Vehicle?> findById(String id) async;  // GET /vehicles/:id
+  Future<void> save(Vehicle v) async;          // 501 Not Implemented (Phase B+)
+  Future<void> delete(String id) async;        // 501 Not Implemented
+  Future<void> clear() async;                  // UnimplementedError
+}
 ```
 
-**Auth redirect** (`app_router.dart`): `_publicRoutes = {onboarding, phone, otp, dev/*}`. No session + private → onboarding. Session + auth/onboarding → home. Session + no profile yet → `/register`.
+### HttpActiveOrderRepository
 
-Refresh: `_RouterRefresh` listens to both `authControllerProvider` and `clientProfileControllerProvider`, so sign-in/out + profile save trigger redirect re-evaluation.
+**File:** `lib/features/orders/adapters/outbound/http_active_order_repository.dart`
 
-Deep-link query params are clamped via `_clamp(value, max)` to guard against malicious long strings. Typed keys live in `QueryParams` (`phone`, `challengeId`, `nextRoute`).
+Handles active orders + booking creation:
+```dart
+class HttpActiveOrderRepository implements ActiveOrderRepositoryPort {
+  Future<List<ActiveOrder>> findAll() async;      // GET /orders
+  Future<ActiveOrder?> findById(String id) async; // GET /orders/:id
+  Future<void> save(ActiveOrder order) async;     // POST /orders (booking) — TBD
+  Future<void> cancel(String id) async;           // POST /orders/:id/cancel — TBD
+}
+```
 
-## Screen → use case wiring
+### HttpServiceHistoryRepository
 
-| Screen | Riverpod providers | Use cases reached |
-|---|---|---|
-| HomeScreen | `ordersControllerProvider`, `vehiclesControllerProvider` | GetActiveOrders, ListVehicles |
-| HistoryScreen | `serviceHistoryProvider(vehicleId)` | GetServiceHistory |
-| CarsListScreen | `vehiclesControllerProvider` | ListVehicles |
-| AddCarScreen | `vehiclesControllerProvider.notifier.add/update`, `carMakesProvider`, `carModelsProvider(make)` | AddVehicle, UpdateVehicle, catalog reads |
-| CarDetailScreen | `vehicleByIdProvider(id)`, `vehiclesControllerProvider.notifier.delete` | GetVehicle, DeleteVehicle |
-| ProfileScreen | `clientProfileControllerProvider`, `vehiclesControllerProvider`, `authControllerProvider` | GetClientProfile, ListVehicles, SignOut |
-| RegisterClientScreen | `clientProfileControllerProvider.notifier.save()` | SaveClientProfile |
-| BookingScreen | `ordersControllerProvider.notifier.create()`, `vehiclesControllerProvider` | CreateOrder |
-| OrderDetailScreen | `orderByIdProvider(id)`, `ordersControllerProvider.notifier.cancel` | GetOrderById, CancelOrder |
-| PhoneScreen | `authControllerProvider.notifier.requestCode()` | RequestOtp |
-| OtpScreen | `authControllerProvider.notifier.verifyCode()` | VerifyOtp |
-| AccountDeleteScreen | `wipeAccountUseCaseProvider` | WipeAccount |
+**File:** `lib/features/history/adapters/outbound/http_service_history_repository.dart`
 
-## Controllers (AsyncNotifier)
+```dart
+class HttpServiceHistoryRepository implements ServiceHistoryRepositoryPort {
+  Future<List<ServiceHistory>> findAll() async;  // GET /history
+}
+```
 
-- `AuthController` → `AsyncNotifier<Session?>` — `requestCode`, `verifyCode`, `signOut`
-- `VehiclesController` → `AsyncNotifier<List<Vehicle>>` — `add`, `update`, `delete`
-- `OrdersController` → `AsyncNotifier<List<ActiveOrder>>` — `create` (optimistic append), `cancel`
-- `ClientProfileController` → `AsyncNotifier<ClientProfile?>` — `save`
+## Composition Wiring (Riverpod)
 
-## Theme / tokens
+Each feature's composition file binds adapters to use cases via Riverpod providers.
 
-Inter via google_fonts. Brand: mustard `#F0CC50` + near-black `#1A1A1A` on cream `#FAF9F6`.
-- `AppColors` (incl. `onError`), `AppTypography`, `AppSpacing` (xxs..xxxl), `AppRadii` (xs..pill), `AppIconSize` (sm..hero), `AppSizes` (avatar, iconBubble, otpSlotHeight, ctaMinHeight).
-- Theme configured in `app_theme.dart`: pill ElevatedButton (yellow CTA), pill FilledButton (black secondary), pill OutlinedButton, surface-rounded TextFields, yellow Switch track on selected.
+**Pattern:**
+1. Port provider (HTTP or Fake)
+2. UseCase provider (injects port)
+3. Controller provider (AsyncNotifier, injects use cases)
 
-## Reusable widgets
+Example:
+```dart
+// features/auth/composition/otp_gateway_provider.dart
+final otpGatewayProvider = Provider<OtpGatewayPort>((ref) {
+  final dio = ref.watch(dioProvider);
+  return HttpOtpGateway(dio);
+});
+
+final authControllerProvider = AsyncNotifierProvider<AuthController, AsyncValue<void>>((ref) {
+  return AuthController(ref);
+});
+```
+
+Test override:
+```dart
+ProviderContainer(
+  overrides: [
+    appEnvironmentProvider.overrideWithValue(AppEnvironment.local),
+    otpGatewayProvider.overrideWithValue(_FakeOtpGateway()),
+  ],
+);
+```
+
+## Screen Navigation & Lifecycle
+
+### OTP Flow
+1. `OtpRequestScreen` → user types phone + presses request
+2. `authController.requestOtp(phone)` triggers HTTP POST
+3. On success: challengeId + phone stored in authController state
+4. go_router transitions to `OtpVerifyScreen`
+5. User enters 6-digit code → `authController.verifyOtp(code)`
+6. On success: accessToken + refreshToken stored in secure storage
+7. go_router redirects to `/home`
+
+### Cars Flow
+1. `CarsListScreen` → `ref.watch(vehiclesProvider)` triggers HTTP GET
+2. On success: renders list with edit/delete actions
+3. Tap car → `GoRoute('/car/:id', ..., builder: CarDetailScreen())`
+4. Detail screen watches `.family.autoDispose` provider keyed by id
+5. Edit/delete actions call `vehiclesController` methods
+
+### Mounted Guards
+Every `await` followed by `context.*` call must be guarded:
+```dart
+await someAsync();
+if (!context.mounted) return;  // or if (!mounted) in ConsumerStatefulWidget
+context.showSnackBar(...);
+```
+
+## OTP Screen Details
+
+**File:** `lib/features/auth/adapters/inbound/otp_verify_screen.dart`
+
+- **Input:** 6-digit code via TextField
+- **Security:** ClipRect + SizedBox hide underlying TextField
+- **Lifecycle:** WidgetsBindingObserver hooks for app lifecycle
+- **Back Prevention:** Disable back button to prevent returning to request screen
+- **Error Messages (Ukrainian):**
+  - **cooldown:** "Спробуйте ще раз через {retryAfterSec}с"
+  - **dailyCap:** "Ви досягли денного ліміту"
+  - **invalidPhone:** "Невірний номер"
+  - **smsFailed:** "Помилка відправки SMS"
+  - **network:** "Помилка мережі"
+
+## Remote Mode Restrictions
+
+When `appEnvironmentProvider == AppEnvironment.remote`:
+- **Vehicles:** Add/Edit/Delete buttons hidden (read-only from RoApp)
+- **Orders:** Booking create route not mounted in router
+- **Profile:** Edit disabled (read-only)
+
+Vehicles are derived from RoApp orders; app-side creation is Phase B+ decision.
+
+## Error Handling
+
+**HTTP 4xx/5xx:**
+- Caught in adapter → mapped to domain exception
+- Controller logs + updates UI (error toast, retry button)
+
+**Invalid JSON:**
+- FormatException caught in adapter
+- Treated as network error
+
+**Network timeout:**
+- DioException caught, handled as network error
+
+## Codecs (JSON ↔ Dart)
+
+Shared JSON shapes extracted to dedicated codec files.
+
+**vehicle_codec.dart:**
+```dart
+Vehicle vehicleFromMap(Map<String, dynamic> m) => Vehicle(
+  id: m['id'] as String,
+  make: m['make'] as String,
+  model: m['model'] as String,
+  year: m['year'] as int,
+  // ...
+);
+
+Map<String, dynamic> vehicleToMap(Vehicle v) => {
+  'id': v.id,
+  'make': v.make,
+  // ...
+};
+```
+
+**active_order_codec.dart:** Similar pattern for orders
+
+## Theme & Design Tokens
+
+Never hardcode raw values; always use:
+- `AppColors.primary`, `AppColors.background`, `AppColors.onError`
+- `AppSpacing.lg` (16.0), `AppSpacing.md` (8.0), `AppSpacing.xxs` (2.0)
+- `AppRadii.md` (12.0), `AppRadii.pill` (999.0)
+- `AppTypography.headline`, `AppTypography.body`
+
+**Files:** `lib/core/theme/colors.dart`, `spacing.dart`, `radii.dart`, `typography.dart`, `app_theme.dart`
+
+**Brand:** Mustard `#F0CC50` (CTA) + Near-black `#1A1A1A` (secondary) on Cream `#FAF9F6`
+
+## Date Formatting
+
+Always use utilities; never `padLeft(2, '0')` inline:
+
+```dart
+// core/util/date_format.dart
+String formatHm(DateTime dt);        // "14:30"
+String formatDdMmHm(DateTime dt);    // "13.05 14:30"
+```
+
+## Reusable Widgets
 
 ```
 core/widgets/
-├── app_shell.dart           bottom nav over ShellRoute child (content clamped to 480pt)
-├── empty_state.dart         icon + title + subtitle + optional CTA
-├── error_state.dart         wifi-off + retry + offline link
-├── states_showcase.dart     /dev/states tabs
-├── button_spinner.dart      inline pill-button spinner for async submit states
-├── confirm_dialog.dart      showConfirmDialog(...) helper — destructive / default flavours
-└── stat_card.dart           hero metric block (mileage, ETA)
-```
-
-## Core utilities
-
-```
-core/util/
-├── date_format.dart         formatHm / formatDdMmHm — never inline padLeft
-├── validators.dart          UA-phone, UA-plate, non-empty / max-length validators
-├── ua_plate_formatter.dart  TextInputFormatter — uppercase + Cyrillic→Latin normalize
-├── clock.dart               Clock seam for tests
-└── id_generator.dart        microsecond-based id generator (orders, vehicles)
+├── app_shell.dart           Bottom nav over ShellRoute child
+├── empty_state.dart         Icon + title + subtitle + CTA
+├── error_state.dart         Wi-Fi off + retry + offline link
+├── button_spinner.dart      Inline spinner for async submit
+├── confirm_dialog.dart      showConfirmDialog helper (destructive/default)
+└── stat_card.dart           Metric card (mileage, ETA, etc.)
 ```
 
 ## Localization
 
-Locale: `uk` (Ukrainian), with `en` template available. ARB-based l10n is wired:
-- `lib/l10n/app_uk.arb` + `app_en.arb` — source ARBs (ICU plurals supported)
-- `lib/l10n/generated/app_localizations.dart` — generated by `flutter gen-l10n`
-- `lib/l10n/l10n_extension.dart` — `context.l10n` extension
+**Approach:** ARB-based (future; currently hardcoded Ukrainian)
 
-`MaterialApp.router` declares `localizationsDelegates: AppLocalizations.localizationsDelegates` + `supportedLocales`. Default `locale: const Locale('uk')`.
+Wired: `lib/l10n/` → `app_uk.arb`, `app_en.arb` → generated `app_localizations.dart`
 
-## Telemetry
+Access: `context.l10n.messageKey`
 
-`core/telemetry/sentry.dart`:
-- `bootstrapSentry({required runApp})` — initialises Sentry if `--dart-define=SENTRY_DSN=...` is provided; otherwise runs `runApp` directly (zero-cost in dev).
-- `reportError(error, stack)` — forwarded by `FlutterError.onError` and `PlatformDispatcher.instance.onError` in `main.dart`.
+## Testing Strategy
 
-## Loading shimmer + Hero
+**Local (APP_ENV=local):**
+- All adapters are FakeXxx (in-memory)
+- No HTTP calls
+- Fast, repeatable, offline
 
-- `Skeletonizer` (skeletonizer ^2.1) wraps loading branches in OrderDetail + History.
-- `Hero(tag: 'order-hero-${order.id}')` wraps in-progress, pending, and canceled card bodies on Home + the matching detail-screen blocks for shared-element transitions.
+**Remote (APP_ENV=remote):**
+- HTTP adapters active
+- Points to `https://autohub.bmolodan.dev/v1` by default
+- Tests override appEnvironmentProvider
+
+Example:
+```dart
+testWidgets('Cars list loads', (tester) async {
+  final container = ProviderContainer(
+    overrides: [
+      appEnvironmentProvider.overrideWithValue(AppEnvironment.remote),
+      apiBaseUrlProvider.overrideWithValue('http://localhost:8787/v1'),
+    ],
+  );
+  // ...
+});
+```
+
+## Current Status
+
+**57/57 tests passing**  
+**All HTTP adapters active** (OTP, Vehicles, Orders, History)  
+**Default to remote** (staging at `autohub.bmolodan.dev`)  
+**AppEnvironment override available** (for widget tests)
